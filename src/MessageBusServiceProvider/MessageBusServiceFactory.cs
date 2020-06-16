@@ -2,7 +2,7 @@ using Microsoft.Azure.ServiceBus;
 
 namespace MessageBusServiceProvider
 {
-    class MessageBusServiceFactory
+    public class MessageBusServiceFactory
     {
         public IQueueClient CreateQueueClient(QueueClientOption option)
         {

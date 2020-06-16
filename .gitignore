@@ -4,3 +4,5 @@ src/DataProviderService/bin/*
 src/DataProviderService/obj/*
 src/ThermoProcessWorker/bin/*
 src/ThermoProcessWorker/obj/*
+src/ThermoDataModel/obj/*
+src/ThermoDataModel/bin/*
