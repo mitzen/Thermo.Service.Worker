@@ -1,0 +1,6 @@
+src/MessageBusServiceProvider/bin/*
+src/MessageBusServiceProvider/obj/*
+src/DataProviderService/bin/*
+src/DataProviderService/obj/*
+src/ThermoProcessWorker/bin/*
+src/ThermoProcessWorker/obj/*
