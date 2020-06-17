@@ -4,9 +4,9 @@ namespace MessageBusServiceProvider
 {
     public class MessageBusServiceFactory
     {
-        public IQueueClient CreateQueueClient(QueueClientOption option)
+        public IQueueClient CreateQueueClient(ServiceBusConfiguration option)
         {
-            return new QueueClient(option.ServiceBusConnectionName, option.QueueName);
+            return new QueueClient(option.ServiceBusConnection, option.QueueName);
         }
     }
 }
