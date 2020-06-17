@@ -38,7 +38,7 @@ namespace ThermoProcessWorker
 
             var targetBaseUrl = _restConfiguration.Hostname + _restConfiguration.PersonelUrl;
             var client = new RestClient(targetBaseUrl);
-            var thermoDataRequester = new ThermoDataRequester(client, stoppingToken);
+            var thermoDataRequester = new ThermoDataRequester(client, stoppingToken, this._logger);
             
             var request = new RestRequest();
             request.AddJsonBody(new RestRequest());
