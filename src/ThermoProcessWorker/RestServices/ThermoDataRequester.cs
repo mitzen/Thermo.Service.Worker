@@ -1,23 +1,23 @@
-using System;
+using System.Threading;
 using System.Threading.Tasks;
 using RestSharp;
-using RestSharp.Deserializers;
+using ThermoDataModel;
 
 namespace ThermoProcessWorker.RestServices
 {
     public class ThermoDataRequester
     {
-        IRestClient _client; 
-        public ThermoDataRequester(IRestClient client)
+        private readonly IRestClient _client; 
+        private CancellationToken _token;
+        public ThermoDataRequester(IRestClient client, CancellationToken token)
         {
             this._client = client; 
+            this._token = token;
         }
 
-        public async Task GetPersonelThermoDataAsync(RestRequest request, 
-        Action<IRestResponse,  RestRequestAsyncHandle> action)
+        public async Task GetPersonelThermoDataAsync(IRestRequest request)
         {
-             this._client.PostAsync(request, action);
+             await this._client.PostAsync<PersonelThermoResponse>(request, this._token);
         }
-        
     }
 }

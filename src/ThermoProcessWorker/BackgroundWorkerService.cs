@@ -12,28 +12,33 @@ namespace ThermoProcessWorker
 {
     public class BackgroundWorkerService : BackgroundService
     {
+        private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
+        private const string ThermoRestApiConfigurationKey = "ThermoConfiguration";
         private readonly ILogger<BackgroundWorkerService> _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoConfiguration _restConfiguration;
+        private readonly ServiceBusConfiguration _serviceBusConfiguration;
 
         public BackgroundWorkerService(ILogger<BackgroundWorkerService> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
+            _serviceBusConfiguration = configuration.GetSection(ServiceBusConfigurationKey).Get<ServiceBusConfiguration>();
+            _restConfiguration = configuration.GetSection(ThermoRestApiConfigurationKey).Get<ThermoConfiguration>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var config = this._configuration.GetSection("ServiceBusConfiguration").Get<ServiceBusConfiguration>();
-            
             _logger.LogInformation("--------------------------------------------------------");
-            _logger.LogInformation(config.QueueName);
-            _logger.LogInformation(config.ServiceBusConnection);
+            _logger.LogInformation(_serviceBusConfiguration.QueueName);
+            _logger.LogInformation(_serviceBusConfiguration.ServiceBusConnection);
+            _logger.LogInformation(_restConfiguration.Hostname);
+            _logger.LogInformation(_restConfiguration.PersonelUrl);
             _logger.LogInformation("--------------------------------------------------------");
 
             var targetBaseUrl = _restConfiguration.Hostname + _restConfiguration.PersonelUrl;
             var client = new RestClient(targetBaseUrl);
-            var thermoDataRequester = new ThermoDataRequester(client);
+            var thermoDataRequester = new ThermoDataRequester(client, stoppingToken);
             
             var request = new RestRequest();
             request.AddJsonBody(new RestRequest());
@@ -42,10 +47,7 @@ namespace ThermoProcessWorker
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-                await thermoDataRequester.GetPersonelThermoDataAsync(request, (status, handle) => 
-                {
-                    _logger.LogInformation(handle.WebRequest.Host);
-                });
+                await thermoDataRequester.GetPersonelThermoDataAsync(request);
                  
                 // Run task 
                 await Task.Delay(1000, stoppingToken);
