@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MessageBusServiceProvider
 {
-    public class QueueMessageSender
+    public class QueueMessageSender : IQueueMessageSender
     {
         private readonly IQueueClient _queueClient;
         private readonly ILogger _logger;
