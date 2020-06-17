@@ -5,6 +5,8 @@ using MessageBusServiceProvider;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RestSharp;
+using ThermoProcessWorker.RestServices;
 
 namespace ThermoProcessWorker
 {
@@ -12,6 +14,7 @@ namespace ThermoProcessWorker
     {
         private readonly ILogger<BackgroundWorkerService> _logger;
         private readonly IConfiguration _configuration;
+        private readonly ThermoConfiguration _restConfiguration;
 
         public BackgroundWorkerService(ILogger<BackgroundWorkerService> logger, IConfiguration configuration)
         {
@@ -28,9 +31,23 @@ namespace ThermoProcessWorker
             _logger.LogInformation(config.ServiceBusConnection);
             _logger.LogInformation("--------------------------------------------------------");
 
+            var targetBaseUrl = _restConfiguration.Hostname + _restConfiguration.PersonelUrl;
+            var client = new RestClient(targetBaseUrl);
+            var thermoDataRequester = new ThermoDataRequester(client);
+            
+            var request = new RestRequest();
+            request.AddJsonBody(new RestRequest());
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+
+                await thermoDataRequester.GetPersonelThermoDataAsync(request, (status, handle) => 
+                {
+                    _logger.LogInformation(handle.WebRequest.Host);
+                });
+                 
+                // Run task 
                 await Task.Delay(1000, stoppingToken);
             }
         }

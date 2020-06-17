@@ -19,13 +19,13 @@ public class TimedBasedService : IHostedService, IDisposable
     {
         _logger.LogInformation("Timed Hosted Service running.");
 
-        _timer = new Timer(GetThermoRestDataService, null, TimeSpan.Zero, 
+        _timer = new Timer(GetThermoDataRestService, null, TimeSpan.Zero, 
             TimeSpan.FromSeconds(5));
 
         return Task.CompletedTask;
     }
 
-    private void GetThermoRestDataService(object state)
+    private void GetThermoDataRestService(object state)
     {
         var count = Interlocked.Increment(ref executionCount);
 
