@@ -6,7 +6,7 @@ using ThermoDataModel;
 
 namespace ThermoProcessWorker.RestServices
 {
-    public class ThermoDataRequester
+    public class ThermoDataRequester : IThermoDataRequester
     {
         private readonly IRestClient _client; 
         private CancellationToken _token;
@@ -19,10 +19,11 @@ namespace ThermoProcessWorker.RestServices
             _logger = logger;
         }
 
-        public async Task GetPersonelThermoDataAsync(IRestRequest request)
+        public async Task<IRestResponse<T>> GetPersonelThermoDataAsync<T>(IRestRequest request) 
+        where T : class
         {
             this._logger.LogInformation("Initiating request to obtain ThermoData");
-             await this._client.PostAsync<PersonelThermoResponse>(request, this._token);
+            return await this._client.ExecuteAsync<T>(request);
         }
     }
 }

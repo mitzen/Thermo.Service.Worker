@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RestSharp;
+using ThermoDataModel.Models.Test;
 using ThermoProcessWorker.RestServices;
 
 namespace ThermoProcessWorker
@@ -36,22 +37,26 @@ namespace ThermoProcessWorker
             _logger.LogInformation(_restConfiguration.PersonelUrl);
             _logger.LogInformation("--------------------------------------------------------");
 
-            var targetBaseUrl = _restConfiguration.Hostname + _restConfiguration.PersonelUrl;
+            var targetBaseUrl = _restConfiguration.Hostname;
+
+
             var client = new RestClient(targetBaseUrl);
             var thermoDataRequester = new ThermoDataRequester(client, stoppingToken, this._logger);
             
-            var request = new RestRequest();
-            request.AddJsonBody(new RestRequest());
-
+            var targetRequest = RequestFactory.CreatePersonRequest(_restConfiguration.PersonelUrl, new Person {
+                 Name  = "test", 
+                Job = "kepung@gmail.com"
+            });
+       
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-
-                await thermoDataRequester.GetPersonelThermoDataAsync(request);
-                 
+                var result = await thermoDataRequester.GetPersonelThermoDataAsync<Person>(targetRequest);
+                _logger.LogInformation(result.Data.Name);
+                _logger.LogInformation(result.Data.Job);
                 // Run task 
                 await Task.Delay(1000, stoppingToken);
             }
         }
-    }
+    }    
 }
