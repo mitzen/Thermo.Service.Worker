@@ -27,7 +27,7 @@ namespace MessageBusServiceProvider
             }
             catch (Exception exception)
             {
-                this._logger.LogInformation($"{exception.Message}");
+                this._logger.LogError($"{exception.Message}");
             }
         }
     }
