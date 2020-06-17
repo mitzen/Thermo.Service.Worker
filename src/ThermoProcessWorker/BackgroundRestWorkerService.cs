@@ -10,16 +10,16 @@ using ThermoProcessWorker.RestServices;
 
 namespace ThermoProcessWorker
 {
-    public class BackgroundWorkerService : BackgroundService
+    public class BackgroundRestWorkerService : BackgroundService
     {
         private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
         private const string ThermoRestApiConfigurationKey = "ThermoConfiguration";
-        private readonly ILogger<BackgroundWorkerService> _logger;
+        private readonly ILogger<BackgroundRestWorkerService> _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoConfiguration _restConfiguration;
         private readonly ServiceBusConfiguration _serviceBusConfiguration;
 
-        public BackgroundWorkerService(ILogger<BackgroundWorkerService> logger, IConfiguration configuration)
+        public BackgroundRestWorkerService(ILogger<BackgroundRestWorkerService> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
