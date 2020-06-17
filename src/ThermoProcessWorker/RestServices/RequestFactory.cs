@@ -5,16 +5,16 @@ using ThermoDataModel.Models.Test;
 
 namespace ThermoProcessWorker.RestServices
 {
-    public class RequestFactory 
+    public class RequestFactory
     {
-        public static IThermoDataRequester CreateRestService(string targetBaseUrl, CancellationToken stoppingToken, 
+        public static IThermoDataRequester CreateRestService(string targetBaseUrl, CancellationToken stoppingToken,
         ILogger logger)
         {
-            var client = new RestClient(targetBaseUrl);
-            return new ThermoDataRequester(client, stoppingToken, logger);
+            var dataservice = new RestDataService(new RestClient(targetBaseUrl), stoppingToken, logger);
+            return new ThermoDataRequester(dataservice, logger);
         }
 
-        public static RestRequest CreatePersonRequest(string url, Person source) 
+        public static RestRequest CreatePersonRequest(string url, Person source)
         {
             var request = new RestRequest(url);
             request.Method = Method.POST;
@@ -22,4 +22,4 @@ namespace ThermoProcessWorker.RestServices
             return request;
         }
     }
-} 
+}

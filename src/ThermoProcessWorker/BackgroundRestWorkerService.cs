@@ -38,11 +38,7 @@ namespace ThermoProcessWorker
             _logger.LogInformation("--------------------------------------------------------");
 
             var targetBaseUrl = _restConfiguration.Hostname;
-
-
-            var client = new RestClient(targetBaseUrl);
-            var thermoDataRequester = new ThermoDataRequester(client, stoppingToken, this._logger);
-            
+            var thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, stoppingToken, _logger);
             var targetRequest = RequestFactory.CreatePersonRequest(_restConfiguration.PersonelUrl, new Person {
                  Name  = "test", 
                 Job = "kepung@gmail.com"
