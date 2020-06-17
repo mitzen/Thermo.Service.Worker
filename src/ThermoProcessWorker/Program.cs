@@ -22,7 +22,6 @@ namespace ThermoProcessWorker
             {
                 services.AddHostedService<BackgroundWorkerService>();
                 services.AddHostedService<TimedBasedService>();
-                //services.Configure<ServiceBusConfiguration>(Configuration.GetSection("ServiceBusConfiguration"));
             });
     }
 }
