@@ -53,8 +53,9 @@ namespace ThermoProcessWorker.AppBusinessLogic
             // send message 
             _logger.LogInformation($"{result.Data.Name}");
             _logger.LogInformation($"{result.Data.Job}");
-            _logger.LogInformation($"Sending message to service bus {DateTimeOffset.Now} : {MessageConverter.Serialize(result)} ");
-            await _messageSender.SendMessagesAsync(MessageConverter.Serialize(result));
+            //_logger.LogInformation($"Sending message to service bus {DateTimeOffset.Now} : {MessageConverter.Serialize(result)} ");
+            //await _messageSender.SendMessagesAsync(MessageConverter.Serialize(result));
+            await _messageSender.SendMessagesAsync("mydatadatadat");
         }
     }
 }

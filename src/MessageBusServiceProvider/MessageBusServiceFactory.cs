@@ -12,6 +12,7 @@ namespace MessageBusServiceProvider
 
         public static IQueueMessageSender CreateServiceBusMessageSender(ServiceBusConfiguration serviceBusOption, ILogger logger)
         {
+            logger.LogInformation($"CreateServiceBusMessageSender. {serviceBusOption.QueueName}, {serviceBusOption.ServiceBusConnection}");
             var client = CreateQueueClient(serviceBusOption);
             return new QueueMessageSender(client, logger);
         }
