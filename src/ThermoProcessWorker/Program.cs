@@ -21,7 +21,7 @@ namespace ThermoProcessWorker
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddHostedService<BackgroundRestWorkerService>();
-                services.AddHostedService<TimedBasedService>();
+                //services.AddHostedService<TimedBasedService>();
             });
     }
 }

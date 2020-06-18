@@ -10,9 +10,9 @@ namespace MessageBusServiceProvider
             return new QueueClient(option.ServiceBusConnection, option.QueueName);
         }
 
-        public static IQueueMessageSender CreateSender(ServiceBusConfiguration option, ILogger logger)
+        public static IQueueMessageSender CreateServiceBusMessageSender(ServiceBusConfiguration serviceBusOption, ILogger logger)
         {
-            var client = CreateQueueClient(option);
+            var client = CreateQueueClient(serviceBusOption);
             return new QueueMessageSender(client, logger);
         }
     }

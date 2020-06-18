@@ -4,7 +4,7 @@ namespace MessageBusServiceProvider
 {
     public class MessageConverter
     {
-        public static string Serialize<T>(T sourceObject)
+        public static string Serialize(object sourceObject)
         {
             return JsonConvert.SerializeObject(sourceObject);
         }

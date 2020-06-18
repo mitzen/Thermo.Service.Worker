@@ -21,6 +21,7 @@ namespace ThermoProcessWorker.AppBusinessLogic
         string targetBaseUrl;
         private IThermoDataRequester thermoDataRequester;
         private CancellationToken _stoppingToken;
+        private IQueueMessageSender _messageSender;
 
         public ThermoDataLogic(ILogger logger, IConfiguration configuration, CancellationToken token)
         {
@@ -35,6 +36,7 @@ namespace ThermoProcessWorker.AppBusinessLogic
         {
             targetBaseUrl = _restConfiguration.Hostname;
             thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _stoppingToken, _logger);
+            _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_serviceBusConfiguration, _logger);
         }
 
         public async Task ExecuteAsync()
@@ -46,16 +48,13 @@ namespace ThermoProcessWorker.AppBusinessLogic
             });
 
             _logger.LogInformation($"Executing ThermoDataLogic {DateTimeOffset.Now}");
-
             // Get data 
             var result = await thermoDataRequester.GetPersonelThermoDataAsync<Person>(targetRequest);
-
             // send message 
             _logger.LogInformation($"{result.Data.Name}");
             _logger.LogInformation($"{result.Data.Job}");
-            _logger.LogInformation($"Sending message {DateTimeOffset.Now}");
-            //var messageSender = MessageBusServiceFactory.CreateSender(_serviceBusConfiguration, _logger);
-            //await messageSender.SendMessagesAsync(MessageConverter.Serialize(result));
+            _logger.LogInformation($"Sending message to service bus {DateTimeOffset.Now} : {MessageConverter.Serialize(result)} ");
+            await _messageSender.SendMessagesAsync(MessageConverter.Serialize(result));
         }
     }
 }

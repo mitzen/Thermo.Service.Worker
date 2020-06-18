@@ -24,6 +24,7 @@ namespace MessageBusServiceProvider
             {
                 var message = new Message(Encoding.UTF8.GetBytes(messageSource));
                 await this._queueClient.SendAsync(message);
+                this._logger.LogInformation($"Sent!");
             }
             catch (Exception exception)
             {
