@@ -11,6 +11,7 @@ namespace Service.ThermoProcessWorker
 {
     public class BackgroundRestWorkerService : BackgroundService
     {
+        private const string ServiceWorkerConfiguration = "ServiceWorkerConfiguration";
         private readonly ILogger<BackgroundRestWorkerService> _logger;
         private readonly IConfiguration _configuration;
         private ServiceWorkerConfiguration _serviceWorkerConfiguration;
@@ -19,7 +20,7 @@ namespace Service.ThermoProcessWorker
         {
             _logger = logger;
             _configuration = configuration;
-            _serviceWorkerConfiguration = configuration.GetSection("ServiceWorkerConfiguration").Get<ServiceWorkerConfiguration>();
+            _serviceWorkerConfiguration = configuration.GetSection(ServiceWorkerConfiguration).Get<ServiceWorkerConfiguration>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -43,6 +44,8 @@ namespace Service.ThermoProcessWorker
                     stoppingToken);
                 _logger.LogInformation($"Service : completed {DateTime.Now}.");
             }
+
+            _logger.LogInformation($"Service stopped or cancelled! {DateTime.Now}.");
         }
     }    
 }
