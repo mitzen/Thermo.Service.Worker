@@ -6,9 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using Service.ThermoProcessWorker.RestServices;
-using Service.ThermoDataModel.Requests;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
+using Service.ThermoDataModel.Requests;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -30,7 +30,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             _logger = logger;
             _configuration = configuration;
             _serviceBusConfiguration = configuration.GetSection(ServiceBusConfigurationKey).Get<ServiceBusConfiguration>();
-            _restConfiguration = configuration.GetSection(ThermoRestApiConfigurationKey).Get<ThermoRestConfiguration>();
+            _restConfiguration = configuration.GetSection("ServiceWorkerConfiguration").Get<ThermoRestConfiguration>();
             _stoppingToken = token;
         }
 

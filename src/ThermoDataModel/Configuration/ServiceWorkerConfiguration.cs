@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Service.ThermoDataModel.Configuration
+﻿namespace Service.ThermoDataModel.Configuration
 {
     public class ServiceWorkerConfiguration
     {
+        public int? GetDataFromRestServiceIntervalSecond { get; set; }
 
-
+        public string LogFilePath { get; set; }
     }
 }

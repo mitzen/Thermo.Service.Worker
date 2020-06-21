@@ -21,8 +21,8 @@ namespace Service.ThermoProcessWorker
             Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
-                //services.AddHostedService<BackgroundRestWorkerService>();
-                services.AddHostedService<TimedBasedService>();
+                services.AddHostedService<BackgroundRestWorkerService>();
+                //services.AddHostedService<TimedBasedService>();
             });
     }
 }
