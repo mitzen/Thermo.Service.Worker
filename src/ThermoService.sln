@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermoProcessWorker", "ThermoProcessWorker\ThermoProcessWorker.csproj", "{4F537A43-6E83-4FC6-87F2-4D1C4FBACB67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.ThermoProcessWorker", "ThermoProcessWorker\Service.ThermoProcessWorker.csproj", "{4F537A43-6E83-4FC6-87F2-4D1C4FBACB67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBusServiceProvider", "MessageBusServiceProvider\MessageBusServiceProvider.csproj", "{A3D8E48F-097E-43C0-A202-FBDDCEEFB393}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.MessageBusServiceProvider", "MessageBusServiceProvider\Service.MessageBusServiceProvider.csproj", "{A3D8E48F-097E-43C0-A202-FBDDCEEFB393}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermoDataModel", "ThermoDataModel\ThermoDataModel.csproj", "{B36319C7-35F3-4D70-8EA9-3E9FACBBD271}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.ThermoDataModel", "ThermoDataModel\Service.ThermoDataModel.csproj", "{B36319C7-35F3-4D70-8EA9-3E9FACBBD271}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,9 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4F537A43-6E83-4FC6-87F2-4D1C4FBACB67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,5 +55,11 @@ Global
 		{B36319C7-35F3-4D70-8EA9-3E9FACBBD271}.Release|x64.Build.0 = Release|Any CPU
 		{B36319C7-35F3-4D70-8EA9-3E9FACBBD271}.Release|x86.ActiveCfg = Release|Any CPU
 		{B36319C7-35F3-4D70-8EA9-3E9FACBBD271}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC58B5A7-639C-46C7-803F-6F4F52885B1D}
 	EndGlobalSection
 EndGlobal
