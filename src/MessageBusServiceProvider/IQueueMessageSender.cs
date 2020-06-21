@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace MessageBusServiceProvider
+namespace Service.MessageBusServiceProvider
 {
     public interface IQueueMessageSender
     {

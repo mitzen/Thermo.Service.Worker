@@ -1,14 +1,14 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MessageBusServiceProvider;
+using Service.MessageBusServiceProvider;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RestSharp;
-using ThermoDataModel.Models.Test;
-using ThermoProcessWorker.RestServices;
+using Service.ThermoDataModel.Models.Test;
+using Service.ThermoProcessWorker.RestServices;
 
-namespace ThermoProcessWorker.AppBusinessLogic
+namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
     public class ThermoDataLogic : IThermoDataLogic
     {

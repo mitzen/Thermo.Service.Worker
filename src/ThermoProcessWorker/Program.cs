@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
-using MessageBusServiceProvider;
+using Service.MessageBusServiceProvider;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Configuration;
 
-namespace ThermoProcessWorker
+namespace Service.ThermoProcessWorker
 {
     public class Program
     {

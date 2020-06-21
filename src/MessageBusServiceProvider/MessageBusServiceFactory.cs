@@ -1,7 +1,7 @@
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 
-namespace MessageBusServiceProvider
+namespace Service.MessageBusServiceProvider
 {
     public class MessageBusServiceFactory
     {

@@ -1,4 +1,4 @@
-namespace ThermoDataModel
+namespace Service.ThermoDataModel
 {
     class PersonelThermoRequest
     {

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MessageBusServiceProvider\MessageBusServiceProvider.csproj" />
-    <ProjectReference Include="..\ThermoDataModel\ThermoDataModel.csproj" />
+    <ProjectReference Include="..\MessageBusServiceProvider\Service.MessageBusServiceProvider.csproj" />
+    <ProjectReference Include="..\ThermoDataModel\Service.ThermoDataModel.csproj" />
   </ItemGroup>
 </Project>

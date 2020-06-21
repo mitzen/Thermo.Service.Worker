@@ -6,3 +6,4 @@ src/ThermoProcessWorker/bin/*
 src/ThermoProcessWorker/obj/*
 src/ThermoDataModel/obj/*
 src/ThermoDataModel/bin/*
+src/.vs/

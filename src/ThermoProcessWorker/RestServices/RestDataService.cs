@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 
-namespace ThermoProcessWorker.RestServices
+namespace Service.ThermoProcessWorker.RestServices
 {
     public class RestDataService : IRestDataService 
     {

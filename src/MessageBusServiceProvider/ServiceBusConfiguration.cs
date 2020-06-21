@@ -1,4 +1,4 @@
-namespace MessageBusServiceProvider
+namespace Service.MessageBusServiceProvider
 {
     public class ServiceBusConfiguration
     {

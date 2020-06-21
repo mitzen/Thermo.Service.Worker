@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using RestSharp;
 
-namespace ThermoProcessWorker.RestServices
+namespace Service.ThermoProcessWorker.RestServices
 {
    public interface IThermoDataRequester
     {

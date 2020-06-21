@@ -1,9 +1,9 @@
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using RestSharp;
-using ThermoDataModel.Models.Test;
+using Service.ThermoDataModel.Models.Test;
 
-namespace ThermoProcessWorker.RestServices
+namespace Service.ThermoProcessWorker.RestServices
 {
     public class RequestFactory
     {

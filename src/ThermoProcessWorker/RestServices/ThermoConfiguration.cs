@@ -1,4 +1,4 @@
-namespace ThermoProcessWorker.RestServices
+namespace Service.ThermoProcessWorker.RestServices
 {
     public class ThermoConfiguration 
     {

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace ThermoProcessWorker.AppBusinessLogic
+namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
     public interface IThermoDataLogic
     {

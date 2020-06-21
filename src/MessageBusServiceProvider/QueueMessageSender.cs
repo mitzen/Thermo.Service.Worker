@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 
-namespace MessageBusServiceProvider
+namespace Service.MessageBusServiceProvider
 {
     public class QueueMessageSender : IQueueMessageSender
     {
