@@ -1,6 +1,7 @@
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using RestSharp;
+using Service.MessageBusServiceProvider;
 
 namespace Service.ThermoProcessWorker.RestServices
 {
@@ -14,11 +15,12 @@ namespace Service.ThermoProcessWorker.RestServices
             return new ThermoDataRequester(dataservice, logger);
         }
 
-        public static RestRequest CreatePersonRequest<T>(string url, T source)
+        public static RestRequest CreatePostBodyRequest<T>(string url, T source)
         {
             var request = new RestRequest(url);
             request.Method = Method.POST;
-            request.AddJsonBody(source);
+            string src = MessageConverter.SerializeCamelCase(source);
+            request.AddJsonBody(src);
             return request;
         }
     }

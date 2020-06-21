@@ -9,7 +9,6 @@ using Service.ThermoProcessWorker.RestServices;
 using Service.ThermoDataModel.Requests;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
-using System.Collections.Generic;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -44,17 +43,24 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
         public async Task ExecuteAsync()
         {
-            var targetRequest = RequestFactory.CreatePersonRequest(
+            var attendanceRequest = RequestFactory.CreatePostBodyRequest(
                 _restConfiguration.AttendanceUrl, new AttendanceRequest
-            {
-                StartId = 1,
-                ReqCount = 20, 
-                NeedImg = false
-            });
+                {
+                    StartId = 1,
+                    ReqCount = 20,
+                    NeedImg = false
+                });
 
             _logger.LogInformation($"Executing ThermoDataLogic {DateTimeOffset.Now}");
+
             // Get data 
-            var result = await thermoDataRequester.GetAttendanceRecordAsync<IEnumerable<AttendRecord>>(targetRequest);
+            var result = await thermoDataRequester.
+                GetAttendanceRecordAsync<AttendanceResponse>(attendanceRequest);
+
+            _logger.LogInformation(result.Content);
+
+            var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
+
             // send message 
             //_logger.LogInformation($"{result.Data.Deviceid}");
             //_logger.LogInformation($"{result.Data.}");
