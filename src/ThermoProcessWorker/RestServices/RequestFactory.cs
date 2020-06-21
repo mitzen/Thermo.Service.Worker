@@ -1,7 +1,6 @@
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using RestSharp;
-using Service.ThermoDataModel.Models.Test;
 
 namespace Service.ThermoProcessWorker.RestServices
 {
@@ -10,11 +9,12 @@ namespace Service.ThermoProcessWorker.RestServices
         public static IThermoDataRequester CreateRestService(string targetBaseUrl, CancellationToken stoppingToken,
         ILogger logger)
         {
-            var dataservice = new RestDataService(new RestClient(targetBaseUrl), stoppingToken, logger);
+            var restClient = new RestClient(targetBaseUrl);
+            var dataservice = new RestDataService(restClient, stoppingToken, logger);
             return new ThermoDataRequester(dataservice, logger);
         }
 
-        public static RestRequest CreatePersonRequest(string url, Person source)
+        public static RestRequest CreatePersonRequest<T>(string url, T source)
         {
             var request = new RestRequest(url);
             request.Method = Method.POST;

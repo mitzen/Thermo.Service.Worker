@@ -1,4 +1,4 @@
-namespace Service.ThermoDataModel.Models.Test
+namespace Service.ThermoDataModel.Models
 {
     public class Person
     {

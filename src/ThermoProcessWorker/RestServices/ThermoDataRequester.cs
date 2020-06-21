@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RestSharp;
@@ -15,7 +16,7 @@ namespace Service.ThermoProcessWorker.RestServices
             _logger = logger;
         }
 
-        public async Task<IRestResponse<T>> GetPersonelThermoDataAsync<T>(IRestRequest request) 
+        public async Task<IRestResponse<T>> GetAttendanceRecordAsync<T>(IRestRequest request) 
         where T : class
         {
             this._logger.LogInformation("Initiating GetPersonelThermoDataAsync request.");

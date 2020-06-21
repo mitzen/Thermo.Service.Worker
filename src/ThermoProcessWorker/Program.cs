@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Configuration;
+using Service.ThermoDataModel.Configuration;
 
 namespace Service.ThermoProcessWorker
 {
@@ -20,8 +21,8 @@ namespace Service.ThermoProcessWorker
             Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
-                services.AddHostedService<BackgroundRestWorkerService>();
-                //services.AddHostedService<TimedBasedService>();
+                //services.AddHostedService<BackgroundRestWorkerService>();
+                services.AddHostedService<TimedBasedService>();
             });
     }
 }

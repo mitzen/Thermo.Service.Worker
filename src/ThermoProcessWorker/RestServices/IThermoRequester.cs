@@ -5,6 +5,6 @@ namespace Service.ThermoProcessWorker.RestServices
 {
    public interface IThermoDataRequester
     {
-        Task<IRestResponse<T>> GetPersonelThermoDataAsync<T>(IRestRequest request) where T: class;
+        Task<IRestResponse<T>> GetAttendanceRecordAsync<T>(IRestRequest request) where T: class;
     }
 }
