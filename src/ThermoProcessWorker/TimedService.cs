@@ -36,9 +36,10 @@ public class TimedBasedService : IHostedService, IDisposable
     {
         try
         {
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
             var count = Interlocked.Increment(ref executionCount);
             await this._thermoLogic.ExecuteAsync();
-            _timer.Change(TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(10));
+            
 
             _logger.LogInformation(
                 "Timed Hosted Service is working. Count: {Count}", count);
