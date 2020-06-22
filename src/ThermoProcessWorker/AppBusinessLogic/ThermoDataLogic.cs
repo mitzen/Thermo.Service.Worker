@@ -6,16 +6,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using Service.ThermoProcessWorker.RestServices;
-using Service.ThermoDataModel.Requests;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
+using Service.ThermoDataModel.Requests;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
     public class ThermoDataLogic : IThermoDataLogic
     {
         private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
-        private const string ThermoRestApiConfigurationKey = "ThermoRestConfiguration";
+        private const string ThermoRestApiConfigurationKey = "ServiceWorkerConfiguration";
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoRestConfiguration _restConfiguration;
@@ -60,13 +60,29 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             _logger.LogInformation(result.Content);
 
             var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
+            await SendMessagesToAzureServiceBus(attendanceRecResult);
 
             // send message 
             //_logger.LogInformation($"{result.Data.Deviceid}");
             //_logger.LogInformation($"{result.Data.}");
             //_logger.LogInformation($"Sending message to service bus {DateTimeOffset.Now} : {MessageConverter.Serialize(result)} ");
             //await _messageSender.SendMessagesAsync(MessageConverter.Serialize(result));
-            await _messageSender.SendMessagesAsync("mydatadatadat");
+            //await _messageSender.SendMessagesAsync("mydatadatadat");
+        }
+
+        private Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
+        {
+            foreach (var attendanceItem in attendanceRecResult.Data)
+            {
+                attendanceItem.Id = Guid.NewGuid().ToString();
+                var messgeInstance = MessageConverter.Serialize(attendanceItem);
+                _messageSender.SendMessagesAsync(messgeInstance);
+                this._logger.LogInformation($"Message to sent : {messgeInstance}");
+            }
+
+            this._logger.LogInformation($"Batch sent! {DateTime.Now}");
+
+            return Task.CompletedTask;
         }
     }
 }
