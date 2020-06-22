@@ -21,6 +21,8 @@ namespace Service.ThermoDataModel.Models
 
     public class AttendanceRecord
     {
+        public string Guid { get; set; }
+
         public string Address { get; set; }
         
         public int Age { get; set; }

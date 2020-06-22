@@ -15,7 +15,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
     public class ThermoDataLogic : IThermoDataLogic
     {
         private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
-        private const string ThermoRestApiConfigurationKey = "ThermoRestConfiguration";
+        private const string ThermoRestApiConfigurationKey = "ServiceWorkerConfiguration";
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoRestConfiguration _restConfiguration;
@@ -30,7 +30,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             _logger = logger;
             _configuration = configuration;
             _serviceBusConfiguration = configuration.GetSection(ServiceBusConfigurationKey).Get<ServiceBusConfiguration>();
-            _restConfiguration = configuration.GetSection("ServiceWorkerConfiguration").Get<ThermoRestConfiguration>();
+            _restConfiguration = configuration.GetSection(ThermoRestApiConfigurationKey).Get<ThermoRestConfiguration>();
             _stoppingToken = token;
         }
 
@@ -72,10 +72,16 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
         private Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
         {
-            foreach (var item in attendanceRecResult.Data)
+            foreach (var attendanceItem in attendanceRecResult.Data)
             {
-                _messageSender.SendMessagesAsync(MessageConverter.Serialize(item));
+                attendanceItem.Id = Guid.NewGuid().ToString();
+                var messgeInstance = MessageConverter.Serialize(attendanceItem);
+                _messageSender.SendMessagesAsync(messgeInstance);
+                this._logger.LogInformation($"Message to sent : {messgeInstance}");
             }
+
+            this._logger.LogInformation($"Batch sent! {DateTime.Now}");
+
             return Task.CompletedTask;
         }
     }
