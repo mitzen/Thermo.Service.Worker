@@ -25,7 +25,10 @@ namespace Service.ThermoProcessWorker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation($"-----------------------------------------------------");
             _logger.LogInformation($"Service : Startup {DateTime.Now}");
+            _logger.LogInformation($"-----------------------------------------------------");
+
             var thermoLogic = new ThermoDataLogic(this._logger, this._configuration, stoppingToken);
             _serviceWorkerConfiguration.GetDataFromRestServiceIntervalSecond ??= 5000;
             ////////////////////////////////////////////////////////////////////
@@ -34,18 +37,25 @@ namespace Service.ThermoProcessWorker
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                _logger.LogInformation($"**************************************************");
                 _logger.LogInformation($"Service : Executing job at {DateTime.Now}.");
+                _logger.LogInformation($"**************************************************");
                 ////////////////////////////////////////////////////////////////////
                 //await thermoLogic.ExecuteAsync();
                 ////////////////////////////////////////////////////////////////////
-                _logger.LogInformation($"Service : Reseting timer to run in" +
-                    $"{_serviceWorkerConfiguration.GetDataFromRestServiceIntervalSecond.Value} seconds. {DateTime.Now}.");
+                ///
+                _logger.LogInformation($"**************************************************");
+                _logger.LogInformation($"Service : completed {DateTime.Now}.");
+                _logger.LogInformation($"**************************************************");
+                _logger.LogInformation($"Service : Waiting to run again in {_serviceWorkerConfiguration.GetDataFromRestServiceIntervalSecond.Value} seconds. {DateTime.Now}.");
+                
                 await Task.Delay(new TimeSpan(0, 0, _serviceWorkerConfiguration.GetDataFromRestServiceIntervalSecond.Value),
                     stoppingToken);
-                _logger.LogInformation($"Service : completed {DateTime.Now}.");
             }
 
+            _logger.LogInformation($"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             _logger.LogInformation($"Service stopped or cancelled! {DateTime.Now}.");
+            _logger.LogInformation($"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
     }    
 }
