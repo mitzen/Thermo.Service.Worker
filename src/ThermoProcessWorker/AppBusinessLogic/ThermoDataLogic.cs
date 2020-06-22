@@ -60,13 +60,23 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             _logger.LogInformation(result.Content);
 
             var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
+            await SendMessagesToAzureServiceBus(attendanceRecResult);
 
             // send message 
             //_logger.LogInformation($"{result.Data.Deviceid}");
             //_logger.LogInformation($"{result.Data.}");
             //_logger.LogInformation($"Sending message to service bus {DateTimeOffset.Now} : {MessageConverter.Serialize(result)} ");
             //await _messageSender.SendMessagesAsync(MessageConverter.Serialize(result));
-            await _messageSender.SendMessagesAsync("mydatadatadat");
+            //await _messageSender.SendMessagesAsync("mydatadatadat");
+        }
+
+        private Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
+        {
+            foreach (var item in attendanceRecResult.Data)
+            {
+                _messageSender.SendMessagesAsync(MessageConverter.Serialize(item));
+            }
+            return Task.CompletedTask;
         }
     }
 }
