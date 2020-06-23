@@ -17,12 +17,15 @@ namespace Service.ThermoProcessWorker
         private readonly IConfiguration _configuration;
         private ServiceWorkerConfiguration _serviceWorkerConfiguration;
         private readonly ICheckPointLogger _checkPointLogger;
-        public BackgroundRestWorkerService(ILogger<BackgroundRestWorkerService> logger, IConfiguration configuration, ICheckPointLogger checkPointLogger)
+        private readonly IThermoDataLogic thermoLogic;
+
+        public BackgroundRestWorkerService(ILogger<BackgroundRestWorkerService> logger, IThermoDataLogic logic, IConfiguration configuration, ICheckPointLogger checkPointLogger)
         {
             _logger = logger;
             _configuration = configuration;
             _serviceWorkerConfiguration = configuration.GetSection(ServiceWorkerConfiguration).Get<ServiceWorkerConfiguration>();
             _checkPointLogger = checkPointLogger;
+            thermoLogic = logic;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,10 +34,10 @@ namespace Service.ThermoProcessWorker
             _logger.LogInformation($"Service : Startup {DateTime.Now}");
             _logger.LogInformation($"-----------------------------------------------------");
 
-            var thermoLogic = new ThermoDataLogic(this._logger, this._configuration, stoppingToken, _checkPointLogger);
+            //var thermoLogic = new ThermoDataLogic(this._logger, this._configuration, _checkPointLogger);
             _serviceWorkerConfiguration.GetDataFromRestServiceIntervalSecond ??= 5000;
             ////////////////////////////////////////////////////////////////////
-            thermoLogic.Setup();
+            thermoLogic.Setup(stoppingToken);
             ////////////////////////////////////////////////////////////////////
 
             while (!stoppingToken.IsCancellationRequested)

@@ -21,12 +21,8 @@ namespace Service.ThermoProcessWorker
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddLogging();
-                //services.AddHostedService<TimedBasedService>();QueueMessageSender
-                services.AddTransient<ICheckPointLogger, CheckPointLogger>();
-                //services.AddTransient<IQueueMessageSender, QueueMessageSender>();
-                //services.AddTransient<IThermoDataLogic, ThermoDataLogic>();
-                //services.AddTransient<IQueueMessageSender, QueueMessageSender>();
-
+                services.AddSingleton<ICheckPointLogger, CheckPointLogger>();
+                services.AddSingleton<IThermoDataLogic, ThermoDataLogic>();
                 services.AddHostedService<BackgroundRestWorkerService>();
             });
     }

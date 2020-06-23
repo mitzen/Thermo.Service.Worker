@@ -32,19 +32,19 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         private ICheckPointLogger _checkPointLogger;
         private int _errorCount = 0;
 
-        public ThermoDataLogic(ILogger logger, IConfiguration configuration, CancellationToken token, ICheckPointLogger checkPointLogger)
+        public ThermoDataLogic(ILogger<ThermoDataLogic> logger, IConfiguration configuration, ICheckPointLogger checkPointLogger)
         {
             _logger = logger;
             _configuration = configuration;
             _serviceBusConfiguration = configuration.GetSection(ServiceBusConfigurationKey).Get<ServiceBusConfiguration>();
             _restConfiguration = configuration.GetSection(ThermoRestApiConfigurationKey).Get<ThermoRestConfiguration>();
-            _stoppingToken = token;
             _checkPointLogger = checkPointLogger;
             _serviceWorkerConfiguration = configuration.GetSection(ServiceWorkerConfigirationKey).Get<ServiceWorkerConfiguration>();
         }
 
-        public void Setup()
+        public void Setup(CancellationToken token)
         {
+            _stoppingToken = token;
             _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_serviceBusConfiguration, _logger);
         }
 
