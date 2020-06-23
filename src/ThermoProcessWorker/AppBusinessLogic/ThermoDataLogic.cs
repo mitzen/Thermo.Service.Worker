@@ -44,8 +44,6 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
         public void Setup()
         {
-            targetBaseUrl = _restConfiguration.HostName;
-            thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _stoppingToken, _logger);
             _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_serviceBusConfiguration, _logger);
         }
 
@@ -53,40 +51,46 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         {
             // read checpoint info
 
-            var checkpointSourceFileName = _serviceWorkerConfiguration.CheckPointFilePath  + Path.DirectorySeparatorChar + @"chkpoint1.json";
-
-            var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
-
-            var attendanceRequestInfo = new AttendanceRequest
+            foreach (var targetDevice in _restConfiguration.TargetDevices)
             {
-                StartId = checkPoint.LastSequence,
-                ReqCount = 20,
-                NeedImg = false
-            };
+                targetBaseUrl = targetDevice.HostName;
+                thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _stoppingToken, _logger);
 
-            // parse request 
-            var attendanceRequest = RequestFactory.CreatePostBodyRequest(
-                _restConfiguration.AttendanceUrl, attendanceRequestInfo);
+                var checkpointSourceFileName = targetDevice.CheckPointFileName;
 
-            _logger.LogInformation($"Executing ThermoDataLogic Main Component {DateTimeOffset.Now}");
+                var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
 
-            // Get data 
-            var result = await thermoDataRequester.
-                GetAttendanceRecordAsync<AttendanceResponse>(attendanceRequest);
+                var attendanceRequestInfo = new AttendanceRequest
+                {
+                    StartId = checkPoint.LastSequence,
+                    ReqCount = 20,
+                    NeedImg = false
+                };
 
-            var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
+                // parse request 
+                var attendanceRequest = RequestFactory.CreatePostBodyRequest(
+                    targetDevice.AttendanceUrl, attendanceRequestInfo);
 
-            if (attendanceRecResult != null)
-            {
-                await SendMessagesToAzureServiceBus(attendanceRecResult);
+                _logger.LogInformation($"Executing ThermoDataLogic Main Component {DateTimeOffset.Now}");
+
+                // Get data 
+                var result = await thermoDataRequester.
+                    GetAttendanceRecordAsync<AttendanceResponse>(attendanceRequest);
+
+                var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
+
+                if (attendanceRecResult != null)
+                {
+                    await SendMessagesToAzureServiceBus(attendanceRecResult);
+                }
+
+                // Update configuration 
+                checkPoint.LastSequence += attendanceRequestInfo.ReqCount;
+                checkPoint.LastUpdate = DateTime.Now;
+
+                // Save checkpoint 
+                await _checkPointLogger.WriteCheckPoint(checkpointSourceFileName, checkPoint); 
             }
-
-            // Update configuration 
-            checkPoint.LastSequence += attendanceRequestInfo.ReqCount;
-            checkPoint.LastUpdate = DateTime.Now;
-
-            // Save checkpoint 
-            await _checkPointLogger.WriteCheckPoint(checkpointSourceFileName, checkPoint);
         }
 
         private Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
