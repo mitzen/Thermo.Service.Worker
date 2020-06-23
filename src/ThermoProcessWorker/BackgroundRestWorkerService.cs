@@ -32,7 +32,7 @@ namespace Service.ThermoProcessWorker
             var thermoLogic = new ThermoDataLogic(this._logger, this._configuration, stoppingToken);
             _serviceWorkerConfiguration.GetDataFromRestServiceIntervalSecond ??= 5000;
             ////////////////////////////////////////////////////////////////////
-            //thermoLogic.Setup();
+            thermoLogic.Setup();
             ////////////////////////////////////////////////////////////////////
 
             while (!stoppingToken.IsCancellationRequested)
@@ -41,7 +41,7 @@ namespace Service.ThermoProcessWorker
                 _logger.LogInformation($"Service : Executing job at {DateTime.Now}.");
                 _logger.LogInformation($"**************************************************");
                 ////////////////////////////////////////////////////////////////////
-                //await thermoLogic.ExecuteAsync();
+                await thermoLogic.ExecuteAsync();
                 ////////////////////////////////////////////////////////////////////
                 ///
                 _logger.LogInformation($"**************************************************");

@@ -15,7 +15,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
     public class ThermoDataLogic : IThermoDataLogic
     {
         private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
-        private const string ThermoRestApiConfigurationKey = "ServiceWorkerConfiguration";
+        private const string ThermoRestApiConfigurationKey = "ThermoRestConfiguration";
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoRestConfiguration _restConfiguration;
