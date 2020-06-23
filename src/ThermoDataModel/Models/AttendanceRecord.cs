@@ -57,7 +57,7 @@ namespace Service.ThermoDataModel.Models
 
         public int Respirator { get; set; }
 
-        public DateTime TimeStamp { get; set; }
+        public string TimeStamp { get; set; }
 
         public string UserId { get; set; }
 
