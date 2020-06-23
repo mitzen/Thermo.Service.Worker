@@ -1,4 +1,5 @@
-﻿using Service.MessageBusServiceProvider.Converters;
+﻿using Microsoft.Extensions.Logging;
+using Service.MessageBusServiceProvider.Converters;
 using Service.ThermoDataModel.Checkpoint;
 using System.IO;
 using System.Threading.Tasks;
@@ -6,26 +7,47 @@ using System.Threading.Tasks;
 namespace Service.MessageBusServiceProvider.CheckPointing
 {
     public class CheckPointLogger : ICheckPointLogger
-    {  
+    {
+        private readonly ILogger<CheckPointLogger> _logger;
+        public CheckPointLogger(ILogger<CheckPointLogger> logger)
+        {
+            _logger = logger;
+        }
+
         public Task<bool> WriteCheckPoint(string fileName, CheckPointConfiguration checkPointConfiguration)
         {
+            _logger.LogInformation($"Saving checkpointing to {fileName}, {checkPointConfiguration.LastSequence}");
+
             using (StreamWriter writetext = new StreamWriter(fileName, false))
             {
                 writetext.WriteLine(MessageConverter.Serialize(checkPointConfiguration));
             }
-
             return Task.FromResult(false);
         }
 
-        public Task<string> ReadCheckPoint(string fileName)
+        public Task<CheckPointConfiguration> ReadCheckPoint(string fileName)
         {
-            string readText = null;
-            using (StreamReader readtext = new StreamReader(fileName))
+            string isourceContent = null;
+
+            if (File.Exists(fileName))
             {
-                readText = readtext.ReadToEnd();
+                using (StreamReader readtext = new StreamReader(fileName))
+                {
+                    isourceContent = readtext.ReadToEnd();
+                }
+            }
+            else
+            {
+                return Task.FromResult(new CheckPointConfiguration
+                {
+                     LastSequence = 1, 
+                });
             }
 
-            return Task.FromResult(readText);
+            var checkpointing = MessageConverter.DeSerialize<CheckPointConfiguration>(isourceContent);
+            _logger.LogInformation($"Reading checkpoint to {fileName}, Last sequence count : {checkpointing.LastSequence}");
+
+            return Task.FromResult(checkpointing);
         }
     }
 
@@ -33,6 +55,6 @@ namespace Service.MessageBusServiceProvider.CheckPointing
     {
         Task<bool> WriteCheckPoint(string fileName, CheckPointConfiguration checkPointConfiguration);
 
-        Task<string> ReadCheckPoint(string fileName);
+        Task<CheckPointConfiguration> ReadCheckPoint(string fileName);
     }
 }

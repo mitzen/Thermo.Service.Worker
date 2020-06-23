@@ -2,6 +2,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Service.MessageBusServiceProvider.CheckPointing;
+using Service.MessageBusServiceProvider.Queue;
+using Service.ThermoProcessWorker.AppBusinessLogic;
 
 namespace Service.ThermoProcessWorker
 {
@@ -18,10 +20,14 @@ namespace Service.ThermoProcessWorker
             Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
-                services.AddHostedService<BackgroundRestWorkerService>();
-                //services.AddHostedService<TimedBasedService>();
+                services.AddLogging();
+                //services.AddHostedService<TimedBasedService>();QueueMessageSender
                 services.AddTransient<ICheckPointLogger, CheckPointLogger>();
+                //services.AddTransient<IQueueMessageSender, QueueMessageSender>();
+                //services.AddTransient<IThermoDataLogic, ThermoDataLogic>();
+                //services.AddTransient<IQueueMessageSender, QueueMessageSender>();
 
+                services.AddHostedService<BackgroundRestWorkerService>();
             });
     }
 }

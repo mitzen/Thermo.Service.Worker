@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Service.MessageBusServiceProvider.CheckPointing;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoProcessWorker.AppBusinessLogic;
 
@@ -15,12 +16,13 @@ namespace Service.ThermoProcessWorker
         private readonly ILogger<BackgroundRestWorkerService> _logger;
         private readonly IConfiguration _configuration;
         private ServiceWorkerConfiguration _serviceWorkerConfiguration;
-
-        public BackgroundRestWorkerService(ILogger<BackgroundRestWorkerService> logger, IConfiguration configuration)
+        private readonly ICheckPointLogger _checkPointLogger;
+        public BackgroundRestWorkerService(ILogger<BackgroundRestWorkerService> logger, IConfiguration configuration, ICheckPointLogger checkPointLogger)
         {
             _logger = logger;
             _configuration = configuration;
             _serviceWorkerConfiguration = configuration.GetSection(ServiceWorkerConfiguration).Get<ServiceWorkerConfiguration>();
+            _checkPointLogger = checkPointLogger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -29,7 +31,7 @@ namespace Service.ThermoProcessWorker
             _logger.LogInformation($"Service : Startup {DateTime.Now}");
             _logger.LogInformation($"-----------------------------------------------------");
 
-            var thermoLogic = new ThermoDataLogic(this._logger, this._configuration, stoppingToken);
+            var thermoLogic = new ThermoDataLogic(this._logger, this._configuration, stoppingToken, _checkPointLogger);
             _serviceWorkerConfiguration.GetDataFromRestServiceIntervalSecond ??= 5000;
             ////////////////////////////////////////////////////////////////////
             thermoLogic.Setup();

@@ -10,6 +10,8 @@ using Service.ThermoDataModel.Models;
 using Service.ThermoDataModel.Requests;
 using Service.MessageBusServiceProvider.Queue;
 using Service.MessageBusServiceProvider.Converters;
+using Service.MessageBusServiceProvider.CheckPointing;
+using System.IO;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -17,22 +19,27 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
     {
         private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
         private const string ThermoRestApiConfigurationKey = "ThermoRestConfiguration";
+        private const string ServiceWorkerConfigirationKey = "ServiceWorkerConfiguration";
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoRestConfiguration _restConfiguration;
         private readonly ServiceBusConfiguration _serviceBusConfiguration;
+        private readonly ServiceWorkerConfiguration _serviceWorkerConfiguration;
         string targetBaseUrl;
         private IThermoDataRequester thermoDataRequester;
         private CancellationToken _stoppingToken;
         private IQueueMessageSender _messageSender;
+        private ICheckPointLogger _checkPointLogger;
 
-        public ThermoDataLogic(ILogger logger, IConfiguration configuration, CancellationToken token)
+        public ThermoDataLogic(ILogger logger, IConfiguration configuration, CancellationToken token, ICheckPointLogger checkPointLogger)
         {
             _logger = logger;
             _configuration = configuration;
             _serviceBusConfiguration = configuration.GetSection(ServiceBusConfigurationKey).Get<ServiceBusConfiguration>();
             _restConfiguration = configuration.GetSection(ThermoRestApiConfigurationKey).Get<ThermoRestConfiguration>();
             _stoppingToken = token;
+            _checkPointLogger = checkPointLogger;
+            _serviceWorkerConfiguration = configuration.GetSection(ServiceWorkerConfigirationKey).Get<ServiceWorkerConfiguration>();
         }
 
         public void Setup()
@@ -44,13 +51,22 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
         public async Task ExecuteAsync()
         {
+            // read checpoint info
+
+            var checkpointSourceFileName = _serviceWorkerConfiguration.CheckPointFilePath  + Path.DirectorySeparatorChar + @"chkpoint1.json";
+
+            var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
+
+            var attendanceRequestInfo = new AttendanceRequest
+            {
+                StartId = checkPoint.LastSequence,
+                ReqCount = 20,
+                NeedImg = false
+            };
+
+            // parse request 
             var attendanceRequest = RequestFactory.CreatePostBodyRequest(
-                _restConfiguration.AttendanceUrl, new AttendanceRequest
-                {
-                    StartId = 1,
-                    ReqCount = 20,
-                    NeedImg = false
-                });
+                _restConfiguration.AttendanceUrl, attendanceRequestInfo);
 
             _logger.LogInformation($"Executing ThermoDataLogic {DateTimeOffset.Now}");
 
@@ -66,6 +82,10 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             {
                 await SendMessagesToAzureServiceBus(attendanceRecResult);
             }
+
+            checkPoint.LastSequence += attendanceRequestInfo.ReqCount;
+
+            await _checkPointLogger.WriteCheckPoint(checkpointSourceFileName, checkPoint);
         }
 
         private Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
