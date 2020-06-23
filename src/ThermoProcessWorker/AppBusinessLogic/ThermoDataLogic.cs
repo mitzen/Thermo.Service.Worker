@@ -74,8 +74,6 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             var result = await thermoDataRequester.
                 GetAttendanceRecordAsync<AttendanceResponse>(attendanceRequest);
 
-            _logger.LogInformation(result.Content);
-
             var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
 
             if (attendanceRecResult != null)
@@ -101,7 +99,6 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 attendanceItem.BatchId = currentBatchId;
                 var messgeInstance = MessageConverter.Serialize(attendanceItem);
                 _messageSender.SendMessagesAsync(messgeInstance);
-                this._logger.LogInformation($"Sending message to service bus : {attendanceItem.Id} ");
             }
 
             this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
