@@ -11,7 +11,6 @@ using Service.ThermoDataModel.Requests;
 using Service.MessageBusServiceProvider.Queue;
 using Service.MessageBusServiceProvider.Converters;
 using Service.MessageBusServiceProvider.CheckPointing;
-using System.IO;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -30,6 +29,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         private CancellationToken _stoppingToken;
         private IQueueMessageSender _messageSender;
         private ICheckPointLogger _checkPointLogger;
+        private int _errorCount = 0;
 
         public ThermoDataLogic(ILogger logger, IConfiguration configuration, CancellationToken token, ICheckPointLogger checkPointLogger)
         {
@@ -50,7 +50,24 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         public async Task ExecuteAsync()
         {
             // read checpoint info
+            try
+            {
+                await RunMainTaskAsync();
+            }
+            catch (Exception ex)
+            {
+                _errorCount++;
+                _logger.LogError($"ThermoLogic component run into some issues : {ex.Message} - Error count {_errorCount}");
 
+                if (_errorCount > 5)
+                {
+                    Environment.Exit(-1);
+                }
+            }
+        }
+
+        private async Task RunMainTaskAsync()
+        {
             foreach (var targetDevice in _restConfiguration.TargetDevices)
             {
                 targetBaseUrl = targetDevice.HostName;
@@ -89,7 +106,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 checkPoint.LastUpdate = DateTime.Now;
 
                 // Save checkpoint 
-                await _checkPointLogger.WriteCheckPoint(checkpointSourceFileName, checkPoint); 
+                await _checkPointLogger.WriteCheckPoint(checkpointSourceFileName, checkPoint);
             }
         }
 
