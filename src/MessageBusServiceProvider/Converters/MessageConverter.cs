@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Service.MessageBusServiceProvider
+namespace Service.MessageBusServiceProvider.Converters
 {
     public class MessageConverter
     {

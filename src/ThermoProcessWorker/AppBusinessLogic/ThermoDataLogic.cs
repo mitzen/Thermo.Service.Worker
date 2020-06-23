@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Service.MessageBusServiceProvider;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RestSharp;
@@ -9,6 +8,8 @@ using Service.ThermoProcessWorker.RestServices;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
 using Service.ThermoDataModel.Requests;
+using Service.MessageBusServiceProvider.Queue;
+using Service.MessageBusServiceProvider.Converters;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {

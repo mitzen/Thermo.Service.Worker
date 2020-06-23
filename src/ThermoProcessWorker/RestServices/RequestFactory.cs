@@ -1,7 +1,7 @@
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using RestSharp;
-using Service.MessageBusServiceProvider;
+using Service.MessageBusServiceProvider.Converters;
 
 namespace Service.ThermoProcessWorker.RestServices
 {
