@@ -73,15 +73,18 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
         private Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
         {
+            var currentBatchId = Guid.NewGuid().ToString();
+
             foreach (var attendanceItem in attendanceRecResult.Data)
             {
                 attendanceItem.Id = Guid.NewGuid().ToString();
+                attendanceItem.BatchId = currentBatchId;
                 var messgeInstance = MessageConverter.Serialize(attendanceItem);
                 _messageSender.SendMessagesAsync(messgeInstance);
-                this._logger.LogInformation($"Message to sent : {messgeInstance}");
+                this._logger.LogInformation($"Message to sent : {attendanceItem.Id} ");
             }
 
-            this._logger.LogInformation($"Batch sent! {DateTime.Now}");
+            this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
 
             return Task.CompletedTask;
         }

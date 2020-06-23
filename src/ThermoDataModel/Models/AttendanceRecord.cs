@@ -7,6 +7,8 @@ namespace Service.ThermoDataModel.Models
     {
         public int Command { get; set; }
 
+        public string BatchId { get; set; }
+
         public AttendanceRecord[]  Data { get; set; }
 
         public string Setail { get; set; }
@@ -22,6 +24,9 @@ namespace Service.ThermoDataModel.Models
     public class AttendanceRecord
     {
         public string Guid { get; set; }
+
+        public string BatchId { get; set; }
+
 
         public string Address { get; set; }
         
