@@ -11,6 +11,7 @@ using Service.ThermoDataModel.Requests;
 using Service.MessageBusServiceProvider.Queue;
 using Service.MessageBusServiceProvider.Converters;
 using Service.MessageBusServiceProvider.CheckPointing;
+using System.Collections.Generic;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -49,7 +50,6 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
         public async Task ExecuteAsync()
         {
-            // read checpoint info
             try
             {
                 await RunMainTaskAsync();
@@ -68,45 +68,56 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
         private async Task RunMainTaskAsync()
         {
+            var tasks = new List<Task>();
+
             foreach (var targetDevice in _restConfiguration.TargetDevices)
             {
-                targetBaseUrl = targetDevice.HostName;
-                thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _stoppingToken, _logger);
+                _logger.LogInformation($"##############################################################");
+                _logger.LogInformation($"Scattering process for {targetDevice.HostName}, {DateTime.Now}");
+                _logger.LogInformation($"##############################################################");
+                tasks.Add(RunTaskForTargetDevices(targetDevice));
+            }
 
-                var checkpointSourceFileName = targetDevice.CheckPointFileName;
+            await Task.WhenAll(tasks);
+        }
 
-                var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
+        private async Task RunTaskForTargetDevices(TargetDevice targetDevice)
+        {
+            targetBaseUrl = targetDevice.HostName;
+            thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _stoppingToken, _logger);
+            var checkpointSourceFileName = targetDevice.CheckPointFileName;
+            var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
+            var attendanceRequestInfo = new AttendanceRequest
+            {
+                StartId = checkPoint.LastSequence,
+                ReqCount = targetDevice.AttendanceRequestCount == 0 ? 10 : targetDevice.AttendanceRequestCount,
+                NeedImg = false
+            };
+            
+            // parse request 
+            var attendanceRequest = RequestFactory.CreatePostBodyRequest(
+                targetDevice.AttendanceUrl, attendanceRequestInfo);
 
-                var attendanceRequestInfo = new AttendanceRequest
-                {
-                    StartId = checkPoint.LastSequence,
-                    ReqCount = 20,
-                    NeedImg = false
-                };
+            _logger.LogInformation($"Executing ThermoDataLogic Main Component {DateTimeOffset.Now}");
 
-                // parse request 
-                var attendanceRequest = RequestFactory.CreatePostBodyRequest(
-                    targetDevice.AttendanceUrl, attendanceRequestInfo);
+            // Get data 
+            var result = await thermoDataRequester.
+                GetAttendanceRecordAsync<AttendanceResponse>(attendanceRequest);
 
-                _logger.LogInformation($"Executing ThermoDataLogic Main Component {DateTimeOffset.Now}");
+            var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
 
-                // Get data 
-                var result = await thermoDataRequester.
-                    GetAttendanceRecordAsync<AttendanceResponse>(attendanceRequest);
-
-                var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
-
-                if (attendanceRecResult != null)
-                {
-                    await SendMessagesToAzureServiceBus(attendanceRecResult);
-                }
-
+            if (attendanceRecResult != null)
+            {
+                await SendMessagesToAzureServiceBus(attendanceRecResult);
                 // Update configuration 
                 checkPoint.LastSequence += attendanceRequestInfo.ReqCount;
                 checkPoint.LastUpdate = DateTime.Now;
-
                 // Save checkpoint 
                 await _checkPointLogger.WriteCheckPoint(checkpointSourceFileName, checkPoint);
+            }
+            else
+            {
+                _logger.LogWarning($"No records retrieve from Rest Service. {targetDevice.HostName}: {DateTime.Now}");
             }
         }
 

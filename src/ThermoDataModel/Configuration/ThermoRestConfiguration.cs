@@ -13,6 +13,8 @@ namespace Service.ThermoDataModel.Configuration
 
         public int Port { get; set; }
 
+        public int AttendanceRequestCount { get; set; }
+
         public string BaseUrl { get; set; }
 
         public string PersonelUrl => "/";
@@ -20,6 +22,8 @@ namespace Service.ThermoDataModel.Configuration
         public string AttendanceUrl => "/api/v1/face/queryAttendRecord";
 
         public string CheckPointFileName { get; set; }
+
+        
 
     }
 }
