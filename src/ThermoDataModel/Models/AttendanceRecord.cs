@@ -37,7 +37,7 @@ namespace Service.ThermoDataModel.Models
 
         public string Country { get; set; }
 
-        public int DeviceId { get; set; }
+        public string DeviceId { get; set; }
 
         public string Email { get; set; }
 
