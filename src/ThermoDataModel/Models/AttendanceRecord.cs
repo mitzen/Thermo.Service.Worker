@@ -5,17 +5,17 @@ namespace Service.ThermoDataModel.Models
 {
     public class AttendanceResponse
     {
-        public int command { get; set; }
+        public int Command { get; set; }
 
         public AttendanceRecord[]  Data { get; set; }
 
-        public string detail { get; set; }
+        public string Setail { get; set; }
 
-        public int recordCount { get; set; }
+        public int RecordCount { get; set; }
 
-        public int status { get; set; }
+        public int Status { get; set; }
 
-        public int transmit_Cast { get; set; }
+        public int Transmit_Cast { get; set; }
 
     }
 
