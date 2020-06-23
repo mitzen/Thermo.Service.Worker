@@ -68,7 +68,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             var attendanceRequest = RequestFactory.CreatePostBodyRequest(
                 _restConfiguration.AttendanceUrl, attendanceRequestInfo);
 
-            _logger.LogInformation($"Executing ThermoDataLogic {DateTimeOffset.Now}");
+            _logger.LogInformation($"Executing ThermoDataLogic Main Component {DateTimeOffset.Now}");
 
             // Get data 
             var result = await thermoDataRequester.
@@ -83,8 +83,11 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 await SendMessagesToAzureServiceBus(attendanceRecResult);
             }
 
+            // Update configuration 
             checkPoint.LastSequence += attendanceRequestInfo.ReqCount;
+            checkPoint.LastUpdate = DateTime.Now;
 
+            // Save checkpoint 
             await _checkPointLogger.WriteCheckPoint(checkpointSourceFileName, checkPoint);
         }
 
