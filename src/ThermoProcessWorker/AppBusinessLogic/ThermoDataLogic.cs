@@ -61,14 +61,11 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             _logger.LogInformation(result.Content);
 
             var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
-            await SendMessagesToAzureServiceBus(attendanceRecResult);
 
-            // send message 
-            //_logger.LogInformation($"{result.Data.Deviceid}");
-            //_logger.LogInformation($"{result.Data.}");
-            //_logger.LogInformation($"Sending message to service bus {DateTimeOffset.Now} : {MessageConverter.Serialize(result)} ");
-            //await _messageSender.SendMessagesAsync(MessageConverter.Serialize(result));
-            //await _messageSender.SendMessagesAsync("mydatadatadat");
+            if (attendanceRecResult != null)
+            {
+                await SendMessagesToAzureServiceBus(attendanceRecResult);
+            }
         }
 
         private Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
@@ -81,11 +78,10 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 attendanceItem.BatchId = currentBatchId;
                 var messgeInstance = MessageConverter.Serialize(attendanceItem);
                 _messageSender.SendMessagesAsync(messgeInstance);
-                this._logger.LogInformation($"Message to sent : {attendanceItem.Id} ");
+                this._logger.LogInformation($"Sending message to service bus : {attendanceItem.Id} ");
             }
 
             this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
-
             return Task.CompletedTask;
         }
     }

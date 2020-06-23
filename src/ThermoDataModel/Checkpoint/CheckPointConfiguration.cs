@@ -2,7 +2,7 @@
 
 namespace Service.ThermoDataModel.Checkpoint
 {
-    public class AttendanceRequestCheckPoint
+    public class CheckPointConfiguration
     {
         public double SequenceId { get; set; }
 

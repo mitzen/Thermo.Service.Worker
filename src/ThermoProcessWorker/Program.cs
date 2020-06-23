@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Service.MessageBusServiceProvider.CheckPointing;
 
 namespace Service.ThermoProcessWorker
 {
@@ -19,6 +20,8 @@ namespace Service.ThermoProcessWorker
             {
                 services.AddHostedService<BackgroundRestWorkerService>();
                 //services.AddHostedService<TimedBasedService>();
+                services.AddTransient<ICheckPointLogger, CheckPointLogger>();
+
             });
     }
 }
