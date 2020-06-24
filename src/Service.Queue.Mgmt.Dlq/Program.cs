@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-
 namespace Service.Queue.Mgmt.Dlq
 {
     class Program
@@ -41,9 +40,7 @@ namespace Service.Queue.Mgmt.Dlq
 
             // Register QueueClient's MessageHandler and receive messages in a loop
             RegisterOnMessageHandlerAndReceiveMessages();
-
             Console.ReadKey();
-
             await queueClient.CloseAsync();
 
         }
@@ -78,7 +75,6 @@ namespace Service.Queue.Mgmt.Dlq
 
             await queueClient.CompleteAsync(message.SystemProperties.LockToken);
         }
-
 
         static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
         {

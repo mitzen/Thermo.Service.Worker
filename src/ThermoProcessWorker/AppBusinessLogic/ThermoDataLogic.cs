@@ -84,7 +84,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         private async Task RunTaskForTargetDevices(TargetDevice targetDevice)
         {
             targetBaseUrl = targetDevice.HostName;
-            thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _stoppingToken, _logger);
+            thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _logger);
             var checkpointSourceFileName = targetDevice.CheckPointFileName;
             var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
             var attendanceRequestInfo = new AttendanceRequest

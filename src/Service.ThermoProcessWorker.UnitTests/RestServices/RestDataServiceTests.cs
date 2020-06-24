@@ -3,34 +3,39 @@ using Service.ThermoProcessWorker.UnitTests.AppBusinessLogic;
 using Xunit;
 using Microsoft.Extensions.Logging;
 using Service.ThermoProcessWorker.RestServices;
-using System.Threading;
 using Service.ThermoDataModel.Requests;
 using Moq;
+using Moq.AutoMock;
+using System;
 
 namespace Service.ThermoProcessWorker.UnitTests.RestServices
 {
     public class RestDataServiceTests : BaseTest
     {
-        private IRestClient restClient;
-        private ILogger logger;
-        private IRestRequest restRequest; 
-
-        public RestDataServiceTests()
+        [Fact]
+        public async void WhenRestServiceRequestAttendanceThenReturnsAttendanceResponse()
         {
-            //restClient = mocker.Use<IRestClient>();
-            //logger = mocker.CreateInstance<ILogger>();
-            //restRequest = mocker.CreateInstance<IRestRequest>();
+            var target = mocker.CreateInstance<RestDataService>();
+            var fakeRequest = new Mock<IRestRequest>();
+         
+            await target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object);
+         
+            mocker.GetMock<ILogger>().Verify(x => x.Log(
+                    It.IsAny<LogLevel>(),
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<Exception>(),
+                    (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
         }
 
         [Fact]
-        public void If()
+        public void IfTraditionalMock()
         {
             var target = mocker.CreateInstance<RestDataService>();
-            //var log = mocker.Get<ILogger>(); 
-            var fakerequest = mocker.CreateInstance<IRestRequest>();
-            target.ExecuteAsync<AttendanceRequest>(fakerequest).GetAwaiter().GetResult();
-            mocker.Verify<ILogger>((logger) => logger.LogInformation(It.IsAny<string>()), Times.Once);
-            //mocker.Verify<IRestClient>((client) => restClient.ExecuteAsync<AttendanceRequest>(It.IsAny<AttendanceRequest>()), Times.Once);
+            var fakeRequest = new Mock<IRestRequest>();
+            //mocker.GetMock<IRestClient>().Setup(c => c.ExecuteAsync<AttendanceRequest>(fakeRequest.Object)).Returns()
+            //await target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object);
         }
     }
 }
+

@@ -8,13 +8,11 @@ namespace Service.ThermoProcessWorker.RestServices
     public class RestDataService : IRestDataService 
     {
         private readonly IRestClient _client; 
-        private CancellationToken _token;
         
         private readonly ILogger _logger; 
-        public RestDataService(IRestClient client, CancellationToken token, ILogger logger)
+        public RestDataService(IRestClient client, ILogger logger)
         {
             this._client = client; 
-            this._token = token;
             this._logger = logger;
         }
 

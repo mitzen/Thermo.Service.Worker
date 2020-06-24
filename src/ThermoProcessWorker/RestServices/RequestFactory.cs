@@ -7,11 +7,11 @@ namespace Service.ThermoProcessWorker.RestServices
 {
     public class RequestFactory
     {
-        public static IThermoDataRequester CreateRestService(string targetBaseUrl, CancellationToken stoppingToken,
+        public static IThermoDataRequester CreateRestService(string targetBaseUrl,
         ILogger logger)
         {
             var restClient = new RestClient(targetBaseUrl);
-            var dataservice = new RestDataService(restClient, stoppingToken, logger);
+            var dataservice = new RestDataService(restClient, logger);
             return new ThermoDataRequester(dataservice, logger);
         }
 
