@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Service.ThermoProcessWorker.RestServices;
 using System.Threading;
 using Service.ThermoDataModel.Requests;
+using Moq;
 
 namespace Service.ThermoProcessWorker.UnitTests.RestServices
 {
@@ -26,6 +27,9 @@ namespace Service.ThermoProcessWorker.UnitTests.RestServices
         {
             var target = new RestDataService(restClient, new CancellationToken(), logger);
             var result = target.ExecuteAsync<AttendanceRequest>(restRequest);
+
+            mocker.Verify<ILogger>((logger) => logger.LogInformation(It.IsAny<string>()), Times.Once);
+            //mocker.Verify<IRestClient>((client) => restClient.ExecuteAsync<AttendanceRequest>(It.IsAny<AttendanceRequest>()), Times.Once);
 
         }
     }
