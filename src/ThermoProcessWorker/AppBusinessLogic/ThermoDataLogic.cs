@@ -42,9 +42,9 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             _serviceWorkerConfiguration = configuration.GetSection(ServiceWorkerConfigirationKey).Get<ServiceWorkerConfiguration>();
         }
 
-        public void Setup(CancellationToken token)
+        public void Setup(CancellationToken stoppingToken)
         {
-            _stoppingToken = token;
+            _stoppingToken = stoppingToken;
             _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_serviceBusConfiguration, _logger);
         }
 
@@ -110,7 +110,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             {
                 await SendMessagesToAzureServiceBus(attendanceRecResult);
                 // Update configuration 
-                checkPoint.LastSequence += attendanceRequestInfo.ReqCount;
+                checkPoint.LastSequence += attendanceRecResult.RecordCount;
                 checkPoint.LastUpdate = DateTime.Now;
                 // Save checkpoint 
                 await _checkPointLogger.WriteCheckPoint(checkpointSourceFileName, checkPoint);
