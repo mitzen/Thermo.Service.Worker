@@ -7,3 +7,9 @@ src/ThermoProcessWorker/obj/*
 src/ThermoDataModel/obj/*
 src/ThermoDataModel/bin/*
 src/.vs/
+src/Service.Queue.Mgmt.ResetQueue/bin/*
+src/Service.Queue.Mgmt.ResetQueue/obj/*
+src/Service.Queue.Mgmt.Dlq/obj/*
+src/Service.Queue.Mgmt.Dlq/bin/*
+src/Service.ThermoProcessWorker.UnitTests/bin/*
+src/Service.ThermoProcessWorker.UnitTests/obj/*
