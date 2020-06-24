@@ -9,6 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.MessageBusServicePr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.ThermoDataModel", "ThermoDataModel\Service.ThermoDataModel.csproj", "{B36319C7-35F3-4D70-8EA9-3E9FACBBD271}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QueueManagement", "QueueManagement", "{76B7C719-4D40-4F76-B43A-8812F2F9F90E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Queue.Mgmt.ResetQueue", "Service.Queue.Mgmt.ResetQueue\Service.Queue.Mgmt.ResetQueue.csproj", "{170483DC-1690-423C-9782-5D6BBAF3AABC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Queue.Mgmt.Dlq", "Service.Queue.Mgmt.Dlq\Service.Queue.Mgmt.Dlq.csproj", "{8C69C597-4883-47EE-8A54-90CE81CF087F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,9 +61,37 @@ Global
 		{B36319C7-35F3-4D70-8EA9-3E9FACBBD271}.Release|x64.Build.0 = Release|Any CPU
 		{B36319C7-35F3-4D70-8EA9-3E9FACBBD271}.Release|x86.ActiveCfg = Release|Any CPU
 		{B36319C7-35F3-4D70-8EA9-3E9FACBBD271}.Release|x86.Build.0 = Release|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Debug|x64.Build.0 = Debug|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Debug|x86.Build.0 = Debug|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Release|x64.ActiveCfg = Release|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Release|x64.Build.0 = Release|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Release|x86.ActiveCfg = Release|Any CPU
+		{170483DC-1690-423C-9782-5D6BBAF3AABC}.Release|x86.Build.0 = Release|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Debug|x64.Build.0 = Debug|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Debug|x86.Build.0 = Debug|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Release|x64.ActiveCfg = Release|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Release|x64.Build.0 = Release|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Release|x86.ActiveCfg = Release|Any CPU
+		{8C69C597-4883-47EE-8A54-90CE81CF087F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{170483DC-1690-423C-9782-5D6BBAF3AABC} = {76B7C719-4D40-4F76-B43A-8812F2F9F90E}
+		{8C69C597-4883-47EE-8A54-90CE81CF087F} = {76B7C719-4D40-4F76-B43A-8812F2F9F90E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC58B5A7-639C-46C7-803F-6F4F52885B1D}
