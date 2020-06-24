@@ -17,20 +17,20 @@ namespace Service.ThermoProcessWorker.UnitTests.RestServices
 
         public RestDataServiceTests()
         {
-            restClient = mocker.CreateInstance<IRestClient>();
-            logger = mocker.CreateInstance<ILogger>();
-            restRequest = mocker.CreateInstance<IRestRequest>();
+            //restClient = mocker.Use<IRestClient>();
+            //logger = mocker.CreateInstance<ILogger>();
+            //restRequest = mocker.CreateInstance<IRestRequest>();
         }
 
         [Fact]
         public void If()
         {
-            var target = new RestDataService(restClient, new CancellationToken(), logger);
-            var result = target.ExecuteAsync<AttendanceRequest>(restRequest);
-
+            var target = mocker.CreateInstance<RestDataService>();
+            //var log = mocker.Get<ILogger>(); 
+            var fakerequest = mocker.CreateInstance<IRestRequest>();
+            target.ExecuteAsync<AttendanceRequest>(fakerequest).GetAwaiter().GetResult();
             mocker.Verify<ILogger>((logger) => logger.LogInformation(It.IsAny<string>()), Times.Once);
             //mocker.Verify<IRestClient>((client) => restClient.ExecuteAsync<AttendanceRequest>(It.IsAny<AttendanceRequest>()), Times.Once);
-
         }
     }
 }
