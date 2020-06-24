@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,18 +9,31 @@ namespace Service.Queue.Mgmt.ResetQueue
 {
     class Program
     {
-        const string ServiceBusConnectionString = "Endpoint=sb://devsbbank.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ZeoCedTJSaqVPAx8bHX998DVIYHtuG5g0OKlUkUFF9g=";
-        const string QueueName = "devsbqbank";
         static IQueueClient queueClient;
+        private static AppArgument appArgument = new AppArgument();
 
         static void Main(string[] args)
         {
+            if (args.Length < 1)
+            {
+                Console.WriteLine("Please provide endpoint connection string and target queue name.");
+                Console.WriteLine("For example : ");
+                Console.WriteLine("Endpoint=sb://devsbbank.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ZeoCedTJSaqVPAx8bHX998DVIYHtuG5g0OKlUkUFF9g= devsbqbank/$deadletterqueue test.log");
+                Console.WriteLine("if you're using dlq, please append $deadletterqueue.");
+
+                return;
+            }
+
+            appArgument.Endpoint = args[0];
+            appArgument.TargetQueueName = $"{args[1]}";
+            appArgument.TargetFilePath = args[2] ?? $"{args[1]}-default-{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}.log";
+
             MainAsync().GetAwaiter().GetResult();
         }
 
         static async Task MainAsync()
         {
-            queueClient = new QueueClient(ServiceBusConnectionString, QueueName);
+            queueClient = new QueueClient(appArgument.Endpoint, appArgument.TargetQueueName);
 
             Console.WriteLine("======================================================");
             Console.WriteLine("Press ENTER key to exit after receiving all the messages.");
@@ -33,7 +47,7 @@ namespace Service.Queue.Mgmt.ResetQueue
             await queueClient.CloseAsync();
 
         }
-static void RegisterOnMessageHandlerAndReceiveMessages()
+        static void RegisterOnMessageHandlerAndReceiveMessages()
         {
             // Configure the message handler options in terms of exception handling, number of concurrent messages to deliver, etc.
             var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
@@ -54,18 +68,15 @@ static void RegisterOnMessageHandlerAndReceiveMessages()
 
         static async Task ProcessMessagesAsync(Message message, CancellationToken token)
         {
-            // Process the message
             Console.WriteLine($"Received message: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
 
-            // Complete the message so that it is not received again.
-            // This can be done only if the queueClient is created in ReceiveMode.PeekLock mode (which is default).
+            using (StreamWriter writetext = new StreamWriter(appArgument.TargetFilePath))
+            {
+                writetext.WriteLine(message.Body);
+            }
+
             await queueClient.CompleteAsync(message.SystemProperties.LockToken);
-
-            // Note: Use the cancellationToken passed as necessary to determine if the queueClient has already been closed.
-            // If queueClient has already been Closed, you may chose to not call CompleteAsync() or AbandonAsync() etc. calls 
-            // to avoid unnecessary exceptions.
         }
-
 
         static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
         {
@@ -77,6 +88,7 @@ static void RegisterOnMessageHandlerAndReceiveMessages()
             Console.WriteLine($"- Executing Action: {context.Action}");
             return Task.CompletedTask;
         }
-
     }
 }
+
+
