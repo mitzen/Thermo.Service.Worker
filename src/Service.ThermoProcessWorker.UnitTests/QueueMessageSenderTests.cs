@@ -5,8 +5,6 @@ using Microsoft.Extensions.Logging;
 using Service.ThermoProcessWorker.RestServices;
 using System.Threading;
 using Service.ThermoDataModel.Requests;
-using Moq;
-using Moq.AutoMock;
 using Service.MessageBusServiceProvider.Queue;
 using System.Threading.Tasks;
 

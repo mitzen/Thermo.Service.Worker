@@ -4,45 +4,23 @@ using Xunit;
 using Microsoft.Extensions.Logging;
 using Service.ThermoProcessWorker.RestServices;
 using Service.ThermoDataModel.Requests;
-using Moq;
-using Moq.AutoMock;
-using System;
-using System.Collections.Generic;
-using Service.ThermoDataModel.Models;
-using System.Threading;
+using NSubstitute;
 
 namespace Service.ThermoProcessWorker.UnitTests.RestServices
 {
     public class RestDataServiceTests : BaseTest
     {
         [Fact]
-        public async void WhenRestServiceRequestAttendanceThenReturnsAttendanceResponse()
+        public void UsingNsubstitute()
         {
-            var target = mocker.CreateInstance<RestDataService>();
-            var fakeRequest = new Mock<IRestRequest>();
-         
-            await target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object);
-         
-            mocker.GetMock<ILogger>().Verify(x => x.Log(
-                    It.IsAny<LogLevel>(),
-                    It.IsAny<EventId>(),
-                    It.IsAny<It.IsAnyType>(),
-                    It.IsAny<Exception>(),
-                    (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
-        }
+            var client = Substitute.For<IRestClient>();
+            var logger = Substitute.For<ILogger>();
+            var request = Substitute.For<IRestRequest>();
+            var response = Substitute.For<IRestResponse<AttendanceRequest>>();
 
-        [Fact]
-        public void IfTraditionalMock()
-        {
-            var l = new List<AttendanceResponse>();
-
-            var target = mocker.CreateInstance<RestDataService>();
-            var fakeRequest = new Mock<IRestRequest>();
-            var fakeResponse = new Mock<IRestResponse<AttendanceRequest>>();
-
-
-            mocker.GetMock<IRestClient>().Setup(x => x.Execute<AttendanceRequest>(It.IsAny<IRestRequest>())).Returns(fakeResponse.Object);
-            var result = target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object).Result;
+            var target = new RestDataService(client, logger);
+            var result = target.ExecuteAsync<AttendanceRequest>(request).Returns(response);
+            logger.Received();
         }
     }
 }

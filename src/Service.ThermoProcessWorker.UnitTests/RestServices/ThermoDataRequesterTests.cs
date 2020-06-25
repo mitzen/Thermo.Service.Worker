@@ -12,12 +12,12 @@ namespace Service.ThermoProcessWorker.UnitTests.RestServices
         [Fact]
         public void If()
         {
-            var dataService = mocker.CreateInstance<IRestDataService>();
-            var logger = mocker.CreateInstance<ILogger>();
-            var request = mocker.CreateInstance<IRestRequest>();
+            //var dataService = mocker.CreateInstance<IRestDataService>();
+            //var logger = mocker.CreateInstance<ILogger>();
+            //var request = mocker.CreateInstance<IRestRequest>();
 
-            var target = new ThermoDataRequester(dataService, logger);
-            var restResponse = target.GetAttendanceRecordAsync<AttendanceResponse>(request);
+            //var target = new ThermoDataRequester(dataService, logger);
+            //var restResponse = target.GetAttendanceRecordAsync<AttendanceResponse>(request);
         }
     }
 }
