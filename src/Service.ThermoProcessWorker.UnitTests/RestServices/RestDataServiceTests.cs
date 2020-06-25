@@ -7,6 +7,9 @@ using Service.ThermoDataModel.Requests;
 using Moq;
 using Moq.AutoMock;
 using System;
+using System.Collections.Generic;
+using Service.ThermoDataModel.Models;
+using System.Threading;
 
 namespace Service.ThermoProcessWorker.UnitTests.RestServices
 {
@@ -31,10 +34,15 @@ namespace Service.ThermoProcessWorker.UnitTests.RestServices
         [Fact]
         public void IfTraditionalMock()
         {
+            var l = new List<AttendanceResponse>();
+
             var target = mocker.CreateInstance<RestDataService>();
             var fakeRequest = new Mock<IRestRequest>();
-            //mocker.GetMock<IRestClient>().Setup(c => c.ExecuteAsync<AttendanceRequest>(fakeRequest.Object)).Returns()
-            //await target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object);
+            var fakeResponse = new Mock<IRestResponse<AttendanceRequest>>();
+
+
+            mocker.GetMock<IRestClient>().Setup(x => x.Execute<AttendanceRequest>(It.IsAny<IRestRequest>())).Returns(fakeResponse.Object);
+            var result = target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object).Result;
         }
     }
 }
