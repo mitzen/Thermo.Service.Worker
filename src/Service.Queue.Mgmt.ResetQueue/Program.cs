@@ -20,7 +20,6 @@ namespace Service.Queue.Mgmt.ResetQueue
                 Console.WriteLine("For example : ");
                 Console.WriteLine("Endpoint=sb://devsbbank.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ZeoCedTJSaqVPAx8bHX998DVIYHtuG5g0OKlUkUFF9g= devsbqbank/$deadletterqueue test.log");
                 Console.WriteLine("if you're using dlq, please append $deadletterqueue.");
-
                 return;
             }
 
@@ -41,9 +40,7 @@ namespace Service.Queue.Mgmt.ResetQueue
 
             // Register QueueClient's MessageHandler and receive messages in a loop
             RegisterOnMessageHandlerAndReceiveMessages();
-
             Console.ReadKey();
-
             await queueClient.CloseAsync();
 
         }

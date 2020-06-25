@@ -20,8 +20,9 @@ namespace Service.ThermoProcessWorker.UnitTests.RestServices
 
             var target = new RestDataService(client, logger);
             var result = target.ExecuteAsync<AttendanceRequest>(request).Returns(response);
+
             logger.Received();
+            client.Received();
         }
     }
 }
-
