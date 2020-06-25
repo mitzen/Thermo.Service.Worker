@@ -35,15 +35,15 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
         //            (3) => _dataStoreProcesor.SaveAttendRecordAsync(sourceData)
         //};
 
-        public Task ProcessDataAsync(string sourceData)
+        public Task ProcessDataAsync(string sourceData, ILogger logger)
         {
-            this._logger.LogInformation($"MessageController::ProcessDataAsync [Deserializing messages] : {DateTime.Now}");
+            logger.LogInformation($"MessageController::ProcessDataAsync [Deserializing messages] : {DateTime.Now}");
 
             try
             {
                 var messageType = MessageConverter.GetMessageType<AttendanceRecord>(sourceData);
 
-                this._logger.LogInformation($" ********** Persist to database ********* : { messageType.Id } ");
+                logger.LogInformation($" ********** Persist to database ********* : { messageType.Id } ");
 
                 //switch (messsageType.MessageType)
                 //{
@@ -70,8 +70,8 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
             }
             catch (Exception ex)
             {
-                this._logger.LogError($"Error in MessageConroller : {ex.Message}");
-                this._logger.LogError($"StackTrace: {ex.StackTrace}");
+                logger.LogError($"Error in MessageConroller : {ex.Message}");
+                logger.LogError($"StackTrace: {ex.StackTrace}");
                 throw;
             }
             return Task.CompletedTask;
