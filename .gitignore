@@ -13,3 +13,15 @@ src/Service.Queue.Mgmt.Dlq/obj/*
 src/Service.Queue.Mgmt.Dlq/bin/*
 src/Service.ThermoProcessWorker.UnitTests/bin/*
 src/Service.ThermoProcessWorker.UnitTests/obj/*
+src/AzCloud/AzCloudApp.MessageProcessor.Core.MessageSenderFunction/bin/
+src/AzCloud/AzCloudApp.MessageProcessor.Core.MessageSenderFunction/obj/
+src/AzCloud/AzCloudApp.MessageProcessor.Core.Thermo.DataStore/bin/
+src/AzCloud/AzCloudApp.MessageProcessor.Core.Thermo.DataStore/obj/
+src/AzCloud/AzCloudApp.MessageProcessor.Core.ThermoDataModel/bin/
+src/AzCloud/AzCloudApp.MessageProcessor.Core.ThermoDataModel/obj/
+src/AzCloud/AzCloudApp.MessageProcessor.Core.Unit.Tests/bin/
+src/AzCloud/AzCloudApp.MessageProcessor.Core.Unit.Tests/obj/
+src/AzCloud/AzCloudApp.MessageProcessor.Core/bin/
+src/AzCloud/AzCloudApp.MessageProcessor.Core/obj/
+src/AzCloud/AzCloudApp.MessageProcessor.Function/bin/
+src/AzCloud/AzCloudApp.MessageProcessor.Function/obj/

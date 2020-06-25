@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Service.Queue.Mgmt.Dlq": {
+      "commandName": "Project",
+      "commandLineArgs": "Endpoint=sb://devsbbank.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ZeoCedTJSaqVPAx8bHX998DVIYHtuG5g0OKlUkUFF9g= devsbqbank/$deadletterqueue .\\test.log"
+    }
+  }
+}

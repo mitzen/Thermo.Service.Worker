@@ -23,7 +23,5 @@ namespace Service.ThermoDataModel.Configuration
 
         public string CheckPointFileName { get; set; }
 
-        
-
     }
 }

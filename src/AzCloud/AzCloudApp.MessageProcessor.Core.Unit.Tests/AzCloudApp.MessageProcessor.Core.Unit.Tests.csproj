@@ -1,0 +1,24 @@
+﻿
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="DataProcessor\**" />
+    <Compile Remove="PersonelThemoDataHandler\**" />
+    <Compile Remove="Utils\**" />
+    <EmbeddedResource Remove="DataProcessor\**" />
+    <EmbeddedResource Remove="PersonelThemoDataHandler\**" />
+    <EmbeddedResource Remove="Utils\**" />
+    <None Remove="DataProcessor\**" />
+    <None Remove="PersonelThemoDataHandler\**" />
+    <None Remove="Utils\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+</Project>

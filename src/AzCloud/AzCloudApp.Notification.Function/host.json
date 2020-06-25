@@ -1,0 +1,19 @@
+{
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingExcludedTypes": "Request",
+      "samplingSettings": {
+        "isEnabled": true
+      }
+    }
+  },
+  "IsEncrypted": false,
+  "sbqconnection": "Endpoint=sb://devsbbank.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ZeoCedTJSaqVPAx8bHX998DVIYHtuG5g0OKlUkUFF9g=",
+  "Values": {
+    "TargetQueueName": "devsbqbank",
+    "Notification:SmtpServer": "0MySmtpServer",
+    "Notification:Username": "0Username",
+    "Notification:Password": "0Password"
+  }
+}
