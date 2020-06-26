@@ -41,9 +41,15 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
 
             try
             {
-                var messageType = MessageConverter.GetMessageType<AttendanceRecord>(sourceData);
+                var attendanceRecFromQueue = MessageConverter.GetMessageType<AttendanceRecord>(sourceData);
 
-                logger.LogInformation($" ********** Persist to database ********* : { messageType.Id } ");
+                if (attendanceRecFromQueue.Subject == "TEST")
+                {
+                    logger.LogInformation($"Test data detected : { attendanceRecFromQueue.Id }");
+                    return Task.CompletedTask;
+                }
+
+                logger.LogInformation($" ********** Persist to database ********* : { attendanceRecFromQueue.Id } ");
 
                 //switch (messsageType.MessageType)
                 //{

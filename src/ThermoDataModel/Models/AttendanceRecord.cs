@@ -27,6 +27,7 @@ namespace Service.ThermoDataModel.Models
 
         public string BatchId { get; set; }
 
+        public string Subject { get; set; }
 
         public string Address { get; set; }
         
