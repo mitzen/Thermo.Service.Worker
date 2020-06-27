@@ -4,7 +4,9 @@ using Xunit;
 using Microsoft.Extensions.Logging;
 using Service.ThermoProcessWorker.RestServices;
 using Service.ThermoDataModel.Requests;
-using NSubstitute;
+using Moq.AutoMock;
+using System;
+using Moq;
 
 namespace Service.ThermoProcessWorker.UnitTests.RestServices
 {
@@ -13,16 +15,21 @@ namespace Service.ThermoProcessWorker.UnitTests.RestServices
         [Fact]
         public void UsingNsubstitute()
         {
-            var client = Substitute.For<IRestClient>();
-            var logger = Substitute.For<ILogger>();
-            var request = Substitute.For<IRestRequest>();
-            var response = Substitute.For<IRestResponse<AttendanceRequest>>();
+            var fakeRequest = new Mock<IRestRequest>();
 
-            var target = new RestDataService(client, logger);
-            var result = target.ExecuteAsync<AttendanceRequest>(request).Returns(response);
+            var mocker = new AutoMocker();
 
-            logger.Received();
-            client.Received();
+            var target = mocker.CreateInstance<RestDataService>();
+
+            var result = target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object);
+
+            mocker.GetMock<ILogger>().Verify(x => x.Log(
+                      It.IsAny<LogLevel>(),
+                      It.IsAny<EventId>(),
+                      It.IsAny<It.IsAnyType>(),
+                      It.IsAny<Exception>(),
+                      (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
+
         }
     }
 }
