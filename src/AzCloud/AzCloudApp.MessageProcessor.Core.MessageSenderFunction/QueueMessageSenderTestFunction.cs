@@ -49,7 +49,7 @@ namespace AzCloudApp.MessageProcessor.Core.MessageSenderFunction
 
                 await qms.SendMessagesAsync(MessageConverter.Serialize(testMessage));
                 log.LogInformation($"Sending data over {i} - {DateTime.Now}");
-                await this._messsageThermoProcessor.ProcessMessage(MessageConverter.Serialize(testMessage));
+                await this._messsageThermoProcessor.ProcessMessage(MessageConverter.Serialize(testMessage), log);
             }
             
             return new OkObjectResult($"Sent operation completed! :{DateTime.Now}.");

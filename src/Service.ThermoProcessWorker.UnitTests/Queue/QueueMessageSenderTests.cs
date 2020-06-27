@@ -1,10 +1,5 @@
-﻿using RestSharp;
-using Service.ThermoProcessWorker.UnitTests.AppBusinessLogic;
-using Xunit;
+﻿using Xunit;
 using Microsoft.Extensions.Logging;
-using Service.ThermoProcessWorker.RestServices;
-using System.Threading;
-using Service.ThermoDataModel.Requests;
 using Service.MessageBusServiceProvider.Queue;
 using System.Threading.Tasks;
 using Moq.AutoMock;
@@ -12,7 +7,7 @@ using Moq;
 using System;
 using Microsoft.Azure.ServiceBus;
 
-namespace Service.ThermoProcessWorker.UnitTests
+namespace Service.ThermoProcessWorker.UnitTests.Queue
 {
     public class QueueMessageSenderTests
     {
