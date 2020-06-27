@@ -106,7 +106,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
             var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
 
-            if (attendanceRecResult != null)
+            if (attendanceRecResult != null && attendanceRecResult.Data != null)
             {
                 await SendMessagesToAzureServiceBus(attendanceRecResult);
                 // Update configuration 
