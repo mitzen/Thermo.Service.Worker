@@ -13,16 +13,15 @@ namespace Service.ThermoProcessWorker.UnitTests.RestServices
     public class RestDataServiceTests : BaseTest
     {
         [Fact]
-        public void UsingNsubstitute()
+        public void WhenRestDataServiceExecuteThenRestSharpClientGetsExecuted()
         {
             var fakeRequest = new Mock<IRestRequest>();
-
             var mocker = new AutoMocker();
 
             var target = mocker.CreateInstance<RestDataService>();
-
             var result = target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object);
 
+            // Logging 
             mocker.GetMock<ILogger>().Verify(x => x.Log(
                       It.IsAny<LogLevel>(),
                       It.IsAny<EventId>(),
@@ -30,6 +29,8 @@ namespace Service.ThermoProcessWorker.UnitTests.RestServices
                       It.IsAny<Exception>(),
                       (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
 
+            //IRestClinet 
+            mocker.GetMock<IRestClient>().VerifyAll();
         }
     }
 }

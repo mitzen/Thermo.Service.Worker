@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Moq;
+using Moq.AutoMock;
 using RestSharp;
 using Service.ThermoDataModel.Models;
 using Service.ThermoProcessWorker.RestServices;
@@ -10,14 +12,16 @@ namespace Service.ThermoProcessWorker.UnitTests.RestServices
     public class ThermoDataRequesterTests : BaseTest
     {
         [Fact]
-        public void If()
+        public void WhenAttendanceCallThenRestDataServiceExecuteAsyncIsCalled()
         {
-            //var dataService = mocker.CreateInstance<IRestDataService>();
-            //var logger = mocker.CreateInstance<ILogger>();
-            //var request = mocker.CreateInstance<IRestRequest>();
+            var mocker = new AutoMocker();
+            var fakeRequest = new Mock<IRestRequest>();
 
-            //var target = new ThermoDataRequester(dataService, logger);
-            //var restResponse = target.GetAttendanceRecordAsync<AttendanceResponse>(request);
+            ThermoDataRequester target = mocker.CreateInstance<ThermoDataRequester>();
+
+            var result = target.GetAttendanceRecordAsync<AttendanceResponse>(fakeRequest.Object);
+
+            mocker.GetMock<IRestDataService>().Verify(x => x.ExecuteAsync<AttendanceResponse>(fakeRequest.Object));
         }
     }
 }
