@@ -7,49 +7,33 @@ using System.Threading;
 using Service.ThermoDataModel.Requests;
 using Service.MessageBusServiceProvider.Queue;
 using System.Threading.Tasks;
+using Moq.AutoMock;
+using Moq;
+using System;
+using Microsoft.Azure.ServiceBus;
 
 namespace Service.ThermoProcessWorker.UnitTests
 {
     public class QueueMessageSenderTests
     {
+        [Fact]
+        public async Task WhenSendAsyncThenMessagesSentWithAzureClient()
+        {
+            var testMessages = "Test Message";
+            var mocker = new AutoMocker();
+            var target = mocker.CreateInstance<QueueMessageSender>();
 
-        //[Fact]
-        //public async Task If()
-        //{
-        //    var mocker = new AutoMocker();
-        //    var target = mocker.CreateInstance<Account>();
-        //    target.SayHi("leng chai");
-        //    mocker.GetMock<IGreeting>().Verify(x => x.Greet(It.IsAny<string>()), Times.Once);
+            await target.SendMessagesAsync(testMessages);
 
-        //    //mocker.GetMock<ILogger>().Verify(x => x.LogInformation(It.IsAny<string>()), Times.Once);
-        //    //var target = mocker.CreateInstance<QueueMessageSender>();
-        //    //var fakeRequest = new Mock<IRestRequest>();
-        //    //await target.SendMessagesAsync("test");
-        //    //mocker.GetMock<ILogger>().Verify(x => x.LogInformation(It.IsAny<string>()), Times.Once);
-        //    //var l = mocker.GetMock<ILogger>();
-        //    //mocker.Verify<ILogger>((l) => l.LogInformation(It.IsAny<string>()), Times.Once);
-        //    //l.Verify(l => l.LogInformation(It.IsAny<string>()), Times.Once);
-        //    //l.Verify(l => l.LogInformation(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
-        //    //target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object).GetAwaiter().GetResult();
-        //    //var restclient = mocker.GetMock<IRestClient>();
-        //    //restclient.Verify(r => restClient.ExecuteAsync<AttendanceRequest>(It.IsAny<IRestRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-        //    //var log = mocker.GetMock<ILogger>();
-        //    //mocker.Verify<ILogger>((logger) => logger.LogInformation(It.IsAny<string>()), Times.Once);
-        //    //mocker.Verify<IRestClient>((client) => restClient.ExecuteAsync<AttendanceRequest>(It.IsAny<AttendanceRequest>()), Times.Once);
-        //}
+            // Logging 
+            mocker.GetMock<ILogger>().Verify(x => x.Log(
+                      It.IsAny<LogLevel>(),
+                      It.IsAny<EventId>(),
+                      It.IsAny<It.IsAnyType>(),
+                      It.IsAny<Exception>(),
+                      (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
 
-        //[Fact]
-        //public async Task WhenSayHiThenGreetMethodCalls()
-        //{
-        //    // arrange 
-        //    var mocker = new AutoMocker();
-        //    var target = mocker.CreateInstance<Account>();
-
-        //    // act 
-        //    target.SayHi("leng chai");
-
-        //    // verify 
-        //    mocker.GetMock<IGreeting>().Verify(x => x.Greet(It.IsAny<string>()), Times.Once);
-        //}
+            mocker.GetMock<IQueueClient>().Verify(x => x.SendAsync(It.IsAny<Message>()));
+        }
     }
 }
