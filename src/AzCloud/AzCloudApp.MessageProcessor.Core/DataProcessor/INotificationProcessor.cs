@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 {
     public interface INotificationProcessor
     {
-        Task<int> ProcessAsync(string source);
+        Task<int> ProcessAsync(string source, ILogger logger);
     }
 }

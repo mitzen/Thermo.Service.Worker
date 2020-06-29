@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 {
-    public class NotificationMessageProcessor 
-        : INotificationProcessor
+    public class NotificationMessageProcessor : INotificationProcessor
     {
         public float SafeBodyTemperature { get; set; }
 
@@ -16,17 +15,20 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             this._sendMailService = sendMail;
         }
 
-        public Task<int> ProcessAsync(string source)
+        public Task<int> ProcessAsync(string source, ILogger logger)
         {
+            logger.LogInformation($"Starting NotificationMessageProcessor. Mail service: {_sendMailService.GetType().Name}.");
 
-            this._sendMailService.SendMailAsync(new AttendanceRecord());
+            if (!string.IsNullOrWhiteSpace(source))
+            {
+                var target = MessageConverter.GetMessageType<AttendanceRecord>(source);
+                if (target != null)
+                {
+                    var mailMessageContent = new ThermoMailContent(new MailingInfo(), target); 
+                    this._sendMailService.SendMailAsync(mailMessageContent, logger);
+                }
+            }
 
-            //var target = MessageConverter.GetMessageType<AttendRecord>(source);
-
-            //if (target.BodyTemperature.GetFloatValue() > SafeBodyTemperature)
-            //{
-            //    _sendMailService.SendMailAsync(target);
-            //}
             return Task.FromResult(1);
         }
     }

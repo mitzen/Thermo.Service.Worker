@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using AzCloudApp.MessageProcessor.Core.DataProcessor;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
-using AzCloudApp.MessageProcessor.Core.PersonelThemoDataHandler;
-using AzCloudApp.MessageProcessor.Core.MessageController;
 using Service.ThermoDataModel.Configuration;
 
 [assembly: FunctionsStartup(typeof(AzCloudApp.MessageProcessor.Function.FunctionAppStartup))]
