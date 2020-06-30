@@ -5,6 +5,6 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 {
     public interface INotificationProcessor
     {
-        Task<int> ProcessAsync(string source, ILogger logger);
+        Task ProcessAsync(string source, ILogger logger);
     }
 }

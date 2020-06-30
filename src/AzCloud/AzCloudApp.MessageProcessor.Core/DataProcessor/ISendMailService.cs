@@ -4,63 +4,54 @@ using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
 using System.Net;
 using System.Net.Mail;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 {
     public interface ISendMailService
     {
-        Task SendMailAsync(ThermoMailContent record, ILogger logger);
+        Task SendMailAsync(MailContentData record, ILogger logger);
     }
 
     public class SendMailService : ISendMailService
     {
-        private ILogger _logger;
+        private ILogger<SendMailService> _logger;
         private NotificationConfiguration _notificationConfiguration;
 
-        public SendMailService(IOptions<NotificationConfiguration> notificationConfiguration)
+        public SendMailService(ILogger<SendMailService> logger, IOptions<NotificationConfiguration> notificationConfiguration)
         {
+            _logger = logger;
             _notificationConfiguration = notificationConfiguration.Value;
         }
 
-        public async Task SendMailAsync(ThermoMailContent mailContent, ILogger logger)
+        public async Task SendMailAsync(MailContentData record, ILogger logger)
         {
-            logger.LogInformation("SendMailService : constructing message");
-            MailMessage message = ConstructMailMessage(mailContent);
-            await SendMailOut(message);
-            logger.LogInformation($"SendMailService : message delivered to {this._notificationConfiguration.SmtpServer} {this._notificationConfiguration.Port}");
-        }
+            this._logger.LogInformation($"Sending email : {this._notificationConfiguration.SmtpServer}");
 
-        private async Task SendMailOut(MailMessage message)
-        {
-            SmtpClient smtp = new SmtpClient();
-            smtp.Port = this._notificationConfiguration.Port;
-            smtp.Host = this._notificationConfiguration.SmtpServer; //for gmail host  
-            smtp.EnableSsl = true;
-            smtp.UseDefaultCredentials = false;
-            smtp.Credentials = new NetworkCredential(
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(record.MailInfo.Sender);
+
+            foreach (var recipient in record.MailInfo.Recipients)
+            {
+                message.To.Add(new MailAddress(recipient));
+            }
+
+            message.Subject = record.MailInfo.Subject;
+            message.IsBodyHtml = true;
+            message.Body = record.MailInfo.Body;
+
+            SmtpClient smtpClient = new SmtpClient();
+            smtpClient.Port = this._notificationConfiguration.Port;
+            smtpClient.Host = this._notificationConfiguration.SmtpServer; //for gmail host  
+            smtpClient.EnableSsl = true;
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.Credentials = new NetworkCredential(
                 this._notificationConfiguration.Username,
                 this._notificationConfiguration.Password
              );
-
-            smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-            await smtp.SendMailAsync(message);
-        }
-
-        private static MailMessage ConstructMailMessage(ThermoMailContent mailContent)
-        {
-            MailMessage message = new MailMessage();
-            message.From = new MailAddress(mailContent!.MailingInfoData.SenderAddress);
-
-            foreach (var targetRecipient in mailContent.MailingInfoData.Recipients)
-            {
-                message.To.Add(new MailAddress(targetRecipient));
-            }
-
-            message.Subject = mailContent.MailingInfoData.Subject;
-            message.IsBodyHtml = mailContent.MailingInfoData.HtmlContent != null;
-            message.Body = mailContent.MailingInfoData.Content;
-            return message;
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            smtpClient.SendAsync(message, new object());
         }
     }
 }
