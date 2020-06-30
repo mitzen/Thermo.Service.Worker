@@ -18,6 +18,8 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
         public Task ProcessAsync(string source, ILogger logger)
         {
+            logger.LogInformation($"NotificationMessageProcessor starts execution wth {this._sendMailService.GetType().Name}");
+
             if (!string.IsNullOrWhiteSpace(source))
             {
                 var target = MessageConverter.GetMessageType<MailContentData>(source);

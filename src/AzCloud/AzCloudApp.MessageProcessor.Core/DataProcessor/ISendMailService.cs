@@ -16,18 +16,16 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
     public class SendMailService : ISendMailService
     {
-        private ILogger<SendMailService> _logger;
         private NotificationConfiguration _notificationConfiguration;
 
-        public SendMailService(ILogger<SendMailService> logger, IOptions<NotificationConfiguration> notificationConfiguration)
+        public SendMailService(IOptions<NotificationConfiguration> notificationConfiguration)
         {
-            _logger = logger;
             _notificationConfiguration = notificationConfiguration.Value;
         }
 
         public async Task SendMailAsync(MailContentData record, ILogger logger)
         {
-            this._logger.LogInformation($"Sending email : {this._notificationConfiguration.SmtpServer}");
+            logger.LogInformation($"Sending email using stmp server {this._notificationConfiguration.SmtpServer} and port {this._notificationConfiguration.Port}");
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(record.MailInfo.Sender);
@@ -51,7 +49,10 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
                 this._notificationConfiguration.Password
              );
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtpClient.SendAsync(message, new object());
+            smtpClient.Send(message);
+
+            logger.LogInformation($"Mail message sent {message.Body}");
+
         }
     }
 }
