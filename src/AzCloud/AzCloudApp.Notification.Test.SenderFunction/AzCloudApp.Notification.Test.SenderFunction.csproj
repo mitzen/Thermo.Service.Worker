@@ -11,7 +11,6 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.5" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\AzCloudApp.MessageProcessor.Core.ThermoDataModel\AzCloudApp.MessageProcessor.Core.ThermoDataModel.csproj" />
 	  <ProjectReference Include="..\AzCloudApp.MessageProcessor.Core\AzCloudApp.MessageProcessor.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>

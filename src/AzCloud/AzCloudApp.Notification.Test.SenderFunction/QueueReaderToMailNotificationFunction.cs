@@ -35,7 +35,7 @@ namespace AzCloudApp.Notification.Test.SenderFunction
             // await this._notificationProcessor.ProcessAsync(requestBody);
 
             var requestBody = "";
-            await this._notificationProcessor.ProcessAsync("");
+            //await this._notificationProcessor.ProcessAsync("");
 
             return new OkObjectResult($"Reading messages from the queue.{DateTime.Now} {requestBody}");
         }

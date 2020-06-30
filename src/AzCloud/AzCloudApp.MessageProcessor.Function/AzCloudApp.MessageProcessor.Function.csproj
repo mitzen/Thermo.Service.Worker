@@ -13,7 +13,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AzCloudApp.MessageProcessor.Core.Thermo.DataStore\AzCloudApp.MessageProcessor.Core.Thermo.DataStore.csproj" />
-    <ProjectReference Include="..\AzCloudApp.MessageProcessor.Core.ThermoDataModel\AzCloudApp.MessageProcessor.Core.ThermoDataModel.csproj" />
     <ProjectReference Include="..\AzCloudApp.MessageProcessor.Core\AzCloudApp.MessageProcessor.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ThermoDataModel\Service.ThermoDataModel.csproj" />
-    <ProjectReference Include="..\AzCloudApp.MessageProcessor.Core.ThermoDataModel\AzCloudApp.MessageProcessor.Core.ThermoDataModel.csproj" />
   </ItemGroup>
 </Project>

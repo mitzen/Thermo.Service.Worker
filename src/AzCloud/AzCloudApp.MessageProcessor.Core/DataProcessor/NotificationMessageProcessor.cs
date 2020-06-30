@@ -16,18 +16,17 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             this._sendMailService = sendMail;
         }
 
-        public Task<int> ProcessAsync(string source)
+        public Task ProcessAsync(string source, ILogger logger)
         {
+            if (!string.IsNullOrWhiteSpace(source))
+            {
+                var target = MessageConverter.GetMessageType<MailContentData>(source);
 
-            this._sendMailService.SendMailAsync(new AttendanceRecord());
+                if (target != null)
+                    this._sendMailService.SendMailAsync(target, logger);
+            }
 
-            //var target = MessageConverter.GetMessageType<AttendRecord>(source);
-
-            //if (target.BodyTemperature.GetFloatValue() > SafeBodyTemperature)
-            //{
-            //    _sendMailService.SendMailAsync(target);
-            //}
-            return Task.FromResult(1);
+            return Task.CompletedTask;
         }
     }
 }

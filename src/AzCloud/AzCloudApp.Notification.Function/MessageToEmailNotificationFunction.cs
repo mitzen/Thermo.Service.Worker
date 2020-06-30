@@ -21,10 +21,10 @@ namespace AzCloudApp.Notification.Function
         }
 
         [FunctionName("MessageToEmailNotificationFunction")]
-        public async Task Run([ServiceBusTrigger("sbqmail", Connection = "sbqconnection")] string messageSource)
+        public async Task Run([ServiceBusTrigger("%TargetQueueName%", Connection = "sbqconnection")] string messageSource, ILogger logger)
         {
             this._logger.LogInformation($"Notification Message Processor started : {messageSource} {DateTime.Now}");
-            await this._notificationProcessor.ProcessAsync(messageSource);
+            await this._notificationProcessor.ProcessAsync(messageSource, logger);
         }
     }
 }
