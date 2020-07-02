@@ -6,22 +6,25 @@ namespace Service.MessageBusServiceProvider.Imaging
 {
     public class ImageConverter
     {
-        public void SaveByteArrayAsImage(string fullOutputPath, string base64String)
+        public static void SaveByteArrayAsImage(string fullOutputPath, string base64String)
         {
-            byte[] bytes = Convert.FromBase64String(base64String);
 
-            Image image;
-            using (MemoryStream ms = new MemoryStream(bytes))
-            {
-                image = Image.FromStream(ms);
-            }
+            File.WriteAllBytes(fullOutputPath, Convert.FromBase64String(base64String));
 
-            image.Save(fullOutputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+            //byte[] bytes = Convert.FromBase64String(base64String);
+
+            //Image image;
+            //using (MemoryStream ms = new MemoryStream(bytes))
+            //{
+            //    image = Image.FromStream(ms);
+            //}
+
+            //image.Save(fullOutputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
         }
         
-        public string ExractBase64(string image)
+        public static string ExractBase64(string base64StringImage)
         {
-            return image.Replace("data:image/jpeg;base64,", string.Empty);
+            return base64StringImage.Replace("data:image/jpeg;base64,", string.Empty);
         }
     }
 }
