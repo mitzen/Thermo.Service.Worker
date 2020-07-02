@@ -25,3 +25,5 @@ src/AzCloud/AzCloudApp.MessageProcessor.Core/bin/
 src/AzCloud/AzCloudApp.MessageProcessor.Core/obj/
 src/AzCloud/AzCloudApp.MessageProcessor.Function/bin/
 src/AzCloud/AzCloudApp.MessageProcessor.Function/obj/
+src/QuickTest/bin/
+src/QuickTest/obj/
