@@ -20,7 +20,6 @@ namespace AzCloudApp.MessageProcessor.Function
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
-
             var configBuilder = new ConfigurationBuilder()
             .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables()
@@ -38,7 +37,6 @@ namespace AzCloudApp.MessageProcessor.Function
 
 
             builder.Services.AddLogging();
-            
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<IDataStoreProcesor, DataStoreMessageProcessor>();
             builder.Services.AddTransient<INotificationProcessor, NotificationMessageProcessor>();

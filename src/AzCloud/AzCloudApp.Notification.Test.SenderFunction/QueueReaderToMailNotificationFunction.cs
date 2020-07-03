@@ -8,6 +8,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using AzCloudApp.MessageProcessor.Core.DataProcessor;
 using Service.ThermoDataModel.Configuration;
+using Microsoft.EntityFrameworkCore;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
+using Service.ThermoDataModel.Models;
+using System.Linq;
 
 namespace AzCloudApp.Notification.Test.SenderFunction
 {
@@ -15,13 +19,14 @@ namespace AzCloudApp.Notification.Test.SenderFunction
     {
         private readonly INotificationProcessor _notificationProcessor;
         private readonly ILogger<QueueReaderToMailNotificationFunction> _logger;
-        private NotificationConfiguration _notificationConfiguration; 
-
-        public QueueReaderToMailNotificationFunction(ILogger<QueueReaderToMailNotificationFunction> logger, INotificationProcessor notificationProcessor, IOptions<NotificationConfiguration> options)
+        private NotificationConfiguration _notificationConfiguration;
+        private ThermoDataContext _thermoDataContext;
+        public QueueReaderToMailNotificationFunction(ILogger<QueueReaderToMailNotificationFunction> logger, INotificationProcessor notificationProcessor, IOptions<NotificationConfiguration> options, ThermoDataContext dbContext)
         {   
             _logger = logger;
             _notificationProcessor = notificationProcessor;
             _notificationConfiguration = options.Value;
+            _thermoDataContext = dbContext;
         }
 
         [FunctionName("QueueReaderToMailNotificationFunction")]
@@ -31,8 +36,14 @@ namespace AzCloudApp.Notification.Test.SenderFunction
             //var body = new StreamReader(req.Body);
             //body.BaseStream.Seek(0, SeekOrigin.Begin);
             //var requestBody = body.ReadToEnd();
+            // await this._notificationProcesso
 
-            // await this._notificationProcessor.ProcessAsync(requestBody);
+            var entity = _thermoDataContext.AttendanceRecord.Where(x => x.Name == "Tong").FirstOrDefault();
+            
+            if (entity != null)
+            {
+                var name =  entity.Name;
+            }
 
             var requestBody = "";
             //await this._notificationProcessor.ProcessAsync("");

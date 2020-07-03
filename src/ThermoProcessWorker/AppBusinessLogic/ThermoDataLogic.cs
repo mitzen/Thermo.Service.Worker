@@ -12,6 +12,7 @@ using Service.MessageBusServiceProvider.Queue;
 using Service.MessageBusServiceProvider.Converters;
 using Service.MessageBusServiceProvider.CheckPointing;
 using System.Collections.Generic;
+using Service.ThermoDataModel.Heartbeat;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -20,6 +21,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
         private const string ThermoRestApiConfigurationKey = "ThermoRestConfiguration";
         private const string ServiceWorkerConfigirationKey = "ServiceWorkerConfiguration";
+        private const string HeartbeatMessage = "Heartbeat Message";
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoRestConfiguration _restConfiguration;
@@ -117,6 +119,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             }
             else
             {
+                // Send heartbeat messages //
                 _logger.LogWarning($"No records retrieve from Rest Service. {targetDevice.HostName}: {DateTime.Now}");
             }
         }
@@ -133,6 +136,25 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 _messageSender.SendMessagesAsync(messgeInstance);
             }
 
+            this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
+            return Task.CompletedTask;
+        }
+
+        private Task SendHeartBeatMessagesToAzureServiceBus(TargetDevice targetDevice)
+        {
+            var currentBatchId = Guid.NewGuid().ToString();
+
+            var heartbeatMessage = new HeartbeatMessage
+            {
+                 MessageDescription = HeartbeatMessage,
+                 ThermoDeviceId = targetDevice.HostName,
+                 Timestamp = DateTime.Now
+            };
+
+            var messgeInstance = MessageConverter.Serialize(heartbeatMessage);
+
+            _messageSender.SendMessagesAsync(messgeInstance);
+            
             this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
             return Task.CompletedTask;
         }

@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using AzCloudApp.MessageProcessor.Core.DataProcessor;
 using Service.ThermoDataModel.Configuration;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
+using Microsoft.EntityFrameworkCore;
 
 [assembly: FunctionsStartup(typeof(AzCloudApp.Notification.Test.SenderFunction.FunctionAppStartup))]
 
@@ -34,7 +36,9 @@ namespace AzCloudApp.Notification.Test.SenderFunction
             builder.Services.AddLogging();
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<INotificationProcessor, NotificationMessageProcessor>();
-          
+
+            builder.Services.AddDbContext<ThermoDataContext>(opt => opt.UseSqlServer(configBuilder.GetConnectionString("ThermoDatabase")));
+
         }
     }
 }
