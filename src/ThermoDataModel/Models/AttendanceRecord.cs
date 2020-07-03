@@ -33,9 +33,9 @@ namespace Service.ThermoDataModel.Models
         
         public int Age { get; set; }
         
-        public string Birth { get; set; }
+        public DateTime Birth { get; set; }
 
-        public string BodyTemperature { get; set; }
+        public float BodyTemperature { get; set; }
 
         public string CertificateNumber { get; set; }
 
@@ -63,7 +63,7 @@ namespace Service.ThermoDataModel.Models
 
         public int Respirator { get; set; }
 
-        public string TimeStamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public string UserId { get; set; }
 

@@ -48,31 +48,12 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
                     logger.LogInformation($"Test data detected : { attendanceRecFromQueue.Id }");
                     return Task.CompletedTask;
                 }
+                else
+                {   
+                    var result = this._dataStoreProcesor.SaveAttendanceRecordAsync(attendanceRecFromQueue);
+                    logger.LogInformation($" ********** Saved attendance record to database ********* : { attendanceRecFromQueue.Id } and record count  {result.Result}");
 
-                logger.LogInformation($" ********** Persist to database ********* : { attendanceRecFromQueue.Id } ");
-
-                //switch (messsageType.MessageType)
-                //{
-                //    case 0:
-                //        this._logger.LogInformation(PersonProcessingMessage);
-                //        _dataStoreProcesor.SavePersonAsync(sourceData);
-                //        break;
-                //    case 1:
-                //        this._logger.LogInformation(ImageProcessingMessage);
-                //        _dataStoreProcesor.SavePersonImgAsync(sourceData);
-                //        break;
-                //    case 2:
-                //        this._logger.LogInformation(DeviceProcessingMessage);
-                //        _dataStoreProcesor.SaveDevicesAsync(sourceData);
-                //        break;
-                //    case 3:
-                //        this._logger.LogInformation(AttendanceMessageProcessingMessage);
-                //        _dataStoreProcesor.SaveAttendRecordAsync(sourceData);
-                //        _notificationProcesor.ProcessAsync(sourceData);
-                //        break;
-                //    default:
-                //        break;
-                //}
+                }
             }
             catch (Exception ex)
             {

@@ -36,6 +36,8 @@ namespace AzCloudApp.Notification.Test.SenderFunction
             builder.Services.AddLogging();
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<INotificationProcessor, NotificationMessageProcessor>();
+            builder.Services.AddTransient<IDataStoreProcesor, DataStoreMessageProcessor>();
+
 
             builder.Services.AddDbContext<ThermoDataContext>(opt => opt.UseSqlServer(configBuilder.GetConnectionString("ThermoDatabase")));
 

@@ -1,23 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 {
-    public class AttendanceRecord
+    public class AttendanceDataStore
     {
-        public string Guid { get; set; }
+        [Key]
+        public long Nid { get; set; }
 
-        //public string BatchId { get; set; }
+        public string Guid { get; set; }
 
         public string Address { get; set; }
 
         public int Age { get; set; }
 
-        public string Birth { get; set; }
+        public DateTime Birth { get; set; }
 
-        public string BodyTemperature { get; set; }
+        public float BodyTemperature { get; set; }
 
         public string CertificateNumber { get; set; }
 
@@ -33,9 +32,6 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 
         public string GroupId { get; set; }
 
-        [Key]
-        public long Nid { get; set; }
-
         public string Name { get; set; }
 
         public string Nation { get; set; }
@@ -46,7 +42,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 
         public int Respirator { get; set; }
 
-        public string TimeStamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public string UserId { get; set; }
 

@@ -1,9 +1,13 @@
 ﻿using AzCloudApp.MessageProcessor.Core.DataProcessor;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel;
+using Service.ThermoDataModel.Models;
 
 namespace AzCloudApp.MessageProcessor.Core.Utils
 {
-    public static class DataConverter
+    public static class DataStoreModelConverter
     {
+        #region Commented methods
+
         //public static Person ToModel(this PersonDataMessageQueue source)
         //{
         //    return new Person
@@ -41,22 +45,33 @@ namespace AzCloudApp.MessageProcessor.Core.Utils
         //        PersonId = source.PersonId,
         //        ImgBase64 = source.ImgBase64
         //    };
-        //}
+        //} 
+        #endregion
 
-        //public static AttendanceRecord ToModel(this AttendRecordDataMessageQueue source)
-        //{
-        //    return new AttendRecord
-        //    {
-        //        AttendRecordId = source.AttendRecordId,
-        //        Id = source.Id,
-        //        BodyTemperature = source.BodyTemperature,
-        //        Deviceid = source.DeviceId,
-        //        PersonId = source.PersonId,
-        //        Respirator = source.Respirator,
-        //        Timestamp = source.Timestamp,
-        //        Userid = source.UserId,
-        //        ImgBase64 = source.ImgBase64
-        //    };
-        //}
+        public static AttendanceDataStore ToModel(this AttendanceRecord source)
+        {
+            return new AttendanceDataStore
+            {
+                Address = source.Address,
+                Age = source.Age,
+                Birth = source.Birth,
+                BodyTemperature = source.BodyTemperature,
+                CertificateNumber = source.CertificateNumber,
+                CertificateType = source.CertificateType, 
+                Country = source.Country,
+                DeviceId = source.DeviceId,
+                Email = source.Email,
+                Gender = source.Gender,
+                GroupId = source.GroupId, 
+                Guid = source.Guid, 
+                Name = source.Name,
+                Nation = source.Nation,
+                PersonId = source.PersonId,
+                Phone = source.Phone,
+                Respirator = source.Respirator,
+                TimeStamp = source.TimeStamp,
+                UserId = source.UserId
+            };
+        }
     }
 }
