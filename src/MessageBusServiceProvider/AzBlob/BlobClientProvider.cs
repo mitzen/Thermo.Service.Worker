@@ -2,6 +2,7 @@
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Service.MessageBusServiceProvider.IOUtil;
 using Service.ThermoDataModel.Configuration;
 using System;
 using System.IO;
@@ -16,14 +17,16 @@ namespace Service.MessageBusServiceProvider.AzBlob
         public const string BlobConfigurationKey = "BlobConfiguration";
 
         public BlobClientProvider(ILogger<BlobClientProvider> logger, IConfiguration configuration)
-
         {
             _logger = logger;
             _blobConfiguration = BlobConfigurationUtil.GetBlobConfigiration(configuration);
         }
 
-        public async Task PushImageToStoreAsync(string targetContainer, string path)
+        public async Task<string> PushImageToStoreAsync(string targetContainer, string path)
         {
+
+            FileUtil.CreateLocalDirectoriesInPath(path);
+
             var storageAccount = CloudStorageAccount.Parse(_blobConfiguration.ConnectionString);
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
             CloudBlobContainer container = blobClient.GetContainerReference(targetContainer);
@@ -37,7 +40,8 @@ namespace Service.MessageBusServiceProvider.AzBlob
             var target = blob.Uri.ToString() + blob.GetSharedAccessSignature(sasConstraints);
             var cloudBlockBlob = new CloudBlockBlob(new Uri(target));
             cloudBlockBlob.UploadFromFile(path);
-
+            
+            return blob.Uri.ToString();
         }
     }
 }

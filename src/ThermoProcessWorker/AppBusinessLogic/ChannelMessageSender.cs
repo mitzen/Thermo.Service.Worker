@@ -14,6 +14,7 @@ using System.Reflection.Metadata;
 using Microsoft.Azure.ServiceBus;
 using Service.MessageBusServiceProvider.Imaging;
 using System.IO;
+using Microsoft.Azure.Amqp.Framing;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -26,6 +27,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         private readonly ServiceBusConfiguration _serviceBusConfiguration;
         private readonly IConfiguration _configuration;
         private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
+        private const string DefaultImageJpg = ".jpg";
         private readonly IBlobClientProvider _blobClientProvider;
         private readonly BlobConfiguration _blobConfiguration;
 
@@ -63,18 +65,18 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 {
                     // All these can be done async 
 
-                    this._logger.LogInformation($"Saving images: {attendanceItem.Id} - {DateTime.Now}");
-
-                    var targetImagePath = _blobConfiguration.ImageStorePath + Path.DirectorySeparatorChar + attendanceItem.Id + ".jpg";
+                    var targetImagePath = $"{_blobConfiguration.ImageStorePath}{Path.DirectorySeparatorChar}{attendanceItem.Id}{DefaultImageJpg}";
 
                     // Save Images 
                     ImageConverter.SaveByteArrayAsImage(targetImagePath, ImageConverter.ExractBase64(attendanceItem.Img));
 
                     // Push image to Azure // 
-
                     await this._blobClientProvider.PushImageToStoreAsync(_blobConfiguration.ContainerName, targetImagePath);
 
-                    attendanceItem.Img = "";
+                    attendanceItem.Img = $"{_blobConfiguration.StorageEndpoint}/{attendanceItem.Id}{DefaultImageJpg}";
+
+                    this._logger.LogInformation($"Saving images: {attendanceItem.Id} to {targetImagePath} to cloud path :: {DateTime.Now}");
+
                 }
 
                 var messgeInstance = MessageConverter.Serialize(attendanceItem);
