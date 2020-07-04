@@ -1,5 +1,6 @@
 ﻿using AzCloudApp.MessageProcessor.Core.DataProcessor;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel;
+using Service.ThermoDataModel.Heartbeat;
 using Service.ThermoDataModel.Models;
 
 namespace AzCloudApp.MessageProcessor.Core.Utils
@@ -47,6 +48,16 @@ namespace AzCloudApp.MessageProcessor.Core.Utils
         //    };
         //} 
         #endregion
+
+        public static HeartBeatDataStore ToModel(this HeartbeatMessage source)
+        {
+            return new HeartBeatDataStore
+            {
+                Status = source.Status,
+                DeviceId = source.DeviceId, 
+                Timestamp = source.Timestamp
+            };
+        }
 
         public static AttendanceDataStore ToModel(this AttendanceRecord source)
         {

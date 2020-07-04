@@ -6,46 +6,50 @@ using Service.ThermoDataModel.Models;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Service.ThermoDataModel.Heartbeat;
 
 namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 {
     public class DataStoreMessageProcessor : IDataStoreProcesor
     {
         private readonly ThermoDataContext _thermoDataContext;
-        
+
         public DataStoreMessageProcessor(ThermoDataContext thermoDataContext)
         {
             _thermoDataContext = thermoDataContext;
         }
 
-        #region Commented methods
-
-        //public Task<int> SavePersonImgAsync(string source)
-        //{
-        //    var target = MessageConverter.GetMessageType<PersonImgDataMessageQueue>(source);
-        //    //            this._thermoDataContext.PersonImgs.Add(target.ToModel());
-        //    return _thermoDataContext.SaveChangesAsync();
-        //}
-
-        //public Task<int> SavePersonAsync(string source)
-        //{
-        //    var target = MessageConverter.GetMessageType<PersonImgDataMessageQueue>(source);
-        //    return this._thermoDataContext.SaveChangesAsync();
-        //}
-
-        //public Task<int> SaveDevicesAsync(string source)
-        //{
-        //    var target = MessageConverter.GetMessageType<DeviceDataMessageQueue>(source);
-        //    this._thermoDataContext.Devices.Add(target.ToModel());
-        //    return this._thermoDataContext.SaveChangesAsync();
-        //}
-        
-        #endregion
-
         public Task<int> SaveAttendanceRecordAsync(AttendanceRecord source)
-        {  
+        {
             this._thermoDataContext.AttendanceRecord.Add(source.ToModel());
             return this._thermoDataContext.SaveChangesAsync();
+        }
+
+        public Task<int> SaveHeartBeatRecordAsync(HeartbeatMessage source)
+        {
+            var instance = GetHeartBeateRecordByDeviceId(source);
+
+            if (instance != null)
+            {
+                instance.Timestamp = source.Timestamp;
+            }
+            else
+            {
+                this._thermoDataContext.HeartBeat.Update(source.ToModel());
+            }
+
+            return this._thermoDataContext.SaveChangesAsync();
+        }
+
+        public HeartBeatDataStore GetHeartBeateRecordByDeviceId(HeartbeatMessage source)
+        {
+            if (source != null && source.DeviceId != null)
+            {
+                var result = this._thermoDataContext.HeartBeat.Where(x => x.DeviceId.Trim().ToLower() == source.DeviceId.Trim().ToLower()).FirstOrDefault();
+
+                return result;
+            }
+            return null;
         }
 
         public Task<List<AttendanceDataStore>> GetAttendanceRecordAsync(AttendanceRecord source)

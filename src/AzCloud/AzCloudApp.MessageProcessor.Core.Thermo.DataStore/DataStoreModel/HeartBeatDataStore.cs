@@ -6,13 +6,13 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
     public class HeartBeatDataStore
     {
         [Key]
-        public int Id { get; set; }
+        public int Nid { get; set; }
 
-        public string ThermoDeviceId { get; set; }
+        public string DeviceId { get; set; }
 
-        public string MessageDescription { get; set; }
+        public string Status { get; set; }
 
-        public DateTime Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
 
     }
 }

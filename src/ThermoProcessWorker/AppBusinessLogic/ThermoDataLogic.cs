@@ -13,6 +13,7 @@ using Service.MessageBusServiceProvider.Converters;
 using Service.MessageBusServiceProvider.CheckPointing;
 using System.Collections.Generic;
 using Service.ThermoDataModel.Heartbeat;
+using Service.ThermoDataModel;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -22,6 +23,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         private const string ThermoRestApiConfigurationKey = "ThermoRestConfiguration";
         private const string ServiceWorkerConfigirationKey = "ServiceWorkerConfiguration";
         private const string HeartbeatMessage = "Heartbeat Message";
+        private const string OnlineMessage = "ONLINE";
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoRestConfiguration _restConfiguration;
@@ -121,6 +123,8 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             {
                 // Send heartbeat messages //
                 _logger.LogWarning($"No records retrieve from Rest Service. {targetDevice.HostName}: {DateTime.Now}");
+
+                await SendHeartBeatMessagesToAzureServiceBus(targetDevice);
             }
         }
 
@@ -130,9 +134,11 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
             foreach (var attendanceItem in attendanceRecResult.Data)
             {
+                attendanceItem.MessageType = CoreMessageType.AttendanceMessage;
+
                 attendanceItem.Id = Guid.NewGuid().ToString();
                 attendanceItem.BatchId = currentBatchId;
-
+                
                 attendanceItem.Birth ??= DateTime.MinValue;
                 attendanceItem.TimeStamp ??= DateTime.MinValue;
 
@@ -145,21 +151,18 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         }
 
         private Task SendHeartBeatMessagesToAzureServiceBus(TargetDevice targetDevice)
-        {
-            var currentBatchId = Guid.NewGuid().ToString();
-
+        {   
             var heartbeatMessage = new HeartbeatMessage
             {
-                 MessageDescription = HeartbeatMessage,
-                 ThermoDeviceId = targetDevice.HostName,
+                 MessageType = CoreMessageType.HeartBeatMessage,
+                 Status = OnlineMessage,
+                 DeviceId = targetDevice.HostName,
                  Timestamp = DateTime.Now
             };
 
             var messgeInstance = MessageConverter.Serialize(heartbeatMessage);
-
             _messageSender.SendMessagesAsync(messgeInstance);
-            
-            this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
+            this._logger.LogInformation($"Sending HeartBeat message {DateTime.Now}");
             return Task.CompletedTask;
         }
     }

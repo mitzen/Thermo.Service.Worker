@@ -2,13 +2,13 @@
 
 namespace Service.ThermoDataModel.Heartbeat
 {
-    public class HeartbeatMessage
+    public class HeartbeatMessage : CoreMessage
     {
-        public string ThermoDeviceId { get; set; }
+        public string DeviceId { get; set; }
 
-        public string MessageDescription { get; set; }
+        public string Status { get; set; }
 
-        public DateTime Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
 
     }
 }

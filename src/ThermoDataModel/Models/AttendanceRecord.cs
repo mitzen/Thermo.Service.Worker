@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Service.ThermoDataModel.Models
 {
-    public class AttendanceResponse
+    public class AttendanceResponse 
     {
         public int Command { get; set; }
 
@@ -21,7 +20,7 @@ namespace Service.ThermoDataModel.Models
 
     }
 
-    public class AttendanceRecord
+    public class AttendanceRecord : CoreMessage
     {
         public string Guid { get; set; }
 
