@@ -9,14 +9,15 @@
     }
   },
   "IsEncrypted": false,
-  "sbqconnection": "Endpoint=sb://devsbbank.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ZeoCedTJSaqVPAx8bHX998DVIYHtuG5g0OKlUkUFF9g=",
+  "sbqconnection": "Endpoint=sb://countryroad.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=vsdmXy5A9B2d9qeqLYRGrRVFcGFTzoZCkqI5QKB20Uk=",
   "Values": {
-    "TargetQueueName": "devsbqbank",
+    "TargetQueueName": "sbq-thermodata",
     "Notification:SmtpServer": "0MySmtpServer",
     "Notification:Username": "0Username",
-    "Notification:Password": "0Password"
+    "Notification:Password": "0Password",
+    "sbqconnection": "Endpoint=sb://countryroad.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=vsdmXy5A9B2d9qeqLYRGrRVFcGFTzoZCkqI5QKB20Uk="
   },
   "ConnectionStrings": {
-    "ThermoDatabase": "Server=(localdb)\\mssqllocaldb;Database=ContosoUniversity1;Trusted_Connection=True;MultipleActiveResultSets=true"
+    "ThermoDatabase": "Server=tcp:countryroad-dbserver.database.windows.net,1433;Initial Catalog=sqldb-countryroad;Persist Security Info=False;User ID=countryroadadmin;Password=2hot2h@ndlEE;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   }
 }
