@@ -42,7 +42,7 @@ namespace AzCloudApp.Notification.Test.SenderFunction
             var h = new HeartbeatMessage()
             {
                 Status = "ONLINE",
-                Timestamp = DateTime.Now,
+                Timestamp = DateTime.UtcNow,
                 DeviceId = "100",
             };
 
@@ -69,7 +69,7 @@ namespace AzCloudApp.Notification.Test.SenderFunction
                 Gender = "M",
                 Name = "Name",
                 PersonId = "PersonId",
-                TimeStamp = DateTime.Now
+                TimeStamp = DateTime.UtcNow
             };
 
 

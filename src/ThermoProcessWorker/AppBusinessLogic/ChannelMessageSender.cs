@@ -15,6 +15,7 @@ using Microsoft.Azure.ServiceBus;
 using Service.MessageBusServiceProvider.Imaging;
 using System.IO;
 using Microsoft.Azure.Amqp.Framing;
+using Service.MessageBusServiceProvider.IOUtil;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -48,6 +49,8 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         {
             _stoppingToken = stoppingToken;
             _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_serviceBusConfiguration, _logger);
+
+            FileUtil.CreateLocalDirectoriesInPath(_blobConfiguration.ImageStorePath);
         }
 
         public async Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
@@ -75,7 +78,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
                     attendanceItem.Img = $"{_blobConfiguration.StorageEndpoint}/{attendanceItem.Id}{DefaultImageJpg}";
 
-                    this._logger.LogInformation($"Saving images: {attendanceItem.Id} to {targetImagePath} to cloud path :: {DateTime.Now}");
+                    this._logger.LogInformation($"Saving images: {attendanceItem.Id} to {targetImagePath} to cloud path : {_blobConfiguration.StorageEndpoint}/{_blobConfiguration.ContainerName} : {DateTime.Now}");
 
                 }
 
@@ -94,7 +97,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 MessageType = CoreMessageType.HeartBeatMessage,
                 Status = OnlineMessage,
                 DeviceId = targetDevice.HostName,
-                Timestamp = DateTime.Now
+                Timestamp = DateTime.UtcNow
             };
 
             var messgeInstance = MessageConverter.Serialize(heartbeatMessage);

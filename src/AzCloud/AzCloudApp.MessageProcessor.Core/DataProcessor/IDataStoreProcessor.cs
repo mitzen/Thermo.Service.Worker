@@ -1,7 +1,6 @@
 ﻿using AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel;
 using Service.ThermoDataModel.Heartbeat;
 using Service.ThermoDataModel.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AzCloudApp.MessageProcessor.Core.DataProcessor
@@ -10,7 +9,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
     {        
         Task<int> SaveAttendanceRecordAsync(AttendanceRecord source);
 
-        Task<List<AttendanceDataStore>> GetAttendanceRecordAsync(AttendanceRecord source);
+        AttendanceDataStore GetAttendanceRecordAsync(AttendanceRecord source);
 
         Task<int> SaveHeartBeatRecordAsync(HeartbeatMessage source);
 

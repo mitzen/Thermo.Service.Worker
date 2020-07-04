@@ -113,7 +113,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 await this._channelMessageSender.SendMessagesToAzureServiceBus(attendanceRecResult);
                 // Update configuration 
                 checkPoint.LastSequence += attendanceRecResult.RecordCount;
-                checkPoint.LastUpdate = DateTime.Now;
+                checkPoint.LastUpdate = DateTime.UtcNow;
                 // Save checkpoint 
                 await _checkPointLogger.WriteCheckPoint(checkpointSourceFileName, checkPoint);
             }

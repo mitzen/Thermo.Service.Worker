@@ -10,6 +10,8 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 
         public string Guid { get; set; }
 
+        public long Id { get; set; }
+
         public string Address { get; set; }
 
         public int Age { get; set; }
@@ -45,6 +47,8 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
         public DateTime? TimeStamp { get; set; }
 
         public string UserId { get; set; }
+
+        public string ImageUri { get; set; }
 
     }
 }

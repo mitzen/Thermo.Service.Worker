@@ -24,9 +24,6 @@ namespace Service.MessageBusServiceProvider.AzBlob
 
         public async Task<string> PushImageToStoreAsync(string targetContainer, string path)
         {
-
-            FileUtil.CreateLocalDirectoriesInPath(path);
-
             var storageAccount = CloudStorageAccount.Parse(_blobConfiguration.ConnectionString);
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
             CloudBlobContainer container = blobClient.GetContainerReference(targetContainer);

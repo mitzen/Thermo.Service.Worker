@@ -4,8 +4,6 @@ using AzCloudApp.MessageProcessor.Core.Utils;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel;
 using Service.ThermoDataModel.Models;
 using System.Linq;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using Service.ThermoDataModel.Heartbeat;
 
 namespace AzCloudApp.MessageProcessor.Core.DataProcessor
@@ -21,7 +19,16 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
         public Task<int> SaveAttendanceRecordAsync(AttendanceRecord source)
         {
-            this._thermoDataContext.AttendanceRecord.Add(source.ToModel());
+            var targetRecord = GetAttendanceRecordAsync(source);
+            if (targetRecord ==  null)
+            {
+                this._thermoDataContext.AttendanceRecord.Add(source.ToModel());
+            }
+            else
+            {
+                DataStoreModelConverter.UpateModel(ref targetRecord, source);
+            }
+
             return this._thermoDataContext.SaveChangesAsync();
         }
 
@@ -52,17 +59,14 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             return null;
         }
 
-        public Task<List<AttendanceDataStore>> GetAttendanceRecordAsync(AttendanceRecord source)
+        public AttendanceDataStore GetAttendanceRecordAsync(AttendanceRecord source)
         {
-            if (!string.IsNullOrWhiteSpace(source.Email) ||
-                !string.IsNullOrWhiteSpace(source.Name))
+            if (source != null)
             {
-                return this._thermoDataContext.AttendanceRecord.Where(x => x.Name.Trim().ToLower() ==
-                source.Name.Trim().ToLower()
-                && x.Email.Trim().ToLower() == source.Email.Trim().ToLower()).ToListAsync();
+                return this._thermoDataContext.AttendanceRecord.Where(x => x.Id == source.Id).FirstOrDefault();
             }
 
-            return Task.FromResult(new List<AttendanceDataStore>());
+            return null;
         }
     }
 }

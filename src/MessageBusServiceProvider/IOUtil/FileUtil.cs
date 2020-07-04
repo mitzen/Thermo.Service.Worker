@@ -6,11 +6,11 @@ namespace Service.MessageBusServiceProvider.IOUtil
     {
         public static bool CreateLocalDirectoriesInPath(string path)
         {
-            var targetPath = Path.GetDirectoryName(path);
+            var targetPath = Path.GetFullPath(path);
 
             if (!Directory.Exists(targetPath))
             {
-                 Directory.CreateDirectory(targetPath);
+                Directory.CreateDirectory(targetPath);
                 return true; 
             }
 
