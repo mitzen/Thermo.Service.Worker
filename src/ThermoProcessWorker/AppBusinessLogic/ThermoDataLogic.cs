@@ -60,6 +60,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
                 if (_errorCount > 5)
                 {
+                    _logger.LogError($"ThermoLogic max error count exceeded. {ex.Message}");
                     Environment.Exit(-1);
                 }
             }
