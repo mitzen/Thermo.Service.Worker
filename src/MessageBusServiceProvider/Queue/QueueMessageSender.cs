@@ -19,7 +19,7 @@ namespace Service.MessageBusServiceProvider.Queue
 
         public async Task SendMessagesAsync(string messageSource)
         {
-            this._logger.LogInformation($"QueueMessageSender : Sending message : {messageSource}");
+            this._logger.LogInformation($"QueueMessageSender : Sending message.");
 
             var message = new Message(Encoding.UTF8.GetBytes(messageSource));
             await this._queueClient.SendAsync(message);

@@ -1,26 +1,32 @@
 ﻿using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Service.ThermoDataModel.Configuration;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Service.MessageBusServiceProvider.AzBlob
 {
-    public class BlobClientProvider
+    public class BlobClientProvider : IBlobClientProvider
     {
-        public BlobClientProvider()
-        {
+        private readonly ILogger<BlobClientProvider> _logger;
+        private readonly BlobConfiguration _blobConfiguration;
+        public const string BlobConfigurationKey = "BlobConfiguration";
 
+        public BlobClientProvider(ILogger<BlobClientProvider> logger, IConfiguration configuration)
+
+        {
+            _logger = logger;
+            _blobConfiguration = BlobConfigurationUtil.GetBlobConfigiration(configuration);
         }
 
-        public async Task PushImageToStore(string targetContainer, string path)
+        public async Task PushImageToStoreAsync(string targetContainer, string path)
         {
-            var connectionString = "DefaultEndpointsProtocol=https;AccountName=devstbank;AccountKey=0FZg1ynJlPo0sjy+NVNdfmDkZRrurzG2NVHEZultxdGC0efRzso0CsYqwku+lclngFn07BEFWJTLAEWWhqBRXg=="; 
-
-            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            var storageAccount = CloudStorageAccount.Parse(_blobConfiguration.ConnectionString);
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
             CloudBlobContainer container = blobClient.GetContainerReference(targetContainer);
-            await container.CreateIfNotExistsAsync();
 
             SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy();
             sasConstraints.SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(30);
@@ -30,7 +36,8 @@ namespace Service.MessageBusServiceProvider.AzBlob
 
             var target = blob.Uri.ToString() + blob.GetSharedAccessSignature(sasConstraints);
             var cloudBlockBlob = new CloudBlockBlob(new Uri(target));
-            await cloudBlockBlob.UploadFromFileAsync(path);
+            cloudBlockBlob.UploadFromFile(path);
+
         }
     }
 }

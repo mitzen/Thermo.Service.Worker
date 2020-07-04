@@ -9,6 +9,11 @@ using Service.ThermoDataModel.Heartbeat;
 using Service.ThermoDataModel;
 using Service.MessageBusServiceProvider.Queue;
 using Microsoft.Extensions.Configuration;
+using Service.MessageBusServiceProvider.AzBlob;
+using System.Reflection.Metadata;
+using Microsoft.Azure.ServiceBus;
+using Service.MessageBusServiceProvider.Imaging;
+using System.IO;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -21,14 +26,20 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         private readonly ServiceBusConfiguration _serviceBusConfiguration;
         private readonly IConfiguration _configuration;
         private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
+        private readonly IBlobClientProvider _blobClientProvider;
+        private readonly BlobConfiguration _blobConfiguration;
 
         public ChannelMessageSender(ILogger<ChannelMessageSender> logger,
-            IConfiguration configuration)
+            IConfiguration configuration, IBlobClientProvider blobClientProvider)
         {
             _logger = logger;
             _configuration = configuration;
+            _blobClientProvider = blobClientProvider;
 
             _serviceBusConfiguration = configuration.GetSection(ServiceBusConfigurationKey).Get<ServiceBusConfiguration>();
+
+            _blobConfiguration = BlobConfigurationUtil.GetBlobConfigiration(configuration);
+
         }
 
         public void Setup(CancellationToken stoppingToken)
@@ -37,26 +48,41 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_serviceBusConfiguration, _logger);
         }
 
-        public Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
+        public async Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
         {
             var currentBatchId = Guid.NewGuid().ToString();
 
             foreach (var attendanceItem in attendanceRecResult.Data)
             {
                 attendanceItem.MessageType = CoreMessageType.AttendanceMessage;
-
-                attendanceItem.Id = Guid.NewGuid().ToString();
                 attendanceItem.BatchId = currentBatchId;
-
                 attendanceItem.Birth ??= DateTime.MinValue;
                 attendanceItem.TimeStamp ??= DateTime.MinValue;
 
+                if (!string.IsNullOrWhiteSpace(attendanceItem.Img))
+                {
+                    // All these can be done async 
+
+                    this._logger.LogInformation($"Saving images: {attendanceItem.Id} - {DateTime.Now}");
+
+                    var targetImagePath = _blobConfiguration.ImageStorePath + Path.DirectorySeparatorChar + attendanceItem.Id + ".jpg";
+
+                    // Save Images 
+                    ImageConverter.SaveByteArrayAsImage(targetImagePath, ImageConverter.ExractBase64(attendanceItem.Img));
+
+                    // Push image to Azure // 
+
+                    await this._blobClientProvider.PushImageToStoreAsync(_blobConfiguration.ContainerName, targetImagePath);
+
+                    attendanceItem.Img = "";
+                }
+
                 var messgeInstance = MessageConverter.Serialize(attendanceItem);
-                _messageSender.SendMessagesAsync(messgeInstance);
+                await _messageSender.SendMessagesAsync(messgeInstance);
             }
 
             this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
 
         public Task SendHeartBeatMessagesToAzureServiceBus(TargetDevice targetDevice)

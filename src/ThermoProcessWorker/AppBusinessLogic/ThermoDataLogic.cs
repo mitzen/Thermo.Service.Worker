@@ -93,7 +93,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             {
                 StartId = checkPoint.LastSequence,
                 ReqCount = targetDevice.AttendanceRequestCount == 0 ? 10 : targetDevice.AttendanceRequestCount,
-                NeedImg = false
+                NeedImg = true
             };
             
             // parse request 

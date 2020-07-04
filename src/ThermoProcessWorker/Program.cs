@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Service.MessageBusServiceProvider.AzBlob;
 using Service.MessageBusServiceProvider.CheckPointing;
 using Service.MessageBusServiceProvider.Queue;
 using Service.ThermoProcessWorker.AppBusinessLogic;
@@ -21,6 +22,7 @@ namespace Service.ThermoProcessWorker
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddLogging();
+                services.AddSingleton<IBlobClientProvider, BlobClientProvider>();
                 services.AddSingleton<IChannelMessageSender, ChannelMessageSender>();
                 services.AddSingleton<ICheckPointLogger, CheckPointLogger>();
                 services.AddSingleton<IThermoDataLogic, ThermoDataLogic>();

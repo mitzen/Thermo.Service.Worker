@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 
 namespace Service.MessageBusServiceProvider.Imaging
@@ -8,18 +7,7 @@ namespace Service.MessageBusServiceProvider.Imaging
     {
         public static void SaveByteArrayAsImage(string fullOutputPath, string base64String)
         {
-
             File.WriteAllBytes(fullOutputPath, Convert.FromBase64String(base64String));
-
-            //byte[] bytes = Convert.FromBase64String(base64String);
-
-            //Image image;
-            //using (MemoryStream ms = new MemoryStream(bytes))
-            //{
-            //    image = Image.FromStream(ms);
-            //}
-
-            //image.Save(fullOutputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
         }
         
         public static string ExractBase64(string base64StringImage)

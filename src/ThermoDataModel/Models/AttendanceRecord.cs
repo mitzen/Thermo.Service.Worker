@@ -66,5 +66,7 @@ namespace Service.ThermoDataModel.Models
 
         public string UserId { get; set; }
 
+        public string Img { get; set; }
+
     }
 }
