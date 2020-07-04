@@ -21,6 +21,7 @@ namespace Service.ThermoProcessWorker
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddLogging();
+                services.AddSingleton<IChannelMessageSender, ChannelMessageSender>();
                 services.AddSingleton<ICheckPointLogger, CheckPointLogger>();
                 services.AddSingleton<IThermoDataLogic, ThermoDataLogic>();
                 services.AddHostedService<BackgroundRestWorkerService>();

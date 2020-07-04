@@ -12,44 +12,39 @@ using Service.MessageBusServiceProvider.Queue;
 using Service.MessageBusServiceProvider.Converters;
 using Service.MessageBusServiceProvider.CheckPointing;
 using System.Collections.Generic;
-using Service.ThermoDataModel.Heartbeat;
-using Service.ThermoDataModel;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
     public class ThermoDataLogic : IThermoDataLogic
     {
-        private const string ServiceBusConfigurationKey = "ServiceBusConfiguration";
         private const string ThermoRestApiConfigurationKey = "ThermoRestConfiguration";
         private const string ServiceWorkerConfigirationKey = "ServiceWorkerConfiguration";
-        private const string HeartbeatMessage = "Heartbeat Message";
-        private const string OnlineMessage = "ONLINE";
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoRestConfiguration _restConfiguration;
-        private readonly ServiceBusConfiguration _serviceBusConfiguration;
         private readonly ServiceWorkerConfiguration _serviceWorkerConfiguration;
         string targetBaseUrl;
         private IThermoDataRequester thermoDataRequester;
         private CancellationToken _stoppingToken;
-        private IQueueMessageSender _messageSender;
         private ICheckPointLogger _checkPointLogger;
         private int _errorCount = 0;
+        private IChannelMessageSender _channelMessageSender;
 
-        public ThermoDataLogic(ILogger<ThermoDataLogic> logger, IConfiguration configuration, ICheckPointLogger checkPointLogger)
+        public ThermoDataLogic(ILogger<ThermoDataLogic> logger, IConfiguration configuration, ICheckPointLogger checkPointLogger, IChannelMessageSender channelMessageSender)
         {
             _logger = logger;
             _configuration = configuration;
-            _serviceBusConfiguration = configuration.GetSection(ServiceBusConfigurationKey).Get<ServiceBusConfiguration>();
+            
             _restConfiguration = configuration.GetSection(ThermoRestApiConfigurationKey).Get<ThermoRestConfiguration>();
             _checkPointLogger = checkPointLogger;
             _serviceWorkerConfiguration = configuration.GetSection(ServiceWorkerConfigirationKey).Get<ServiceWorkerConfiguration>();
+            _channelMessageSender = channelMessageSender;
         }
 
         public void Setup(CancellationToken stoppingToken)
         {
             _stoppingToken = stoppingToken;
-            _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_serviceBusConfiguration, _logger);
+            _channelMessageSender.Setup(_stoppingToken);
         }
 
         public async Task ExecuteAsync()
@@ -79,6 +74,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 _logger.LogInformation($"##############################################################");
                 _logger.LogInformation($"Scattering process for {targetDevice.HostName}, {DateTime.Now}");
                 _logger.LogInformation($"##############################################################");
+            
                 tasks.Add(RunTaskForTargetDevices(targetDevice));
             }
 
@@ -91,6 +87,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _logger);
             var checkpointSourceFileName = targetDevice.CheckPointFileName;
             var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
+            
             var attendanceRequestInfo = new AttendanceRequest
             {
                 StartId = checkPoint.LastSequence,
@@ -112,7 +109,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
             if (attendanceRecResult != null && attendanceRecResult.Data != null)
             {
-                await SendMessagesToAzureServiceBus(attendanceRecResult);
+                await this._channelMessageSender.SendMessagesToAzureServiceBus(attendanceRecResult);
                 // Update configuration 
                 checkPoint.LastSequence += attendanceRecResult.RecordCount;
                 checkPoint.LastUpdate = DateTime.Now;
@@ -124,46 +121,47 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 // Send heartbeat messages //
                 _logger.LogWarning($"No records retrieve from Rest Service. {targetDevice.HostName}: {DateTime.Now}");
 
-                await SendHeartBeatMessagesToAzureServiceBus(targetDevice);
+                await this._channelMessageSender.SendHeartBeatMessagesToAzureServiceBus(targetDevice);
             }
         }
 
-        private Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
-        {
-            var currentBatchId = Guid.NewGuid().ToString();
 
-            foreach (var attendanceItem in attendanceRecResult.Data)
-            {
-                attendanceItem.MessageType = CoreMessageType.AttendanceMessage;
+        //public Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
+        //{
+        //    var currentBatchId = Guid.NewGuid().ToString();
 
-                attendanceItem.Id = Guid.NewGuid().ToString();
-                attendanceItem.BatchId = currentBatchId;
+        //    foreach (var attendanceItem in attendanceRecResult.Data)
+        //    {
+        //        attendanceItem.MessageType = CoreMessageType.AttendanceMessage;
+
+        //        attendanceItem.Id = Guid.NewGuid().ToString();
+        //        attendanceItem.BatchId = currentBatchId;
                 
-                attendanceItem.Birth ??= DateTime.MinValue;
-                attendanceItem.TimeStamp ??= DateTime.MinValue;
+        //        attendanceItem.Birth ??= DateTime.MinValue;
+        //        attendanceItem.TimeStamp ??= DateTime.MinValue;
 
-                var messgeInstance = MessageConverter.Serialize(attendanceItem);
-                _messageSender.SendMessagesAsync(messgeInstance);
-            }
+        //        var messgeInstance = MessageConverter.Serialize(attendanceItem);
+        //        _messageSender.SendMessagesAsync(messgeInstance);
+        //    }
 
-            this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
-            return Task.CompletedTask;
-        }
+        //    this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
+        //    return Task.CompletedTask;
+        //}
 
-        private Task SendHeartBeatMessagesToAzureServiceBus(TargetDevice targetDevice)
-        {   
-            var heartbeatMessage = new HeartbeatMessage
-            {
-                 MessageType = CoreMessageType.HeartBeatMessage,
-                 Status = OnlineMessage,
-                 DeviceId = targetDevice.HostName,
-                 Timestamp = DateTime.Now
-            };
+        //public Task SendHeartBeatMessagesToAzureServiceBus(TargetDevice targetDevice)
+        //{   
+        //    var heartbeatMessage = new HeartbeatMessage
+        //    {
+        //         MessageType = CoreMessageType.HeartBeatMessage,
+        //         Status = OnlineMessage,
+        //         DeviceId = targetDevice.HostName,
+        //         Timestamp = DateTime.Now
+        //    };
 
-            var messgeInstance = MessageConverter.Serialize(heartbeatMessage);
-            _messageSender.SendMessagesAsync(messgeInstance);
-            this._logger.LogInformation($"Sending HeartBeat message {DateTime.Now}");
-            return Task.CompletedTask;
-        }
+        //    var messgeInstance = MessageConverter.Serialize(heartbeatMessage);
+        //    _messageSender.SendMessagesAsync(messgeInstance);
+        //    this._logger.LogInformation($"Sending HeartBeat message {DateTime.Now}");
+        //    return Task.CompletedTask;
+        //}
     }
 }
