@@ -5,9 +5,9 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore
 {
     public class ThermoDataContext : DbContext
     {
-        public virtual DbSet<AttendanceRecord> AttendanceRecord { get; set; }
+        public virtual DbSet<AttendanceDataStore> AttendanceRecord { get; set; }
 
-        public virtual DbSet<Heartbeat> HeartBeat { get; set; }
+        public virtual DbSet<HeartBeatDataStore> HeartBeat { get; set; }
 
         public ThermoDataContext(DbContextOptions<ThermoDataContext> options) : base(options)
         {

@@ -132,6 +132,10 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             {
                 attendanceItem.Id = Guid.NewGuid().ToString();
                 attendanceItem.BatchId = currentBatchId;
+
+                attendanceItem.Birth ??= DateTime.Now;
+                attendanceItem.TimeStamp ??= DateTime.Now;
+
                 var messgeInstance = MessageConverter.Serialize(attendanceItem);
                 _messageSender.SendMessagesAsync(messgeInstance);
             }

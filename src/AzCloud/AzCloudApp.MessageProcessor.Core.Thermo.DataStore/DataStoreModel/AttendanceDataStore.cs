@@ -14,7 +14,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 
         public int Age { get; set; }
 
-        public DateTime Birth { get; set; }
+        public DateTime? Birth { get; set; }
 
         public float BodyTemperature { get; set; }
 
@@ -42,7 +42,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 
         public int Respirator { get; set; }
 
-        public DateTime TimeStamp { get; set; }
+        public DateTime? TimeStamp { get; set; }
 
         public string UserId { get; set; }
 

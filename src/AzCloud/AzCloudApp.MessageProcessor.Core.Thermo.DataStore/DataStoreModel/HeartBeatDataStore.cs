@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 {
-    public class Heartbeat
+    public class HeartBeatDataStore
     {
         [Key]
         public int Id { get; set; }

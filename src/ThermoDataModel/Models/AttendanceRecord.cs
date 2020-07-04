@@ -11,7 +11,7 @@ namespace Service.ThermoDataModel.Models
 
         public AttendanceRecord[]  Data { get; set; }
 
-        public string Setail { get; set; }
+        public string Detail { get; set; }
 
         public int RecordCount { get; set; }
 
@@ -33,7 +33,7 @@ namespace Service.ThermoDataModel.Models
         
         public int Age { get; set; }
         
-        public DateTime Birth { get; set; }
+        public DateTime? Birth { get; set; }
 
         public float BodyTemperature { get; set; }
 
@@ -63,7 +63,7 @@ namespace Service.ThermoDataModel.Models
 
         public int Respirator { get; set; }
 
-        public DateTime TimeStamp { get; set; }
+        public DateTime? TimeStamp { get; set; }
 
         public string UserId { get; set; }
 

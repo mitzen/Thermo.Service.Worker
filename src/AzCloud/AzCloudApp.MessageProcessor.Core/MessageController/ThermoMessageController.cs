@@ -26,15 +26,6 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
             _notificationProcesor = notificationProcesor;
         }
 
-        //var messsageType = GetMessageType(sourceData);
-        //_ = messsageType.MessageType switch
-        //        {
-        //            (0) => _dataStoreProcesor.SavePersonAsync(sourceData),
-        //            (1) => _dataStoreProcesor.SavePersonImgAsync(sourceData),
-        //            (2) => _dataStoreProcesor.SaveDevicesAsync(sourceData),
-        //            (3) => _dataStoreProcesor.SaveAttendRecordAsync(sourceData)
-        //};
-
         public Task ProcessDataAsync(string sourceData, ILogger logger)
         {
             logger.LogInformation($"MessageController::ProcessDataAsync [Deserializing messages] : {DateTime.Now}");
