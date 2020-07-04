@@ -8,10 +8,9 @@ using Service.ThermoProcessWorker.RestServices;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
 using Service.ThermoDataModel.Requests;
-using Service.MessageBusServiceProvider.Queue;
-using Service.MessageBusServiceProvider.Converters;
 using Service.MessageBusServiceProvider.CheckPointing;
 using System.Collections.Generic;
+using Service.MessageBusServiceProvider.Converters;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -19,6 +18,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
     {
         private const string ThermoRestApiConfigurationKey = "ThermoRestConfiguration";
         private const string ServiceWorkerConfigirationKey = "ServiceWorkerConfiguration";
+        private const string MessageSpacer = "##############################################################";
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly ThermoRestConfiguration _restConfiguration;
@@ -71,9 +71,9 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
             foreach (var targetDevice in _restConfiguration.TargetDevices)
             {
-                _logger.LogInformation($"##############################################################");
+                _logger.LogInformation(MessageSpacer);
                 _logger.LogInformation($"Scattering process for {targetDevice.HostName}, {DateTime.Now}");
-                _logger.LogInformation($"##############################################################");
+                _logger.LogInformation(MessageSpacer);
             
                 tasks.Add(RunTaskForTargetDevices(targetDevice));
             }
@@ -124,44 +124,5 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 await this._channelMessageSender.SendHeartBeatMessagesToAzureServiceBus(targetDevice);
             }
         }
-
-
-        //public Task SendMessagesToAzureServiceBus(AttendanceResponse attendanceRecResult)
-        //{
-        //    var currentBatchId = Guid.NewGuid().ToString();
-
-        //    foreach (var attendanceItem in attendanceRecResult.Data)
-        //    {
-        //        attendanceItem.MessageType = CoreMessageType.AttendanceMessage;
-
-        //        attendanceItem.Id = Guid.NewGuid().ToString();
-        //        attendanceItem.BatchId = currentBatchId;
-                
-        //        attendanceItem.Birth ??= DateTime.MinValue;
-        //        attendanceItem.TimeStamp ??= DateTime.MinValue;
-
-        //        var messgeInstance = MessageConverter.Serialize(attendanceItem);
-        //        _messageSender.SendMessagesAsync(messgeInstance);
-        //    }
-
-        //    this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
-        //    return Task.CompletedTask;
-        //}
-
-        //public Task SendHeartBeatMessagesToAzureServiceBus(TargetDevice targetDevice)
-        //{   
-        //    var heartbeatMessage = new HeartbeatMessage
-        //    {
-        //         MessageType = CoreMessageType.HeartBeatMessage,
-        //         Status = OnlineMessage,
-        //         DeviceId = targetDevice.HostName,
-        //         Timestamp = DateTime.Now
-        //    };
-
-        //    var messgeInstance = MessageConverter.Serialize(heartbeatMessage);
-        //    _messageSender.SendMessagesAsync(messgeInstance);
-        //    this._logger.LogInformation($"Sending HeartBeat message {DateTime.Now}");
-        //    return Task.CompletedTask;
-        //}
     }
 }
