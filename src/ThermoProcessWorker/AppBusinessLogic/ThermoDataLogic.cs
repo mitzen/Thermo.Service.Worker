@@ -11,6 +11,7 @@ using Service.ThermoDataModel.Requests;
 using Service.MessageBusServiceProvider.CheckPointing;
 using System.Collections.Generic;
 using Service.MessageBusServiceProvider.Converters;
+using Microsoft.Azure.Amqp.Framing;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -56,7 +57,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             catch (Exception ex)
             {
                 _errorCount++;
-                _logger.LogError($"ThermoLogic component run into some issues : {ex.Message} - Error count {_errorCount}");
+                _logger.LogError($"ThermoLogic component run into some issues : {ex.Message} - Error count {_errorCount} : {ex.StackTrace}");
 
                 if (_errorCount > 5)
                 {
@@ -88,12 +89,14 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _logger);
             var checkpointSourceFileName = targetDevice.CheckPointFileName;
             var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
-            
+
+            checkPoint.LastSequence = checkPoint.LastSequence == 0 ? 1 : checkPoint.LastSequence;
+
             var attendanceRequestInfo = new AttendanceRequest
             {
                 StartId = checkPoint.LastSequence,
                 ReqCount = targetDevice.AttendanceRequestCount == 0 ? 10 : targetDevice.AttendanceRequestCount,
-                NeedImg = true
+                NeedImg = targetDevice.NeedImage
             };
             
             // parse request 
@@ -108,7 +111,11 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
             var attendanceRecResult = MessageConverter.DeSerializeCamelCase<AttendanceResponse>(result.Content);
 
-            if (attendanceRecResult != null && attendanceRecResult.Data != null)
+            if (attendanceRecResult != null && attendanceRecResult.Command == 523)
+            {
+                _logger.LogError($"Invalida requrest made to the server: Status 523. {targetDevice.HostName}: {DateTime.Now}. Maybe your request count is zero. Please ensure it is atleast 1.");
+            }
+            else if (attendanceRecResult != null && attendanceRecResult.Data != null )
             {
                 await this._channelMessageSender.SendMessagesToAzureServiceBus(attendanceRecResult);
                 // Update configuration 

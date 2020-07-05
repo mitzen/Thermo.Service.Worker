@@ -23,5 +23,6 @@ namespace Service.ThermoDataModel.Configuration
 
         public string CheckPointFileName { get; set; }
 
+        public bool NeedImage { get; set; }
     }
 }
