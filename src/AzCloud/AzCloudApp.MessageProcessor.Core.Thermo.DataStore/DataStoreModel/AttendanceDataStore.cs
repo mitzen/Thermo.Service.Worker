@@ -18,7 +18,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 
         public DateTime? Birth { get; set; }
 
-        public float BodyTemperature { get; set; }
+        public double BodyTemperature { get; set; }
 
         public string CertificateNumber { get; set; }
 

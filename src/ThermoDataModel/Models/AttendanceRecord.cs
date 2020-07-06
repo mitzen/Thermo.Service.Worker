@@ -34,7 +34,7 @@ namespace Service.ThermoDataModel.Models
         
         public DateTime? Birth { get; set; }
 
-        public float BodyTemperature { get; set; }
+        public double BodyTemperature { get; set; }
 
         public string CertificateNumber { get; set; }
 

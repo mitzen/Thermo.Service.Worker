@@ -10,11 +10,8 @@ using Service.ThermoDataModel;
 using Service.MessageBusServiceProvider.Queue;
 using Microsoft.Extensions.Configuration;
 using Service.MessageBusServiceProvider.AzBlob;
-using System.Reflection.Metadata;
-using Microsoft.Azure.ServiceBus;
 using Service.MessageBusServiceProvider.Imaging;
 using System.IO;
-using Microsoft.Azure.Amqp.Framing;
 using Service.MessageBusServiceProvider.IOUtil;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
@@ -63,6 +60,11 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 attendanceItem.BatchId = currentBatchId;
                 attendanceItem.Birth ??= DateTime.MinValue;
                 attendanceItem.TimeStamp ??= DateTime.MinValue;
+
+                if (double.IsNaN(attendanceItem.BodyTemperature))
+                    attendanceItem.BodyTemperature = 0d;
+
+                this._logger.LogInformation($"Temperature: {attendanceItem.BodyTemperature}");
 
                 if (!string.IsNullOrWhiteSpace(attendanceItem.Img))
                 {
