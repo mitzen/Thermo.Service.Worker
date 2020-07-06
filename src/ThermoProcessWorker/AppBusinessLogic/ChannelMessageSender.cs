@@ -62,9 +62,10 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 attendanceItem.TimeStamp ??= DateTime.MinValue;
 
                 if (double.IsNaN(attendanceItem.BodyTemperature))
+                {
                     attendanceItem.BodyTemperature = 0d;
-
-                this._logger.LogInformation($"Temperature: {attendanceItem.BodyTemperature}");
+                    this._logger.LogInformation($"Temperature is NaN setting it to : {attendanceItem.BodyTemperature}");
+                }
 
                 if (!string.IsNullOrWhiteSpace(attendanceItem.Img))
                 {
