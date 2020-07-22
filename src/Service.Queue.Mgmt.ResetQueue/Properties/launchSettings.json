@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Service.Queue.Mgmt.ResetQueue": {
+      "commandName": "Project",
+      "commandLineArgs": "Endpoint=sb://countryroad.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=vsdmXy5A9B2d9qeqLYRGrRVFcGFTzoZCkqI5QKB20Uk= countryroad/sqb-mmqt test.log"
+    }
+  }
+}

@@ -18,7 +18,7 @@ namespace Service.Queue.Mgmt.ResetQueue
             {
                 Console.WriteLine("Please provide endpoint connection string and target queue name.");
                 Console.WriteLine("For example : ");
-                Console.WriteLine("Endpoint=sb://devsbbank.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ZeoCedTJSaqVPAx8bHX998DVIYHtuG5g0OKlUkUFF9g= devsbqbank/$deadletterqueue test.log");
+                Console.WriteLine("Endpoint=sb://countryroad.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=vsdmXy5A9B2d9qeqLYRGrRVFcGFTzoZCkqI5QKB20Uk= countryroad/sqb-mmqt test.log");
                 Console.WriteLine("if you're using dlq, please append $deadletterqueue.");
                 return;
             }

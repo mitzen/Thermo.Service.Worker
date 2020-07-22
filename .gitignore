@@ -27,3 +27,10 @@ src/AzCloud/AzCloudApp.MessageProcessor.Function/bin/
 src/AzCloud/AzCloudApp.MessageProcessor.Function/obj/
 src/QuickTest/bin/
 src/QuickTest/obj/
+src/AzCloud/AzCloudApp.MessageProcessor.Function/Properties/PublishProfiles/
+src/Thermo.Web.WebApi/bin/
+src/Thermo.Web.WebApi/obj/
+src/Thermo.Web.WebApi/.vs/Thermo.Web.WebApi/v16/
+src/Thermo.Web.WebApi/.vs/Thermo.Web.WebApi/DesignTimeBuild/
+src/ThermoProcessWorker/Properties/PublishProfiles/
+src/AzCloud/AzCloudApp.Notification.Function/Properties/PublishProfiles/
