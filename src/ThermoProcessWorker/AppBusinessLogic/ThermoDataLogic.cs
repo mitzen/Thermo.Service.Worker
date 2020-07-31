@@ -11,6 +11,7 @@ using Service.MessageBusServiceProvider.CheckPointing;
 using System.Collections.Generic;
 using Service.MessageBusServiceProvider.Converters;
 using Microsoft.Azure.Amqp.Framing;
+using Service.ThermoDataModel.Requests;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {

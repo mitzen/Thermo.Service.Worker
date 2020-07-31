@@ -52,6 +52,18 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 
             return null;
         }
+
+        public virtual Task<int> DeleteUserAsync(DeleteUserRequest source)
+        {
+            var targetRecord = GetSingleUserAsync(source.Nid);
+
+            if (targetRecord == null)
+            {
+                this._thermoDataContext.Users.Remove(targetRecord);
+            }
+
+            return this._thermoDataContext.SaveChangesAsync();
+        }
     }
 }
 
