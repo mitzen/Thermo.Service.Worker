@@ -1,42 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Thermo.Web.WebApi.Model;
 
 namespace Thermo.Web.WebApi.Controllers
 {
-  //  [Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        //        private IUserService _userService;
-        //       private IMapper _mapper;
         private readonly AppSettings _appSettings;
 
         public UsersController(
-            //  IUserService userService,
-            //   IMapper mapper,
             IOptions<AppSettings> appSettings)
         {
-            // _userService = userService;
-            // _mapper = mapper;
             _appSettings = appSettings.Value;
-        }
-
-        [AllowAnonymous]
-        [HttpGet("test")]
-        public IActionResult Test()
-        {
-            return Ok("llalala");
         }
 
         [AllowAnonymous]
@@ -44,7 +28,6 @@ namespace Thermo.Web.WebApi.Controllers
         public IActionResult Authenticate([FromBody] AuthenticateModel model)
         {
             //var user = _userService.Authenticate(model.Username, model.Password);
-
             //if (user == null)
 
             var tokenHandler = new JwtSecurityTokenHandler();
