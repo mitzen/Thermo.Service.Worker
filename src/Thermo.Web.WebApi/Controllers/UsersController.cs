@@ -17,8 +17,7 @@ namespace Thermo.Web.WebApi.Controllers
     {
         private readonly AppSettings _appSettings;
 
-        public UsersController(
-            IOptions<AppSettings> appSettings)
+        public UsersController(IOptions<AppSettings> appSettings)
         {
             _appSettings = appSettings.Value;
         }
@@ -36,7 +35,8 @@ namespace Thermo.Web.WebApi.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, "jeremy")
+                    new Claim(ClaimTypes.Name, "jeremy"),
+                    new Claim(ClaimTypes.Role, "user")
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

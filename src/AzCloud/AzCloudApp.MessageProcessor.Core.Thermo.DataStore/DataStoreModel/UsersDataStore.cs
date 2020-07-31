@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 {
-    public class AttendanceDataStore
+    public class UsersDataStore
     {
         [Key]
         public long Nid { get; set; }
@@ -11,7 +11,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
         public string Guid { get; set; }
 
         public long Id { get; set; }
-      
+
         public string Address { get; set; }
 
         public int Age { get; set; }

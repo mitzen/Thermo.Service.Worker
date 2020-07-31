@@ -56,7 +56,7 @@ namespace Thermo.Web.WebApi
              {
                  OnTokenValidated = context =>
                  {
-                     System.Console.WriteLine(context.Principal.Identity.Name);
+                     Console.WriteLine(context.Principal.Identity.Name);
 
                      //var userService =context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                      //var userId = int.Parse(context.Principal.Identity.Name);
