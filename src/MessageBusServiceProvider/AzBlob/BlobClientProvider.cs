@@ -15,6 +15,7 @@ namespace Service.MessageBusServiceProvider.AzBlob
         private readonly ILogger<BlobClientProvider> _logger;
         private readonly BlobConfiguration _blobConfiguration;
         public const string BlobConfigurationKey = "BlobConfiguration";
+        private const string ImageContentType = "image/jpg";
 
         public BlobClientProvider(ILogger<BlobClientProvider> logger, IConfiguration configuration)
         {
@@ -33,11 +34,13 @@ namespace Service.MessageBusServiceProvider.AzBlob
             sasConstraints.Permissions = SharedAccessBlobPermissions.Write | SharedAccessBlobPermissions.Create;
 
             var blob = container.GetBlockBlobReference(Path.GetFileName(path));
-
+           
             var target = blob.Uri.ToString() + blob.GetSharedAccessSignature(sasConstraints);
             var cloudBlockBlob = new CloudBlockBlob(new Uri(target));
+
+            cloudBlockBlob.Properties.ContentType = ImageContentType;
             cloudBlockBlob.UploadFromFile(path);
-            
+
             return blob.Uri.ToString();
         }
     }
