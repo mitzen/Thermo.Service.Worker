@@ -1,11 +1,11 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Text;
 
-namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
+namespace Thermo.Web.WebApi.Model.UserModel
 {
-    public class UsersDataStore
+    public class UpdateUserRequest
     {
-        [Key]
         public int Nid { get; set; }
 
         public string FirstName { get; set; }
@@ -18,6 +18,5 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 
         public string NotificationToken { get; set; }
 
-        public DateTime? TimeStamp { get; set; }
     }
 }

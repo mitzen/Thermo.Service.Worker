@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Thermo.Web.WebApi.Model.UserModel
+namespace Service.ThermoDataModel.Models.Request
 {
-    public class NewUser
+    public class UserRequest
     {
         public string FirstName { get; set; }
 
@@ -15,5 +15,6 @@ namespace Thermo.Web.WebApi.Model.UserModel
         public string Password { get; set; }
 
         public string NotificationToken { get; set; }
+
     }
 }

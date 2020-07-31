@@ -1,11 +1,11 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Text;
 
-namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
+namespace Thermo.Web.WebApi.Model.SMTPModel
 {
-    public class SMTPSettingsDataStore
+    public class UpdateSMTPRequest
     {
-        [Key]
         public long Nid { get; set; }
 
         public string Name { get; set; }
@@ -17,8 +17,6 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
         public string Password { get; set; }
 
         public int Port { get; set; }
-
-        public DateTime? TimeStamp { get; set; }
 
     }
 }

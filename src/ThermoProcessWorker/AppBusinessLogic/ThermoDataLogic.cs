@@ -7,7 +7,6 @@ using RestSharp;
 using Service.ThermoProcessWorker.RestServices;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
-using Service.ThermoDataModel.Requests;
 using Service.MessageBusServiceProvider.CheckPointing;
 using System.Collections.Generic;
 using Service.MessageBusServiceProvider.Converters;

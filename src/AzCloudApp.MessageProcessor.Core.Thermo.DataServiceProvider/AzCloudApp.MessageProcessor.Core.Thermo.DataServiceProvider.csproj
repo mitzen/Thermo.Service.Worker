@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AzCloud\AzCloudApp.MessageProcessor.Core.Thermo.DataStore\AzCloudApp.MessageProcessor.Core.Thermo.DataStore.csproj" />
+    <ProjectReference Include="..\Thermo.Web.WebApi.Model\Thermo.Web.WebApi.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+</Project>

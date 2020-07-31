@@ -36,3 +36,7 @@ src/ThermoProcessWorker/Properties/PublishProfiles/
 src/AzCloud/AzCloudApp.Notification.Function/Properties/PublishProfiles/
 src/Thermo.Web.WebApi.Model/obj/
 src/Thermo.Web.WebApi.Model/bin/
+src/AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider/bin/
+src/AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider/obj/AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.csproj.nuget.dgspec.json
+src/AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider/obj/Debug/netstandard2.1/AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.assets.cache
+src/AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider/obj/
