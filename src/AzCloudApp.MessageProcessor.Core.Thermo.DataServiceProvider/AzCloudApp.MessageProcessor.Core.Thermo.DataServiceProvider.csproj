@@ -9,8 +9,4 @@
     <ProjectReference Include="..\Thermo.Web.WebApi.Model\Thermo.Web.WebApi.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
 </Project>

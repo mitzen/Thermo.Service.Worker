@@ -1,11 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
+namespace Thermo.Web.WebApi.Model.UserModel
 {
-    public class UsersDataStore
+    public class UserGetResponse
     {
-        [Key]
         public int Nid { get; set; }
 
         public string Username { get; set; }

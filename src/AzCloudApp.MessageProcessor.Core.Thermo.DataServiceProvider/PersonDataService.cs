@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Thermo.Web.WebApi.Model.UserModel;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Extensions;
 
 namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 {
@@ -17,9 +18,9 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             _thermoDataContext = thermoDataContext;
         }
 
-        public virtual Task<int> SaveUserAsync(NewUserRequest source)
+        public virtual Task<int> SaveUserAsync(UserUpdateRequest source)
         {
-            var targetRecord = GetSingleUserAsync(source.Nid);
+            var targetRecord = GetUser(source.Nid);
 
             if (targetRecord == null)
             {
@@ -33,7 +34,60 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             return this._thermoDataContext.SaveChangesAsync();
         }
 
-        public virtual UsersDataStore GetSingleUserAsync(int? source)
+        public virtual Task<int> RegisterUserAsync(UserNewRequest source)
+        {
+            var targetRecord = GetUser(source.Nid);
+
+            if (targetRecord == null)
+            {
+                this._thermoDataContext.Users.Add(source.ToModel());
+            }
+            else
+            {
+                return Task.FromResult(-1);
+            }
+
+            return this._thermoDataContext.SaveChangesAsync();
+        }
+
+        public virtual UserGetResponse GetUserByIdAsync(int? source)
+        {
+            if (source.HasValue)
+            {
+                var result = this._thermoDataContext.Users.Where(x => x.Nid == source.Value).FirstOrDefault();
+
+                return result.MapTo();
+            }
+
+            return null;
+        }
+
+        public virtual IEnumerable<UserGetResponse> GetUsersAsync()
+        {
+            return this._thermoDataContext.Users.MapTo().ToList();
+        }
+
+        public virtual Task<int> DeleteUserAsync(UserDeleteRequest source)
+        {
+            // if (source  null)
+            //     return -1;
+
+            var usersToRemove = DataTypeHelper.ConvertToIntegerArray(source?.TargetUsers);
+
+            foreach (var targetUserId in usersToRemove)
+            {
+                var targetRecord = GetUser(targetUserId);
+
+                if (targetRecord == null)
+                {
+                    _thermoDataContext.Users.Remove(targetRecord);
+                }
+            }
+
+            return _thermoDataContext.SaveChangesAsync();
+        }
+
+        private UsersDataStore GetUser(int? source)
         {
             if (source.HasValue)
             {
@@ -41,28 +95,6 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             }
 
             return null;
-        }
-
-        public virtual IEnumerable<UsersDataStore> GetUsersAsync(int? source)
-        {
-            if (source.HasValue)
-            {
-                return this._thermoDataContext.Users.Where(x => x.Nid == source.Value);
-            }
-
-            return null;
-        }
-
-        public virtual Task<int> DeleteUserAsync(DeleteUserRequest source)
-        {
-            var targetRecord = GetSingleUserAsync(source.Nid);
-
-            if (targetRecord == null)
-            {
-                this._thermoDataContext.Users.Remove(targetRecord);
-            }
-
-            return this._thermoDataContext.SaveChangesAsync();
         }
     }
 }

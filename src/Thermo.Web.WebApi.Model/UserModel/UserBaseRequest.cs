@@ -1,11 +1,17 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
+﻿namespace Thermo.Web.WebApi.Model.UserModel
 {
-    public class UsersDataStore
+    public class UserBaseResponse
     {
-        [Key]
+        public int Nid { get; set; }
+
+        public int Status { get; set; }
+
+        public string Message { get; set; }
+    }
+
+
+    public class UserBaseRequest
+    {
         public int Nid { get; set; }
 
         public string Username { get; set; }
@@ -17,7 +23,6 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
         public int CompanyId { get; set; }
 
         public string FirebaseToken { get; set; }
-
-        public DateTime? TimeStamp { get; set; }
     }
+
 }

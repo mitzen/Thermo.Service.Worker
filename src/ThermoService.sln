@@ -36,12 +36,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickTest", "QuickTest\QuickTest.csproj", "{4A12EB83-EDD0-4FBA-A125-8E8DB35D78E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureAdminWebApi", "AzureAdminWebApi", "{C73A534F-51AA-43F9-AE85-DC98C14C0CEE}"
+	ProjectSection(SolutionItems) = preProject
+		Thermo.Web.WebApi\appsettings.Development.json = Thermo.Web.WebApi\appsettings.Development.json
+		Thermo.Web.WebApi\appsettings.json = Thermo.Web.WebApi\appsettings.json
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thermo.Web.WebApi", "Thermo.Web.WebApi\Thermo.Web.WebApi.csproj", "{24858174-7284-4987-905B-76F9FD14C858}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thermo.Web.WebApi.Model", "Thermo.Web.WebApi.Model\Thermo.Web.WebApi.Model.csproj", "{358F1FC8-3DC9-45FA-B507-1B7FA2D0CF9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thermo.Web.WebApi.Model", "Thermo.Web.WebApi.Model\Thermo.Web.WebApi.Model.csproj", "{358F1FC8-3DC9-45FA-B507-1B7FA2D0CF9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider", "AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider\AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.csproj", "{DFE665E7-70C5-4DEE-AAF0-C19B0A38D042}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider", "AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider\AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.csproj", "{DFE665E7-70C5-4DEE-AAF0-C19B0A38D042}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

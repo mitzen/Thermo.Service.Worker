@@ -1,7 +1,7 @@
 ﻿namespace Thermo.Web.WebApi.Model.UserModel
 {
-    public class UserNewRequest : UserBaseRequest
+    public class UserUpdateRequest : UserBaseRequest
     {
-        
+      
     }
 }

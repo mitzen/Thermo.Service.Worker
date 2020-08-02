@@ -2,11 +2,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Thermo.Web.WebApi.Model;
+using Thermo.Web.WebApi.Model.UserModel;
 
 namespace Thermo.Web.WebApi.Controllers
 {
@@ -16,10 +19,13 @@ namespace Thermo.Web.WebApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly AppSettings _appSettings;
-
-        public UsersController(IOptions<AppSettings> appSettings)
+        private readonly ThermoDataContext _thermoDataContext;
+        private readonly PersonDataService _personDataService;
+        public UsersController(IOptions<AppSettings> appSettings, ThermoDataContext thermoDataContext)
         {
             _appSettings = appSettings.Value;
+            _thermoDataContext = thermoDataContext;
+            _personDataService = new PersonDataService(thermoDataContext);
         }
 
         [AllowAnonymous]
@@ -28,6 +34,8 @@ namespace Thermo.Web.WebApi.Controllers
         {
             //var user = _userService.Authenticate(model.Username, model.Password);
             //if (user == null)
+
+            var ps = new PersonDataService(_thermoDataContext);
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -57,20 +65,15 @@ namespace Thermo.Web.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterModel model)
-        {
-            // map model to entity
-            //var user = _mapper.Map<User>(model);
-
+        public IActionResult Register([FromBody] UserNewRequest model)
+        {   
             try
             {
-                // create user
-                //_userService.Create(user, model.Password);
-                return Ok();
+                var result = _personDataService.RegisterUserAsync(model);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
         }
@@ -78,46 +81,36 @@ namespace Thermo.Web.WebApi.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            //var users = _userService.GetAll();
-            //var model = _mapper.Map<IList<UserModel>>(users);
-            //return Ok(model);
-            return Ok();
+            var result = _personDataService.GetUsersAsync();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            //var user = _userService.GetById(id);
-            //var model = _mapper.Map<UserModel>(user);
-            //return Ok(model);
-            return Ok();
+            var result = _personDataService.GetUserByIdAsync(id);
+            return Ok(result);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] UpdateModel model)
-        {
-            // map model to entity and set id
-            //var user = _mapper.Map<User>(model);
-            //user.Id = id;
-
+        [HttpPut]
+        public IActionResult Update(int id, [FromBody] UserUpdateRequest model)
+        {   
             try
             {
-                // update user 
-                // _userService.Update(user, model.Password);
-                return Ok();
+                var result = _personDataService.SaveUserAsync(model);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpDelete()]
+        public IActionResult Delete(UserDeleteRequest deleteRequest)
         {
-            //   _userService.Delete(id);
-            return Ok();
+            var result = _personDataService.DeleteUserAsync(deleteRequest);
+            return Ok(result);
         }
     }
 }

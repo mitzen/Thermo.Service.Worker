@@ -11,6 +11,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
 using Thermo.Web.WebApi.Model;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider;
 
 namespace Thermo.Web.WebApi
 {
@@ -35,20 +36,22 @@ namespace Thermo.Web.WebApi
 
             services.AddControllers();
 
-            services.AddDbContext<ThermoDataContext>(opt => opt.UseSqlServer(configBuilder.GetConnectionString("ThermoDatabase")));
+            services.AddDbContext<ThermoDataContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("ThermoDatabase")));
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
+            //services.AddSingleton<IPersonDataService, PersonDataService>();
+
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
-            services.AddAuthentication(x =>
+            services.AddAuthentication(auth =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
          .AddJwtBearer(x =>
          {
