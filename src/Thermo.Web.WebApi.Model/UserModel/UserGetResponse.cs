@@ -12,7 +12,7 @@ namespace Thermo.Web.WebApi.Model.UserModel
 
         public string Email { get; set; }
 
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
 
         public string FirebaseToken { get; set; }
 

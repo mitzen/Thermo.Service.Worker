@@ -36,7 +36,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 
         public virtual Task<int> RegisterUserAsync(UserNewRequest source)
         {
-            var targetRecord = GetUser(source.Nid);
+            var targetRecord = GetUserByName(source.Username);
 
             if (targetRecord == null)
             {
@@ -71,6 +71,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
         {
             // if (source  null)
             //     return -1;
+            var isRecordDelete = false;
 
             var usersToRemove = DataTypeHelper.ConvertToIntegerArray(source?.TargetUsers);
 
@@ -78,13 +79,17 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             {
                 var targetRecord = GetUser(targetUserId);
 
-                if (targetRecord == null)
+                if (targetRecord != null)
                 {
+                    isRecordDelete = true;
                     _thermoDataContext.Users.Remove(targetRecord);
                 }
             }
 
-            return _thermoDataContext.SaveChangesAsync();
+            if (isRecordDelete)
+                return _thermoDataContext.SaveChangesAsync();
+            else
+                return null;
         }
 
         private UsersDataStore GetUser(int? source)
@@ -92,6 +97,16 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             if (source.HasValue)
             {
                 return this._thermoDataContext.Users.Where(x => x.Nid == source.Value).FirstOrDefault();
+            }
+
+            return null;
+        }
+
+        private UsersDataStore GetUserByName(string username)
+        {
+            if (username != null)
+            {
+                return this._thermoDataContext.Users.Where(x => x.Username == username).FirstOrDefault();
             }
 
             return null;

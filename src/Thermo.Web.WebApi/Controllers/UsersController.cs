@@ -82,18 +82,22 @@ namespace Thermo.Web.WebApi.Controllers
         public IActionResult GetAll()
         {
             var result = _personDataService.GetUsersAsync();
-            return Ok(result);
+            if (result != null)
+                return Ok(result);
+            return NotFound();
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
             var result = _personDataService.GetUserByIdAsync(id);
-            return Ok(result);
+            if (result != null)
+                return Ok(result);
+            return NotFound();
         }
 
         [HttpPut]
-        public IActionResult Update(int id, [FromBody] UserUpdateRequest model)
+        public IActionResult Update([FromBody] UserUpdateRequest model)
         {   
             try
             {
@@ -110,7 +114,9 @@ namespace Thermo.Web.WebApi.Controllers
         public IActionResult Delete(UserDeleteRequest deleteRequest)
         {
             var result = _personDataService.DeleteUserAsync(deleteRequest);
-            return Ok(result);
+            if (result != null)
+                return Ok(result);
+            return NotFound();
         }
     }
 }
