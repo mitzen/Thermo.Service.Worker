@@ -15,9 +15,10 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Extensions
                 target.Email = source?.Email;
                 target.FirebaseToken = source?.FirebaseToken;
                 target.Nid = source.Nid;
-                target.Password = source.Password;
+                target.Password = source.Password.Trim();
                 target.TimeStamp = source.TimeStamp;
                 target.Username = source.Username;
+                target.Role = source.Role;
 
                 return target;
             }

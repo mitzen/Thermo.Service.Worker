@@ -18,6 +18,8 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 
         public string FirebaseToken { get; set; }
 
+        public string Role { get; set; }
+
         public DateTime? TimeStamp { get; set; }
     }
 }

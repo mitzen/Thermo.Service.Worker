@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.0" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AzCloud\AzCloudApp.MessageProcessor.Core.Thermo.DataStore\AzCloudApp.MessageProcessor.Core.Thermo.DataStore.csproj" />
     <ProjectReference Include="..\Thermo.Web.WebApi.Model\Thermo.Web.WebApi.Model.csproj" />
   </ItemGroup>
-
 </Project>

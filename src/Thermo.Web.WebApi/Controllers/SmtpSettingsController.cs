@@ -45,7 +45,7 @@ namespace Thermo.Web.WebApi.Controllers
             var result = _personDataService.GetAllSmtpSettings();
             if (result != null)
                 return Ok(result);
-            return NotFound();
+            return Ok();
         }
 
         [HttpGet("{id}")]
@@ -54,7 +54,7 @@ namespace Thermo.Web.WebApi.Controllers
             var result = _personDataService.GetSmtpSettingsByCompanyIdAsync(id);
             if (result != null)
                 return Ok(result);
-            return NotFound();
+            return Ok();
         }
 
         [HttpPut]
@@ -75,7 +75,7 @@ namespace Thermo.Web.WebApi.Controllers
         public async Task<IActionResult> Delete(SMTPDeleteRequest deleteRequest)
         {
             var result = await _personDataService.DeleteSmtpSettingsAsync(deleteRequest);
-            if (result != null)
+            if (result > 0)
                 return Ok(result);
             return NotFound();
         }

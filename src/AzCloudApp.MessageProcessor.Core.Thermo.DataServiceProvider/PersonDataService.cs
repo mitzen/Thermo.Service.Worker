@@ -17,6 +17,22 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
         {
             _thermoDataContext = thermoDataContext;
         }
+        public virtual UserGetResponse Authenticate(UserAuthenticateRequest source)
+        {
+            if (source != null && !string.IsNullOrWhiteSpace(source.Username) 
+                && !string.IsNullOrWhiteSpace(source.Password))
+            {
+                var userAuthorized = this._thermoDataContext.Users.Where(x => x.Username == source.Username).FirstOrDefault();
+
+                if (userAuthorized != null)
+                {
+                    if (EncryptionUtil.IsPasswordAMatch(source.Password.Trim(), userAuthorized.Password.Trim()))
+                        return userAuthorized.MapTo();
+                }
+            }
+
+            return null;
+        }
 
         public virtual Task<int> SaveUserAsync(UserUpdateRequest source)
         {
@@ -34,7 +50,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             return this._thermoDataContext.SaveChangesAsync();
         }
 
-        public virtual Task<int> RegisterUserAsync(UserNewRequest source)
+        public  virtual Task<int> RegisterUserAsync(UserNewRequest source)
         {
             var targetRecord = GetUserByName(source.Username);
 
@@ -69,8 +85,9 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 
         public virtual Task<int> DeleteUserAsync(UserDeleteRequest source)
         {
-            // if (source  null)
-            //     return -1;
+             if (source == null)
+                 return Task.FromResult(-1);
+            
             var isRecordDelete = false;
 
             var usersToRemove = DataTypeHelper.ConvertToIntegerArray(source?.TargetUsers);

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util;
 using Thermo.Web.WebApi.Model.SMTPModel;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Extensions;
-using Microsoft.Extensions.Options;
 using System;
 
 namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
@@ -69,9 +68,10 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 
         public virtual Task<int> DeleteSmtpSettingsAsync(SMTPDeleteRequest source)
         {
-            // if (source  null)
-            //     return -1;
             var isRecordDelete = false;
+
+            if (source == null)
+                 return Task.FromResult(-1);
 
             var usersToRemove = DataTypeHelper.ConvertToIntegerArray(source?.TargetUsers);
 

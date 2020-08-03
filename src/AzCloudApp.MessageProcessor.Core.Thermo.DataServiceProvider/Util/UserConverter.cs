@@ -1,8 +1,4 @@
 ﻿using AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Thermo.Web.WebApi.Model.UserModel;
 
 namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util
@@ -17,6 +13,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util
             target.Nid = source.Nid;
             target.Password = source.Password;
             target.Username = source.Username;
+            target.Role = source.Role;
         }
 
         public static void UpateModel(ref UsersDataStore target, UserUpdateRequest source)
@@ -27,17 +24,19 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util
             target.Nid = source.Nid;
             target.Password = source.Password;
             target.Username = source.Username;
+            target.Role = source.Role;
         }
 
-        public static UsersDataStore ToModel(this UserNewRequest target)
+        public static UsersDataStore ToModel(this UserNewRequest source)
         {
-            var source = new UsersDataStore();
-            source.CompanyId = target.CompanyId;
-            source.Email = target.Email;
-            source.FirebaseToken = target.FirebaseToken;
-            source.Password = target.Password;
-            source.Username = target.Username;
-            return source;
+            var target = new UsersDataStore();
+            target.CompanyId = source.CompanyId;
+            target.Email = source.Email;
+            target.FirebaseToken = source.FirebaseToken;
+            target.Password = EncryptionUtil.Encrypt(source.Password);
+            target.Username = source.Username;
+            target.Role = source.Role;
+            return target;
         }
 
         public static UsersDataStore ToModel(this UserUpdateRequest target)
@@ -47,7 +46,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util
             source.Email = target.Email;
             source.FirebaseToken = target.FirebaseToken;
             source.Nid = target.Nid;
-            source.Password = target.Password;
+            source.Password = EncryptionUtil.Encrypt(target.Password);
             source.Username = target.Username;
             return source;
         }

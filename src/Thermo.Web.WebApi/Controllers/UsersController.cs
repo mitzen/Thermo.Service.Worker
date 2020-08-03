@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
 using Microsoft.AspNetCore.Authorization;
@@ -30,46 +31,49 @@ namespace Thermo.Web.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] AuthenticateModel model)
+        public IActionResult Authenticate([FromBody] UserAuthenticateRequest model)
         {
-            //var user = _userService.Authenticate(model.Username, model.Password);
-            //if (user == null)
+            if (model == null)
+                return BadRequest();
 
-            var ps = new PersonDataService(_thermoDataContext);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var user = _personDataService.Authenticate(model);
+            if (user != null)
             {
-                Subject = new ClaimsIdentity(new Claim[]
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    new Claim(ClaimTypes.Name, "jeremy"),
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                    new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Role, "user")
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
+                    }),
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(token);
 
-            // return basic user info and authentication token
-            return Ok(new
-            {
-                Id = "user.Id",
-                Username = "user.Username",
-                FirstName = "user.FirstName",
-                LastName = "user.LastName",
-                Token = tokenString
-            });
+                // return basic user info and authentication token
+                return Ok(new
+                {
+                    Id = user.Nid,
+                    Username = user.Username,
+                    Email = user.Email,
+                    Token = tokenString
+                });
+            }
+
+            return NotFound();
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody] UserNewRequest model)
-        {   
+        public async Task<IActionResult> Register([FromBody] UserNewRequest model)
+        {
             try
             {
-                var result = _personDataService.RegisterUserAsync(model);
+                var result = await _personDataService.RegisterUserAsync(model);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -98,7 +102,7 @@ namespace Thermo.Web.WebApi.Controllers
 
         [HttpPut]
         public IActionResult Update([FromBody] UserUpdateRequest model)
-        {   
+        {
             try
             {
                 var result = _personDataService.SaveUserAsync(model);
@@ -111,10 +115,10 @@ namespace Thermo.Web.WebApi.Controllers
         }
 
         [HttpDelete()]
-        public IActionResult Delete(UserDeleteRequest deleteRequest)
+        public async Task<IActionResult> Delete(UserDeleteRequest deleteRequest)
         {
-            var result = _personDataService.DeleteUserAsync(deleteRequest);
-            if (result != null)
+            var result = await _personDataService.DeleteUserAsync(deleteRequest);
+            if (result > 0)
                 return Ok(result);
             return NotFound();
         }
