@@ -7,21 +7,23 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util
     {
         public static void UpateModel(ref SMTPSettingsDataStore source, NewSMTPRequest target)
         {
-            source.Host = target.Host;
-            source.Name = target.Name;
-            source.Username = target.Username;
+            source.Company = target.Company;
+            source.FromEmail = target.FromEmail;
+            source.HostName = target.HostName;
             source.Password = target.Password;
             source.Port = target.Port;
+            source.Username = target.Username;
         }
 
         public static SMTPSettingsDataStore ToModel(this NewSMTPRequest target)
         {
             var source = new SMTPSettingsDataStore();
-            source.Host = target.Host;
-            source.Name = target.Name;
-            source.Username = target.Username;
+            source.Company = target.Company;
+            source.FromEmail = target.FromEmail;
+            source.HostName = target.HostName;
             source.Password = target.Password;
             source.Port = target.Port;
+            source.Username = target.Username;
             return source;
         }
     }

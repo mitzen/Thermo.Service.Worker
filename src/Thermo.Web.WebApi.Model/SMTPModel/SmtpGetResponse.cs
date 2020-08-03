@@ -1,12 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
+﻿namespace Thermo.Web.WebApi.Model.SMTPModel
 {
-    public class SMTPSettingsDataStore
+    public class SmtpGetResponse
     {
-        [Key]
-        public int Nid { get; set; }
+        public long Nid { get; set; }
 
         public int Company { get; set; }
 

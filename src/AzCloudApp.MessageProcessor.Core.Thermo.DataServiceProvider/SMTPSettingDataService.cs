@@ -5,6 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util;
 using Thermo.Web.WebApi.Model.SMTPModel;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Extensions;
+using Microsoft.Extensions.Options;
+using System;
 
 namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 {
@@ -17,9 +20,11 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             _thermoDataContext = thermoDataContext;
         }
 
-        public virtual Task<int> SaveSMTPAsync(NewSMTPRequest source)
+        public virtual Task<int> SaveSmtpSettings(NewSMTPRequest source)
         {
-            var targetRecord = GetSingleSMTPSettingsAsync(source.Name);
+            ValidateOptions(source);
+
+            var targetRecord = GetSmtpSettingsBy(source.Company);
 
             if (targetRecord == null)
             {
@@ -33,7 +38,61 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             return this._thermoDataContext.SaveChangesAsync();
         }
 
-        public virtual SMTPSettingsDataStore GetSingleSMTPSettingsAsync(int? source)
+        private void ValidateOptions(NewSMTPRequest source)
+        {
+            if (source == null)
+                throw new ArgumentNullException();
+            if (source.Company == 0)
+                throw new ArgumentException("Company is required");
+            if (source.Port == 0)
+                throw new ArgumentException("Port  is required");
+            if (string.IsNullOrWhiteSpace(source.HostName))
+                throw new ArgumentException("Hostname is required");
+        }
+
+        public virtual SmtpGetResponse GetSmtpSettingsByCompanyIdAsync(int? source)
+        {
+            if (source.HasValue)
+            {
+                var result = this._thermoDataContext.SMTPSettings.Where(x => x.Company == source.Value).FirstOrDefault();
+
+                return result.MapTo();
+            }
+
+            return null;
+        }
+
+        public virtual IEnumerable<SmtpGetResponse> GetAllSmtpSettings()
+        {
+            return this._thermoDataContext.SMTPSettings.MapTo().ToList();
+        }
+
+        public virtual Task<int> DeleteSmtpSettingsAsync(SMTPDeleteRequest source)
+        {
+            // if (source  null)
+            //     return -1;
+            var isRecordDelete = false;
+
+            var usersToRemove = DataTypeHelper.ConvertToIntegerArray(source?.TargetUsers);
+
+            foreach (var targetUserId in usersToRemove)
+            {
+                var targetRecord = GetSmtpById(targetUserId);
+
+                if (targetRecord != null)
+                {
+                    isRecordDelete = true;
+                    _thermoDataContext.SMTPSettings.Remove(targetRecord);
+                }
+            }
+
+            if (isRecordDelete)
+                return _thermoDataContext.SaveChangesAsync();
+            else
+                return null;
+        }
+
+        private SMTPSettingsDataStore GetSmtpById(long? source)
         {
             if (source.HasValue)
             {
@@ -43,40 +102,14 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             return null;
         }
 
-        public virtual SMTPSettingsDataStore GetSingleSMTPSettingsAsync(string source)
+        private SMTPSettingsDataStore GetSmtpSettingsBy(int? username)
         {
-            if (source != null)
+            if (username.HasValue)
             {
-                return this._thermoDataContext.SMTPSettings.Where(x => x.Name == source).FirstOrDefault();
+                return this._thermoDataContext.SMTPSettings.Where(x => x.Company == username.Value).FirstOrDefault();
             }
 
             return null;
-        }
-        public virtual SMTPSettingsDataStore GetSingleSMTPSettingsByIdAsync(int? source)
-        {
-            if (source.HasValue)
-            {
-                return this._thermoDataContext.SMTPSettings.Where(x => x.Nid == source.Value).FirstOrDefault();
-            }
-
-            return null;
-        }
-
-        public virtual IEnumerable<SMTPSettingsDataStore> GetSingleSMTPSettings()
-        {
-            return this._thermoDataContext.SMTPSettings;
-        }
-
-        public virtual Task<int> DeleteSMTPSettingsAsync(SMTPDeleteRequest source)
-        {
-            var targetRecord = GetSingleSMTPSettingsByIdAsync(source.Nid);
-
-            if (targetRecord == null)
-            {
-                this._thermoDataContext.SMTPSettings.Remove(targetRecord);
-            }
-
-            return this._thermoDataContext.SaveChangesAsync();
         }
     }
 }

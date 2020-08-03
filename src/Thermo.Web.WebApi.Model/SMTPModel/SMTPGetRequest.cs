@@ -1,6 +1,6 @@
 ﻿namespace Thermo.Web.WebApi.Model.SMTPModel
 {
-    public class SMTPListRequest
+    public class SMTPGetRequest
     {
         public string Filter { get; set; }
 

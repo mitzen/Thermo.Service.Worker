@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider;
+using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Thermo.Web.WebApi.Model;
+using Thermo.Web.WebApi.Model.SMTPModel;
 
 namespace Thermo.Web.WebApi.Controllers
 {
@@ -13,61 +15,69 @@ namespace Thermo.Web.WebApi.Controllers
     [Route("[controller]")]
     public class SmtpSettingsController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
+        private readonly AppSettings _appSettings;
+        private readonly ThermoDataContext _thermoDataContext;
+        private readonly SMTPSettingDataService _personDataService;
+        public SmtpSettingsController(IOptions<AppSettings> appSettings, ThermoDataContext thermoDataContext)
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+            _appSettings = appSettings.Value;
+            _thermoDataContext = thermoDataContext;
+            _personDataService = new SMTPSettingDataService(thermoDataContext);
+        }
 
-        private readonly ILogger<SmtpSettingsController> _logger;
-
-        public SmtpSettingsController(ILogger<SmtpSettingsController> logger)
+        [HttpPost]
+        public async Task<IActionResult> CreateNewSmtpSetting([FromBody] NewSMTPRequest model)
         {
-            _logger = logger;
+            try
+            {
+                var result = await _personDataService.SaveSmtpSettings(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            //var users = _userService.GetAll();
-            //var model = _mapper.Map<IList<UserModel>>(users);
-            //return Ok(model);
-            return Ok();
+            var result = _personDataService.GetAllSmtpSettings();
+            if (result != null)
+                return Ok(result);
+            return NotFound();
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            //var user = _userService.GetById(id);
-            //var model = _mapper.Map<UserModel>(user);
-            //return Ok(model);
-            return Ok();
+            var result = _personDataService.GetSmtpSettingsByCompanyIdAsync(id);
+            if (result != null)
+                return Ok(result);
+            return NotFound();
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] UpdateModel model)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] NewSMTPRequest model)
         {
-            // map model to entity and set id
-            //var user = _mapper.Map<User>(model);
-            //user.Id = id;
-
             try
             {
-                // update user 
-                // _userService.Update(user, model.Password);
-                return Ok();
+                var result = await _personDataService.SaveSmtpSettings(model);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpDelete()]
+        public async Task<IActionResult> Delete(SMTPDeleteRequest deleteRequest)
         {
-            //   _userService.Delete(id);
-            return Ok();
+            var result = await _personDataService.DeleteSmtpSettingsAsync(deleteRequest);
+            if (result != null)
+                return Ok(result);
+            return NotFound();
         }
     }
 }
