@@ -34,23 +34,20 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             return null;
         }
 
-        public virtual Task<int> SaveUserAsync(UserUpdateRequest source)
+        public virtual Task<int> UpdateUserAsync(UserUpdateRequest source)
         {
-            var targetRecord = GetUser(source.Nid);
+            var targetRecord = GetUserByName(source.Username);
 
-            if (targetRecord == null)
-            {
-                this._thermoDataContext.Users.Add(source.ToModel());
-            }
-            else
+            if (targetRecord != null)
             {
                 UserConverter.UpateModel(ref targetRecord, source);
+                return this._thermoDataContext.SaveChangesAsync();
             }
 
-            return this._thermoDataContext.SaveChangesAsync();
+            return Task.FromResult(-1);
         }
 
-        public  virtual Task<int> RegisterUserAsync(UserNewRequest source)
+        public virtual Task<int> RegisterUserAsync(UserNewRequest source)
         {
             var targetRecord = GetUserByName(source.Username);
 
@@ -94,7 +91,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 
             foreach (var targetUserId in usersToRemove)
             {
-                var targetRecord = GetUser(targetUserId);
+                var targetRecord = GetUserByIdRaw(targetUserId);
 
                 if (targetRecord != null)
                 {
@@ -106,10 +103,10 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             if (isRecordDelete)
                 return _thermoDataContext.SaveChangesAsync();
             else
-                return null;
+                return Task.FromResult(-1);
         }
 
-        private UsersDataStore GetUser(int? source)
+        private UsersDataStore GetUserByIdRaw(int? source)
         {
             if (source.HasValue)
             {
@@ -121,7 +118,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 
         private UsersDataStore GetUserByName(string username)
         {
-            if (username != null)
+            if (!string.IsNullOrWhiteSpace(username))
             {
                 return this._thermoDataContext.Users.Where(x => x.Username == username).FirstOrDefault();
             }

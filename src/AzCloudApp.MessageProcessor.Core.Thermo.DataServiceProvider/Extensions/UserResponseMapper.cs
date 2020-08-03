@@ -12,12 +12,12 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Extensions
             {
                 var target = new UserGetResponse();
                 target.CompanyId = source.CompanyId;
-                target.Email = source?.Email;
+                target.Email = source?.Email.Trim();
                 target.FirebaseToken = source?.FirebaseToken;
                 target.Nid = source.Nid;
                 target.Password = source.Password.Trim();
                 target.TimeStamp = source.TimeStamp;
-                target.Username = source.Username;
+                target.Username = source.Username.Trim();
                 target.Role = source.Role;
 
                 return target;

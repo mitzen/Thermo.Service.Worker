@@ -10,7 +10,6 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util
             target.CompanyId = source.CompanyId;
             target.Email = source.Email;
             target.FirebaseToken = source.FirebaseToken;
-            target.Nid = source.Nid;
             target.Password = source.Password;
             target.Username = source.Username;
             target.Role = source.Role;
@@ -21,8 +20,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Util
             target.CompanyId = source.CompanyId;
             target.Email = source.Email;
             target.FirebaseToken = source.FirebaseToken;
-            target.Nid = source.Nid;
-            target.Password = source.Password;
+            target.Password = EncryptionUtil.Encrypt(source.Password);
             target.Username = source.Username;
             target.Role = source.Role;
         }

@@ -101,17 +101,21 @@ namespace Thermo.Web.WebApi.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update([FromBody] UserUpdateRequest model)
+        public async Task<IActionResult> Update([FromBody] UserUpdateRequest model)
         {
             try
             {
-                var result = _personDataService.SaveUserAsync(model);
-                return Ok(result);
+                var result = await _personDataService.UpdateUserAsync(model);
+                if (result > 0)
+                    return Ok(result);
+              
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
+              
+            return BadRequest();
         }
 
         [HttpDelete()]
