@@ -2,6 +2,6 @@
 {
     public class SMTPDeleteRequest
     {
-        public string TargetUsers { get; set; }
+        public string Targets { get; set; }
     }
 }

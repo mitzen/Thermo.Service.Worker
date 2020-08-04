@@ -17,12 +17,12 @@ namespace Thermo.Web.WebApi.Controllers
     {
         private readonly AppSettings _appSettings;
         private readonly ThermoDataContext _thermoDataContext;
-        private readonly SMTPSettingDataService _personDataService;
+        private readonly SMTPSettingDataService _smtpDataService;
         public SmtpSettingsController(IOptions<AppSettings> appSettings, ThermoDataContext thermoDataContext)
         {
             _appSettings = appSettings.Value;
             _thermoDataContext = thermoDataContext;
-            _personDataService = new SMTPSettingDataService(thermoDataContext);
+            _smtpDataService = new SMTPSettingDataService(thermoDataContext);
         }
 
         [HttpPost]
@@ -30,8 +30,11 @@ namespace Thermo.Web.WebApi.Controllers
         {
             try
             {
-                var result = await _personDataService.SaveSmtpSettings(model);
-                return Ok(result);
+                var result = await _smtpDataService.SaveSmtpSettings(model);
+                if (result > 0)
+                    return Ok(result);
+
+                return BadRequest();
             }
             catch (Exception ex)
             {
@@ -42,7 +45,7 @@ namespace Thermo.Web.WebApi.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var result = _personDataService.GetAllSmtpSettings();
+            var result = _smtpDataService.GetAllSmtpSettings();
             if (result != null)
                 return Ok(result);
             return Ok();
@@ -51,10 +54,10 @@ namespace Thermo.Web.WebApi.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var result = _personDataService.GetSmtpSettingsByCompanyIdAsync(id);
+            var result = _smtpDataService.GetSmtpSettingsByCompanyIdAsync(id);
             if (result != null)
                 return Ok(result);
-            return Ok();
+            return BadRequest();
         }
 
         [HttpPut]
@@ -62,8 +65,12 @@ namespace Thermo.Web.WebApi.Controllers
         {
             try
             {
-                var result = await _personDataService.SaveSmtpSettings(model);
-                return Ok(result);
+                var result = await _smtpDataService.UpdateSmtpSettings(model);
+                
+                if (result > 0)
+                    return Ok(result);
+
+                return BadRequest();
             }
             catch (Exception ex)
             {
@@ -74,7 +81,7 @@ namespace Thermo.Web.WebApi.Controllers
         [HttpDelete()]
         public async Task<IActionResult> Delete(SMTPDeleteRequest deleteRequest)
         {
-            var result = await _personDataService.DeleteSmtpSettingsAsync(deleteRequest);
+            var result = await _smtpDataService.DeleteSmtpSettingsAsync(deleteRequest);
             if (result > 0)
                 return Ok(result);
             return NotFound();

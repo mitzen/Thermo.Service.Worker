@@ -23,18 +23,31 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
         {
             ValidateOptions(source);
 
-            var targetRecord = GetSmtpSettingsBy(source.Company);
+            var targetRecord = GetSmtpSettingsByCompanyId(source.Company);
 
             if (targetRecord == null)
             {
                 this._thermoDataContext.SMTPSettings.Add(source.ToModel());
-            }
-            else
-            {
-                SMTPSettingsConverter.UpateModel(ref targetRecord, source);
+                return this._thermoDataContext.SaveChangesAsync();
             }
 
-            return this._thermoDataContext.SaveChangesAsync();
+            return Task.FromResult(-1);
+
+        }
+
+        public virtual Task<int> UpdateSmtpSettings(NewSMTPRequest source)
+        {
+            ValidateOptions(source);
+
+            var targetRecord = GetSmtpSettingsByCompanyId(source.Company);
+
+            if (targetRecord != null)
+            {
+                SMTPSettingsConverter.UpateModel(ref targetRecord, source);
+                return this._thermoDataContext.SaveChangesAsync();
+            }
+
+            return Task.FromResult(-1);
         }
 
         private void ValidateOptions(NewSMTPRequest source)
@@ -73,7 +86,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             if (source == null)
                  return Task.FromResult(-1);
 
-            var usersToRemove = DataTypeHelper.ConvertToIntegerArray(source?.TargetUsers);
+            var usersToRemove = DataTypeHelper.ConvertToIntegerArray(source?.Targets);
 
             foreach (var targetUserId in usersToRemove)
             {
@@ -88,8 +101,8 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 
             if (isRecordDelete)
                 return _thermoDataContext.SaveChangesAsync();
-            else
-                return null;
+             
+            return Task.FromResult(-1);
         }
 
         private SMTPSettingsDataStore GetSmtpById(long? source)
@@ -102,7 +115,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             return null;
         }
 
-        private SMTPSettingsDataStore GetSmtpSettingsBy(int? username)
+        private SMTPSettingsDataStore GetSmtpSettingsByCompanyId(int? username)
         {
             if (username.HasValue)
             {

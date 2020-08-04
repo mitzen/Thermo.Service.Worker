@@ -19,6 +19,8 @@ namespace Thermo.Web.WebApi.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
+        private const string DefaultUserRole = "user";
+        private const int DefaultTokenExpirationDays = 7;
         private readonly AppSettings _appSettings;
         private readonly ThermoDataContext _thermoDataContext;
         private readonly PersonDataService _personDataService;
@@ -45,10 +47,10 @@ namespace Thermo.Web.WebApi.Controllers
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Role, "user")
+                        new Claim(ClaimTypes.Name, user.Username),
+                        new Claim(ClaimTypes.Role, (user.Role ?? DefaultUserRole))
                     }),
-                    Expires = DateTime.UtcNow.AddDays(7),
+                    Expires = DateTime.UtcNow.AddDays(DefaultTokenExpirationDays),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -60,6 +62,7 @@ namespace Thermo.Web.WebApi.Controllers
                     Id = user.Nid,
                     Username = user.Username,
                     Email = user.Email,
+                    Role = user.Role,
                     Token = tokenString
                 });
             }
@@ -74,12 +77,15 @@ namespace Thermo.Web.WebApi.Controllers
             try
             {
                 var result = await _personDataService.RegisterUserAsync(model);
-                return Ok(result);
+                if (result > 0)
+                    return Ok(result);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
+
+            return BadRequest();
         }
 
         [HttpGet]
