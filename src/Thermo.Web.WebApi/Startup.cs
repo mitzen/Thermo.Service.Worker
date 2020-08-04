@@ -11,7 +11,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
 using Thermo.Web.WebApi.Model;
-using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider;
 
 namespace Thermo.Web.WebApi
 {
