@@ -83,6 +83,9 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
                     this._logger.LogInformation($"Saving images: {attendanceItem.Id} to {targetImagePath} to cloud path : {_blobConfiguration.StorageEndpoint}/{_blobConfiguration.ContainerName} : {DateTime.Now}");
 
+                    // Removeing image file / 
+                    File.Delete(targetImagePath);
+
                 }
 
                 var messgeInstance = MessageConverter.Serialize(attendanceItem);
