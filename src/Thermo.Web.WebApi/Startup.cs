@@ -11,6 +11,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Thermo.Web.WebApi.Model;
 using System.Linq;
+using System;
+using Thermo.Web.WebApi.Util;
 
 namespace Thermo.Web.WebApi
 {
@@ -19,6 +21,7 @@ namespace Thermo.Web.WebApi
         private const string ThermoDatabaseContext = "ThermoDatabase";
         private const string UnAuthorizedTokenValidation = "Unauthorized";
         private const string AppSettingConfigurationName = "AppSettings";
+        private const string ExpiryClaimDefinition = "exp";
 
         public Startup(IConfiguration configuration)
         {
@@ -61,9 +64,11 @@ namespace Thermo.Web.WebApi
                  OnTokenValidated = context =>
                  {
                      var userIdentity = context.Principal.Identity.Name;
-
+                     var exp = ClaimUtil.GetExpiryClaimExpiryDate(context.Principal.Claims.Where(x => x.Type == ExpiryClaimDefinition).FirstOrDefault().Value);
+                    
                      var connectionString = Configuration.GetConnectionString(ThermoDatabaseContext);
-                     var isUserValid = IsUserAuthorized(userIdentity, connectionString);
+                     
+                     var isUserValid = IsUserAuthorized(userIdentity, connectionString, exp);
 
                      if (!isUserValid)
                        context.Fail(UnAuthorizedTokenValidation);
@@ -83,10 +88,16 @@ namespace Thermo.Web.WebApi
          });
         }
 
-        private static bool IsUserAuthorized(string userIdentity, string connection)
+        private static bool IsUserAuthorized(string userIdentity, string connection, DateTime? offset)
         {
+            // Check token expiry 
+            if (offset == null || offset < DateTime.Now)
+                return false; 
+
             var optionsBuilder = new DbContextOptionsBuilder<ThermoDataContext>();
             optionsBuilder.UseSqlServer(connection);
+
+            // Query the user to see if they are legi users
 
             var themorDataSource = new ThermoDataContext(optionsBuilder.Options);
             var userInDataStore = themorDataSource.Users.Where(x => x.Username == userIdentity).FirstOrDefault();
