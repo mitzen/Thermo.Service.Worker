@@ -9,7 +9,7 @@ using AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.Extensions;
 
 namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
 {
-    public class PersonDataService
+    public class PersonDataService : IPersonDataService
     {
         private readonly ThermoDataContext _thermoDataContext;
 
@@ -54,13 +54,13 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             if (targetRecord == null)
             {
                 this._thermoDataContext.Users.Add(source.ToModel());
+                return this._thermoDataContext.SaveChangesAsync();
             }
             else
             {
                 return Task.FromResult(-1);
             }
 
-            return this._thermoDataContext.SaveChangesAsync();
         }
 
         public virtual UserGetResponse GetUserByIdAsync(int? source)
@@ -116,7 +116,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider
             return null;
         }
 
-        private UsersDataStore GetUserByName(string username)
+        public UsersDataStore GetUserByName(string username)
         {
             if (!string.IsNullOrWhiteSpace(username))
             {

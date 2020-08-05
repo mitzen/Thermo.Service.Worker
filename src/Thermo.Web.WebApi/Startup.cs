@@ -9,13 +9,17 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System;
 using Thermo.Web.WebApi.Model;
+using System.Linq;
 
 namespace Thermo.Web.WebApi
 {
     public class Startup
     {
+        private const string ThermoDatabaseContext = "ThermoDatabase";
+        private const string UnAuthorizedTokenValidation = "Unauthorized";
+        private const string AppSettingConfigurationName = "AppSettings";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -35,13 +39,11 @@ namespace Thermo.Web.WebApi
 
             services.AddControllers();
 
-            services.AddDbContext<ThermoDataContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("ThermoDatabase")));
+            services.AddDbContext<ThermoDataContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString(ThermoDatabaseContext)));
 
             // configure strongly typed settings objects
-            var appSettingsSection = Configuration.GetSection("AppSettings");
+            var appSettingsSection = Configuration.GetSection(AppSettingConfigurationName);
             services.Configure<AppSettings>(appSettingsSection);
-
-            //services.AddSingleton<IPersonDataService, PersonDataService>();
 
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
@@ -52,29 +54,26 @@ namespace Thermo.Web.WebApi
                 auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-         .AddJwtBearer(x =>
+         .AddJwtBearer(jwtOptions =>
          {
-             x.Events = new JwtBearerEvents
+             jwtOptions.Events = new JwtBearerEvents
              {
                  OnTokenValidated = context =>
                  {
-                     Console.WriteLine(context.Principal.Identity.Name);
+                     var userIdentity = context.Principal.Identity.Name;
 
-                     //var userService =context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                     //var userId = int.Parse(context.Principal.Identity.Name);
-                     //var user = userService.GetById(userId);
-                     //if (user == null)
-                     //{
-                     //       // return unauthorized if user no longer exists
-                     //       context.Fail("Unauthorized");
-                     //}
+                     var connectionString = Configuration.GetConnectionString(ThermoDatabaseContext);
+                     var isUserValid = IsUserAuthorized(userIdentity, connectionString);
+
+                     if (!isUserValid)
+                       context.Fail(UnAuthorizedTokenValidation);
 
                      return Task.CompletedTask;
                  }
              };
-             x.RequireHttpsMetadata = false;
-             x.SaveToken = true;
-             x.TokenValidationParameters = new TokenValidationParameters
+             jwtOptions.RequireHttpsMetadata = false;
+             jwtOptions.SaveToken = true;
+             jwtOptions.TokenValidationParameters = new TokenValidationParameters
              {
                  ValidateIssuerSigningKey = true,
                  IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -82,6 +81,17 @@ namespace Thermo.Web.WebApi
                  ValidateAudience = false
              };
          });
+        }
+
+        private static bool IsUserAuthorized(string userIdentity, string connection)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ThermoDataContext>();
+            optionsBuilder.UseSqlServer(connection);
+
+            var themorDataSource = new ThermoDataContext(optionsBuilder.Options);
+            var userInDataStore = themorDataSource.Users.Where(x => x.Username == userIdentity).FirstOrDefault();
+
+            return userInDataStore != null ? true : false;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

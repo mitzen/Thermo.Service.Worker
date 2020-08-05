@@ -49,6 +49,7 @@ namespace Thermo.Web.WebApi.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Username),
                         new Claim(ClaimTypes.Role, (user.Role ?? DefaultUserRole))
+
                     }),
                     Expires = DateTime.UtcNow.AddDays(DefaultTokenExpirationDays),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -63,6 +64,7 @@ namespace Thermo.Web.WebApi.Controllers
                     Username = user.Username,
                     Email = user.Email,
                     Role = user.Role,
+                    FirebaseToken = user.FirebaseToken,
                     Token = tokenString
                 });
             }
