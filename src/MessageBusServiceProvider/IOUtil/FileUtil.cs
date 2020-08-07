@@ -5,6 +5,11 @@ namespace Service.MessageBusServiceProvider.IOUtil
 {
     public class FileUtil
     {
+        public static bool CreateDirectoryFromFilePath(string fileNameAndPath)
+        {
+            return CreateLocalDirectoriesInPath(Path.GetDirectoryName(fileNameAndPath));
+        }
+
         public static bool CreateLocalDirectoriesInPath(string path)
         {
             var targetPath = Path.GetFullPath(path);
