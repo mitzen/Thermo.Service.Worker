@@ -61,9 +61,9 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
         public AttendanceDataStore GetAttendanceRecordAsync(AttendanceRecord source)
         {
-            if (source != null)
+            if (source != null && source.DeviceId != null)
             {
-                return this._thermoDataContext.AttendanceRecord.Where(x => x.Id == source.Id).FirstOrDefault();
+                return this._thermoDataContext.AttendanceRecord.Where(x => x.Id == source.Id && x.DeviceId.Trim() == source.DeviceId.Trim()).FirstOrDefault();
             }
 
             return null;
