@@ -7,13 +7,17 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
     {
         [Key]
         public long Nid { get; set; }
-        public string Name { get; set; }
+        public string CompanyName { get; set; }
 
-        public string Address { get; set; }
+        public string DeviceId { get; set; }
 
-        public string Email { get; set; }
+        public Boolean MaskRequired { get; set; }
 
-        public string Phone { get; set; }
+        public Double MaxTempThreshold { get; set; }
+
+        public Double MinTempThreshold { get; set; }
+
+        public int NoDaysPassDataShowInDays { get; set; }
 
         public DateTime? TimeStamp { get; set; }
 

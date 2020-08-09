@@ -51,7 +51,7 @@ namespace Thermo.Web.WebApi
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
+  
             services.AddAuthentication(auth =>
             {
                 auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -112,9 +112,7 @@ namespace Thermo.Web.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
-           // app.UseHttpsRedirection();
-
+         
             app.UseRouting();
 
             app.UseCors(x => x
@@ -124,6 +122,8 @@ namespace Thermo.Web.WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            // app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints => endpoints.MapControllers());
 

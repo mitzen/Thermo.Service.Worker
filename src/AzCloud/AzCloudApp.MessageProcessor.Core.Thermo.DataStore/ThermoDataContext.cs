@@ -15,6 +15,8 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore
 
         public virtual DbSet<CompanyDataStore> Company { get; set; }
 
+        public virtual DbSet<Company_DeviceDataStore> Company_Device { get; set; }
+
         public ThermoDataContext(DbContextOptions<ThermoDataContext> options) : base(options)
         {
 
