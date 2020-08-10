@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
-using System.Net;
-using System.Net.Mail;
-using System.Threading;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AzCloudApp.MessageProcessor.Core.DataProcessor
@@ -25,33 +26,29 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
         public async Task SendMailAsync(MailContentData record, ILogger logger)
         {
-            logger.LogInformation($"Sending email using stmp server {this._notificationConfiguration.SmtpServer} and port {this._notificationConfiguration.Port}");
+            logger.LogInformation($"Sending email.");
 
-            MailMessage message = new MailMessage();
-            message.From = new MailAddress(record.MailInfo.Sender);
+            var apiKey = _notificationConfiguration.ApiKey;
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress(record.MailInfo.Sender, record.MailInfo.SenderName);
+
+            List<EmailAddress> tos = new List<EmailAddress>();
 
             foreach (var recipient in record.MailInfo.Recipients)
             {
-                message.To.Add(new MailAddress(recipient));
+                tos.Add(new EmailAddress(recipient));
             }
 
-            message.Subject = record.MailInfo.Subject;
-            message.IsBodyHtml = true;
-            message.Body = record.MailInfo.Body;
+            var subject = record.MailInfo.Subject;
+            var htmlContent = record.MailInfo.ContentBody;
+            var displayRecipients = false;
 
-            SmtpClient smtpClient = new SmtpClient();
-            smtpClient.Port = this._notificationConfiguration.Port;
-            smtpClient.Host = this._notificationConfiguration.SmtpServer; //for gmail host  
-            smtpClient.EnableSsl = true;
-            smtpClient.UseDefaultCredentials = false;
-            smtpClient.Credentials = new NetworkCredential(
-                this._notificationConfiguration.Username,
-                this._notificationConfiguration.Password
-             );
-            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtpClient.Send(message);
+            var mssage = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos,
+                subject, string.Empty, htmlContent, false);
 
-            logger.LogInformation($"Mail message sent {message.Body}");
+            var response = await client.SendEmailAsync(mssage);
+
+            logger.LogInformation($"Mail message sent at {DateTime.Now}");
 
         }
     }
