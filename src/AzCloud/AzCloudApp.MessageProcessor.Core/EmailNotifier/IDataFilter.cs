@@ -2,7 +2,7 @@
 using Service.ThermoDataModel.Models;
 using System.Threading.Tasks;
 
-namespace AzCloudApp.MessageProcessor.Core.AttendanceDataRuleFilter
+namespace AzCloudApp.MessageProcessor.Core.EmailNotifier
 {
     public interface IDataFilter
     {

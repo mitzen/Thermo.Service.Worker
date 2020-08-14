@@ -6,7 +6,7 @@ using Service.ThermoDataModel.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace AzCloudApp.MessageProcessor.Core.AttendanceDataRuleFilter
+namespace AzCloudApp.MessageProcessor.Core.EmailNotifier
 {
     public class TemperatureDataFilter : IDataFilter
     {
@@ -32,8 +32,11 @@ namespace AzCloudApp.MessageProcessor.Core.AttendanceDataRuleFilter
             if (attendanceRecord.BodyTemperature > _temperatureFilterConfiguration.Max)
             {
                 _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
-                
-                var messgeInstance = MessageConverter.Serialize(attendanceRecord);
+
+                var mailData = new MailContentData();
+
+
+                var messgeInstance = MessageConverter.Serialize(mailData);
                 await _messageSender.SendMessagesAsync(messgeInstance);
                 // format template 
             }

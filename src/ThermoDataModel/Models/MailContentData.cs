@@ -5,7 +5,6 @@ namespace Service.ThermoDataModel.Models
     public class MailContentData
     {
         public MailInfo MailInfo { get; set; }
-        public AttendanceRecord AttendanceData { get; set; }
     }
 
     public class MailInfo

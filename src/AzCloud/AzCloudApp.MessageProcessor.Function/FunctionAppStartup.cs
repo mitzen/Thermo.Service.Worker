@@ -6,8 +6,8 @@ using AzCloudApp.MessageProcessor.Core.DataProcessor;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
 using AzCloudApp.MessageProcessor.Core.PersonelThemoDataHandler;
 using AzCloudApp.MessageProcessor.Core.MessageController;
-using AzCloudApp.MessageProcessor.Core.AttendanceDataRuleFilter;
 using Service.MessageBusServiceProvider.Queue;
+using AzCloudApp.MessageProcessor.Core.EmailNotifier;
 
 [assembly: FunctionsStartup(typeof(AzCloudApp.MessageProcessor.Function.FunctionAppStartup))]
 

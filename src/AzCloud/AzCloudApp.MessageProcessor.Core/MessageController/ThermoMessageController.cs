@@ -1,5 +1,5 @@
-﻿using AzCloudApp.MessageProcessor.Core.AttendanceDataRuleFilter;
-using AzCloudApp.MessageProcessor.Core.DataProcessor;
+﻿using AzCloudApp.MessageProcessor.Core.DataProcessor;
+using AzCloudApp.MessageProcessor.Core.EmailNotifier;
 using AzCloudApp.MessageProcessor.Core.Utils;
 using Microsoft.Extensions.Logging;
 using Service.ThermoDataModel;

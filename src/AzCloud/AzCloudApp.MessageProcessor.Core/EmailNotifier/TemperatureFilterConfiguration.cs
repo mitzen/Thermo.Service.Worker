@@ -1,4 +1,4 @@
-﻿namespace AzCloudApp.MessageProcessor.Core.AttendanceDataRuleFilter
+﻿namespace AzCloudApp.MessageProcessor.Core.EmailNotifier
 {
     public class TemperatureFilterConfiguration
     {
