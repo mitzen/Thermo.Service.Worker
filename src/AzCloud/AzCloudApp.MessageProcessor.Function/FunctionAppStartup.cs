@@ -51,7 +51,7 @@ namespace AzCloudApp.MessageProcessor.Function
             builder.Services.AddTransient<IEmailAlertRecipientDataProcessor, EmailAlertRecipientDataProcessor>();
 
             builder.Services.AddTransient<IMailContentParser, MailContentParser>();
-            builder.Services.AddTransient<IDataFilter, TemperatureDataFilter>();
+            builder.Services.AddTransient<IDataFilter, EmailTemperatureDataFilter>();
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<IDataStoreProcesor, DataStoreMessageProcessor>();
             builder.Services.AddTransient<INotificationProcessor, NotificationMessageProcessor>();

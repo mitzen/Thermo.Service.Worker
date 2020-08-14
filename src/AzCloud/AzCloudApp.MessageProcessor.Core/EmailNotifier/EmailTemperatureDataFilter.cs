@@ -1,7 +1,6 @@
 ﻿using AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Service.MessageBusServiceProvider.Converters;
 using Service.MessageBusServiceProvider.Queue;
 using Service.ThermoDataModel.Models;
@@ -10,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace AzCloudApp.MessageProcessor.Core.EmailNotifier
 {
-    public class TemperatureDataFilter : IDataFilter
+    public class EmailTemperatureDataFilter : IDataFilter
     {
         private const string AttendanceRecordNullMessage = "AttendanceRecord is null";
         private IQueueMessageSender _messageSender;
         private ServiceBusConfiguration _notificationServiceBusConfiguration;
         private TemperatureFilterConfiguration _temperatureFilterConfiguration;
         private readonly IMailContentParser _mailContentParser;
-        public TemperatureDataFilter(IOptions<ServiceBusConfiguration> notificationServiceBusOption,
+        public EmailTemperatureDataFilter(IOptions<ServiceBusConfiguration> notificationServiceBusOption,
             IOptions<TemperatureFilterConfiguration> temperatureOption,
             IMailContentParser mailContentParser)
         {
