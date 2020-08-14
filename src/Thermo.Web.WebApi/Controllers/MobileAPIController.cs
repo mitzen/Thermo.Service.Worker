@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Service.ThermoDataModel.Models;
 using Thermo.Web.WebApi.Model;
 using Thermo.Web.WebApi.Model.MobileAPIModel;
 
@@ -33,19 +36,34 @@ namespace Thermo.Web.WebApi.Controllers
                 DateTime d1 = DateTime.Parse(model.QueryDate.ToString());
                 DateTime d2 = DateTime.Parse(model.QueryDate.ToString()).AddDays(1);
                 var deList = (from d in db.Company_Device where d.CompanyId == model.CompanyId select new { d.DeviceId }).ToList();
+                var company = db.Company.Where(x => x.Nid == model.CompanyId).FirstOrDefault();
                 var devices = deList.Distinct();
-
                 foreach (var d in devices)
                 {
                     if (model.NextId == 0)
                     {
-                        var temp = db.AttendanceRecord.Where(x => x.DeviceId.Trim() == d.DeviceId.Trim() && x.TimeStamp > d1 && x.TimeStamp <= d2).OrderByDescending(x => x.TimeStamp).Take(50);
-                        records.AddRange(temp);
+                        if (company.MaskRequired)
+                        {
+                            var temp = (from x in db.AttendanceRecord
+                                        where x.DeviceId.Trim() == d.DeviceId.Trim() && x.TimeStamp > d1 && x.TimeStamp <= d2
+                                        && ((x.PersonId.Trim().Length > 0) ||
+                                        (x.PersonId.Trim().Length == 0 &&
+                                        (x.BodyTemperature > company.MaxTempThreshold || x.BodyTemperature < company.MinTempThreshold
+                                        || x.Respirator == 0)))
+                                        select x).OrderByDescending(x => x.TimeStamp).ToList();
+                            records.AddRange(temp);
+                        }
+                        else {
+                            var temp = (from x in db.AttendanceRecord
+                                        where x.DeviceId.Trim() == d.DeviceId.Trim() && x.TimeStamp > d1 && x.TimeStamp <= d2
+                                        && ((x.PersonId.Trim().Length > 0) ||
+                                        (x.PersonId.Trim().Length == 0 &&
+                                        (x.BodyTemperature > company.MaxTempThreshold || x.BodyTemperature < company.MinTempThreshold)))
+                                        select x).OrderByDescending(x => x.TimeStamp).ToList();
+                            records.AddRange(temp);
+                        }
                     }
-                    else {
-                        var temp = db.AttendanceRecord.Where(x => x.DeviceId.Trim() == d.DeviceId.Trim() && x.TimeStamp > d1 && x.TimeStamp <= d2 && x.Nid < model.NextId).OrderByDescending(x => x.TimeStamp).Take(50);
-                        records.AddRange(temp);
-                    }
+
                 }
                 return records;
             }

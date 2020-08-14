@@ -18,18 +18,17 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
     public class SendMailService : ISendMailService
     {
         private NotificationConfiguration _notificationConfiguration;
-
+        private readonly SendGridClient _client;
         public SendMailService(IOptions<NotificationConfiguration> notificationConfiguration)
         {
             _notificationConfiguration = notificationConfiguration.Value;
+            _client = new SendGridClient(_notificationConfiguration.ApiKey);
         }
 
         public async Task SendMailAsync(MailContentData record, ILogger logger)
         {
-            logger.LogInformation($"Sending email.");
+            logger.LogInformation($"Sending email. {DateTime.Now}");
 
-            var apiKey = _notificationConfiguration.ApiKey;
-            var client = new SendGridClient(apiKey);
             var from = new EmailAddress(record.MailInfo.Sender, record.MailInfo.SenderName);
 
             List<EmailAddress> tos = new List<EmailAddress>();
@@ -44,11 +43,11 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             var displayRecipients = false;
 
             var mssage = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos,
-                subject, string.Empty, htmlContent, false);
+                subject, string.Empty, htmlContent, displayRecipients);
 
-            var response = await client.SendEmailAsync(mssage);
+            var response = await _client.SendEmailAsync(mssage);
 
-            logger.LogInformation($"Mail message sent at {DateTime.Now}");
+            logger.LogInformation($"Mail message sent result {response.StatusCode} at {DateTime.Now}");
 
         }
     }

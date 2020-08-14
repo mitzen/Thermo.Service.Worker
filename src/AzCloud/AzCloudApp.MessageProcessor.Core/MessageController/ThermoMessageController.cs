@@ -1,4 +1,5 @@
-﻿using AzCloudApp.MessageProcessor.Core.DataProcessor;
+﻿using AzCloudApp.MessageProcessor.Core.AttendanceDataRuleFilter;
+using AzCloudApp.MessageProcessor.Core.DataProcessor;
 using AzCloudApp.MessageProcessor.Core.Utils;
 using Microsoft.Extensions.Logging;
 using Service.ThermoDataModel;
@@ -14,11 +15,13 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
         private ILogger _logger;
         private readonly IDataStoreProcesor _dataStoreProcesor;
         private readonly INotificationProcessor _notificationProcesor;
+        private readonly IDataFilter _dataFilter;
 
-        public ThermoMessageController(IDataStoreProcesor dataStoreProcesor, INotificationProcessor notificationProcesor)
+        public ThermoMessageController(IDataStoreProcesor dataStoreProcesor, INotificationProcessor notificationProcesor, IDataFilter dataFilter)
         {
             _dataStoreProcesor = dataStoreProcesor;
             _notificationProcesor = notificationProcesor;
+            _dataFilter = dataFilter;
         }
 
         public Task ProcessDataAsync(string sourceData, ILogger logger)
@@ -38,6 +41,8 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
                 }
                 else if (attendanceRecFromQueue.MessageType == CoreMessageType.AttendanceMessage)
                 {
+                    _dataFilter.ExecuteDataFiltering(attendanceRecFromQueue, logger);
+
                     var result = this._dataStoreProcesor.SaveAttendanceRecordAsync(attendanceRecFromQueue);
                     logger.LogInformation($" ********** Saved attendance record to database ********* : { attendanceRecFromQueue.Id } and record count  {result.Result}");
                 }
