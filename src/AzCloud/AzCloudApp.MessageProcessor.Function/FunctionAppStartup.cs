@@ -6,7 +6,8 @@ using AzCloudApp.MessageProcessor.Core.DataProcessor;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
 using AzCloudApp.MessageProcessor.Core.PersonelThemoDataHandler;
 using AzCloudApp.MessageProcessor.Core.MessageController;
-using Service.ThermoDataModel.Configuration;
+using AzCloudApp.MessageProcessor.Core.AttendanceDataRuleFilter;
+using Service.MessageBusServiceProvider.Queue;
 
 [assembly: FunctionsStartup(typeof(AzCloudApp.MessageProcessor.Function.FunctionAppStartup))]
 
@@ -26,17 +27,27 @@ namespace AzCloudApp.MessageProcessor.Function
             .Build();
 
             builder
-              .Services
-              .AddOptions<NotificationConfiguration>()
-              .Configure<IConfiguration>((messageResponderSettings, configuration) =>
-              {
-                  configuration
-                  .GetSection("Notification")
-                  .Bind(messageResponderSettings);
-              });
+             .Services
+             .AddOptions<TemperatureFilterConfiguration>()
+             .Configure<IConfiguration>((messageResponderSettings, configuration) =>
+             {
+                 configuration
+                 .GetSection("TemperatureFilter")
+                 .Bind(messageResponderSettings);
+             });
 
+            builder
+            .Services
+            .AddOptions<ServiceBusConfiguration>()
+            .Configure<IConfiguration>((messageResponderSettings, configuration) =>
+            {
+                configuration
+                .GetSection("NotificationServiceBusConfiguration")
+                .Bind(messageResponderSettings);
+            });
 
             builder.Services.AddLogging();
+            builder.Services.AddTransient<IDataFilter, TemperatureDataFilter>();
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<IDataStoreProcesor, DataStoreMessageProcessor>();
             builder.Services.AddTransient<INotificationProcessor, NotificationMessageProcessor>();

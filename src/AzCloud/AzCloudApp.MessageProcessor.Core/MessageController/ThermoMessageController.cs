@@ -12,16 +12,17 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
 {
     public class ThermoMessageController : IMessageController
     {
+        private const string TextMessageType = "TEST";
         private ILogger _logger;
         private readonly IDataStoreProcesor _dataStoreProcesor;
         private readonly INotificationProcessor _notificationProcesor;
-        private readonly IDataFilter _dataFilter;
+        private readonly IDataFilter _notificationTrigger;
 
-        public ThermoMessageController(IDataStoreProcesor dataStoreProcesor, INotificationProcessor notificationProcesor, IDataFilter dataFilter)
+        public ThermoMessageController(IDataStoreProcesor dataStoreProcesor, INotificationProcessor notificationProcesor, IDataFilter notificationTrigger)
         {
             _dataStoreProcesor = dataStoreProcesor;
             _notificationProcesor = notificationProcesor;
-            _dataFilter = dataFilter;
+            _notificationTrigger = notificationTrigger;
         }
 
         public Task ProcessDataAsync(string sourceData, ILogger logger)
@@ -34,14 +35,14 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
             {
                 var attendanceRecFromQueue = MessageConverter.GetMessageType<AttendanceRecord>(sourceData);
 
-                if (attendanceRecFromQueue.MessageType == "TEST")
+                if (attendanceRecFromQueue.MessageType == TextMessageType)
                 {
                     logger.LogInformation($"Test data detected : { attendanceRecFromQueue.Id }");
                     return Task.CompletedTask;
                 }
                 else if (attendanceRecFromQueue.MessageType == CoreMessageType.AttendanceMessage)
                 {
-                    _dataFilter.ExecuteDataFiltering(attendanceRecFromQueue, logger);
+                    _notificationTrigger.ExecuteDataFiltering(attendanceRecFromQueue, logger);
 
                     var result = this._dataStoreProcesor.SaveAttendanceRecordAsync(attendanceRecFromQueue);
                     logger.LogInformation($" ********** Saved attendance record to database ********* : { attendanceRecFromQueue.Id } and record count  {result.Result}");

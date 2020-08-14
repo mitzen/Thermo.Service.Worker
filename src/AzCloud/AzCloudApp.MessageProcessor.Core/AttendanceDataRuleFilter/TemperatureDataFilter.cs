@@ -10,29 +10,29 @@ namespace AzCloudApp.MessageProcessor.Core.AttendanceDataRuleFilter
 {
     public class TemperatureDataFilter : IDataFilter
     {
+        private const string AttendanceRecordNullMessage = "AttendanceRecord is null";
         private IQueueMessageSender _messageSender;
-        private NotificationServiceBusConfiguration _notificationServiceBusConfiguration;
-        private ServiceBusConfiguration _serviceBusConfiguration;
+        private ServiceBusConfiguration _notificationServiceBusConfiguration;
+        private TemperatureFilterConfiguration _temperatureFilterConfiguration;
 
-        public TemperatureDataFilter(IOptions<NotificationServiceBusConfiguration> options)
+        public TemperatureDataFilter(IOptions<ServiceBusConfiguration> notificationServiceBusOption,
+            IOptions<TemperatureFilterConfiguration> temperatureOption)
         {
-            _notificationServiceBusConfiguration = options.Value;
+            _notificationServiceBusConfiguration = notificationServiceBusOption.Value;
+            _temperatureFilterConfiguration = temperatureOption.Value;
         }
 
         public async Task ExecuteDataFiltering(AttendanceRecord attendanceRecord, ILogger logger)
         {
             if (attendanceRecord == null)
-                throw new ArgumentException("attendanceRecord is null");
+                throw new ArgumentException(AttendanceRecordNullMessage);
 
-            logger.LogInformation($"TemperatureDataFilter sbconnection : {_notificationServiceBusConfiguration.ServiceBusConnection}, queue : {_notificationServiceBusConfiguration.QueueName} ");
+            logger.LogInformation($"TemperatureDataFilter sbconnection : {_notificationServiceBusConfiguration.ServiceBusConnection}, queue : {_notificationServiceBusConfiguration.QueueName} and temperature max : {_temperatureFilterConfiguration.Max} ");
 
-            if (attendanceRecord.BodyTemperature > 37d)
+            if (attendanceRecord.BodyTemperature > _temperatureFilterConfiguration.Max)
             {
-                _serviceBusConfiguration = new ServiceBusConfiguration(_notificationServiceBusConfiguration.ServiceBusConnection, _notificationServiceBusConfiguration.QueueName);
-
-                _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_serviceBusConfiguration, logger);
+                _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
                 
-                // get from template and then write to queue 
                 var messgeInstance = MessageConverter.Serialize(attendanceRecord);
                 await _messageSender.SendMessagesAsync(messgeInstance);
                 // format template 
