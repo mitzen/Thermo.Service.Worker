@@ -1,4 +1,5 @@
 ﻿using AzCloudApp.MessageProcessor.Core.DataProcessor;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Service.ThermoDataModel.Models;
 using System;
@@ -17,17 +18,16 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
             _temperatureFilterConfiguration = temperatureOption.Value;
         }
 
-        public MailContentData CreateMailMessage(EmailInfoParameter infoParameter)
+        public MailContentData CreateMailMessage(EmailInfoParameter infoParameter, ILogger logger)
         {
             var mailData = new MailContentData();
             mailData.MailInfo = new MailInfo();
 
+            logger.LogInformation("Getting sender/recipient email address.");
             var recipients = GetEmailAddress(infoParameter.DeviceId);
 
             if (recipients == null)
                 throw new ArgumentNullException("Recipients is null, please ensure recipient are setup properly.");
-
-            string message = ApplyTextReplacement(infoParameter);
 
             mailData.MailInfo.Recipients = recipients;
             mailData.MailInfo.ContentBody = ApplyTextReplacement(infoParameter);
@@ -54,7 +54,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
 
     public interface IMailContentParser
     {
-        MailContentData CreateMailMessage(EmailInfoParameter emaiInfoParameter);
+        MailContentData CreateMailMessage(EmailInfoParameter emaiInfoParameter, ILogger logger);
     }
 
     public class EmailInfoParameter

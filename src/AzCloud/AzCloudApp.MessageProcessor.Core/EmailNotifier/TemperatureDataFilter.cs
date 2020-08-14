@@ -46,12 +46,19 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier
                     mailParam.Image = attendanceRecord.Img;
                     mailParam.Timestamp = attendanceRecord.TimeStamp;
 
-                    var mailData = _mailContentParser.CreateMailMessage(mailParam);
+                    var mailData = _mailContentParser.CreateMailMessage(mailParam, logger);
 
-                    var messgeInstance = MessageConverter.Serialize(mailData);
-                    await _messageSender.SendMessagesAsync(messgeInstance);
+                    if (mailData != null)
+                    {
+                        var messgeInstance = MessageConverter.Serialize(mailData);
+                        await _messageSender.SendMessagesAsync(messgeInstance);
 
-                    logger.LogInformation("MailData message sent to queue.");
+                        logger.LogInformation("MailData message sent to queue.");
+                    }
+                    else
+                    {
+                        logger.LogInformation($"No notifcation sent to queue. {DateTime.Now}");
+                    }
                 }
             }
             catch (Exception ex)
