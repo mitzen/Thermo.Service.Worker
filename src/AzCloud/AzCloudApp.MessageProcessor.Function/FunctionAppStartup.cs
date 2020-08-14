@@ -8,6 +8,7 @@ using AzCloudApp.MessageProcessor.Core.PersonelThemoDataHandler;
 using AzCloudApp.MessageProcessor.Core.MessageController;
 using Service.MessageBusServiceProvider.Queue;
 using AzCloudApp.MessageProcessor.Core.EmailNotifier;
+using AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils;
 
 [assembly: FunctionsStartup(typeof(AzCloudApp.MessageProcessor.Function.FunctionAppStartup))]
 
@@ -47,6 +48,9 @@ namespace AzCloudApp.MessageProcessor.Function
             });
 
             builder.Services.AddLogging();
+            builder.Services.AddTransient<IEmailAlertRecipientDataProcessor, EmailAlertRecipientDataProcessor>();
+
+            builder.Services.AddTransient<IMailContentParser, MailContentParser>();
             builder.Services.AddTransient<IDataFilter, TemperatureDataFilter>();
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<IDataStoreProcesor, DataStoreMessageProcessor>();
