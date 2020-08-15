@@ -32,6 +32,14 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             return null;
         }
 
+        public int GetAbnormalScanCountByCompanyId(int companyId, DateTime start, DateTime end)
+        {
+            //var count = from ar in _thermoDataContext.AttendanceRecord
+            //            where ar.TimeStamp >= start && ar.TimeStamp <= end
+            //            && ar.DeviceId = companyId;
+            return 0;
+        }
+
         public IEnumerable<string> GetRecipientsByCompanyId(int companyId)
         {
             var result = _thermoDataContext.EmailAlertRecipient.Where(x => x.CompanyId == companyId)
@@ -57,6 +65,5 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
         public int CompanyId { get; set; }
 
         public int TotalScans { get; set; }
-
     }
 }

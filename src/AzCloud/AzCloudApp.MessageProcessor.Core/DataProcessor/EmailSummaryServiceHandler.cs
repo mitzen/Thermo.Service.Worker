@@ -32,17 +32,16 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
             var endDate = DateTime.Now;
             var startDate = endDate.AddDays(-1);
-            var sumaryRecordCount = _dataProcessor.GetSummaryEmailSentGroupByCompany(startDate, endDate);
+            var sumaryRecords = _dataProcessor.GetSummaryEmailSentGroupByCompany(startDate, endDate);
 
-            if (sumaryRecordCount != null)
+            if (sumaryRecords != null)
             {
-
-                foreach (var item in sumaryRecordCount)
+                foreach (var item in sumaryRecords)
                 {
                     // Parse email info //
                     var mailParam = new EmailSummaryParam(item.CompanyId, item.TotalScans);
                     mailParam.Recipients = _dataProcessor.GetRecipientsByCompanyId(item.CompanyId);
-                    mailParam.TotalScans = item.TotalScans;
+                    mailParam.TotalAbnormalDetected = item.TotalScans;
 
                     var mailData = _summaryMailContentParser.CreateSummaryEmailAlertMessage(
                         mailParam, logger);
