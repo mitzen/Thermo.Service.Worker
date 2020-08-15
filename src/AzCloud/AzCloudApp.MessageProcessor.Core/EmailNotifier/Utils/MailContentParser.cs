@@ -18,7 +18,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
             _temperatureFilterConfiguration = temperatureOption.Value;
         }
 
-        public MailContentData CreateMailMessage(EmailInfoParameter infoParameter, ILogger logger)
+        public MailContentData CreateTemperatureEMailAlertMessage(EmailTemperatureHitParameter infoParameter, ILogger logger)
         {
             var mailData = new MailContentData();
             mailData.MailInfo = new MailInfo();
@@ -37,7 +37,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
             return mailData;
         }
 
-        private string ApplyTextReplacement(EmailInfoParameter mailInfo)
+        private string ApplyTextReplacement(EmailTemperatureHitParameter mailInfo)
         {
             mailInfo.EmailMessage = mailInfo.EmailMessage.ReplaceContent("###THERO_UNIT###", mailInfo.DeviceId).ReplaceContent("###INCIDENT_DATE###", mailInfo.Timestamp.ToString()).ReplaceContent("###TEMPERATURE###", mailInfo.TemperatureRegistered.ToString()).ReplaceContent("###IMG###", mailInfo.Image);
             return mailInfo.EmailMessage;
@@ -51,10 +51,10 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
 
     public interface IMailContentParser
     {
-        MailContentData CreateMailMessage(EmailInfoParameter emaiInfoParameter, ILogger logger);
+        MailContentData CreateTemperatureEMailAlertMessage(EmailTemperatureHitParameter emaiInfoParameter, ILogger logger);
     }
 
-    public class EmailInfoParameter
+    public class EmailTemperatureHitParameter
     {
         public string DeviceId { get; set; }
 
@@ -68,7 +68,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
 
         public DateTime? Timestamp { get; set; }
 
-        public EmailInfoParameter(string deviceId, string emailMessage)
+        public EmailTemperatureHitParameter(string deviceId, string emailMessage)
         {
             DeviceId = deviceId;
             EmailMessage = emailMessage;

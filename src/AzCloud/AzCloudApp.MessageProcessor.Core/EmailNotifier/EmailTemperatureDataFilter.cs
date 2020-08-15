@@ -38,14 +38,14 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier
                 {
                     _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
 
-                    var mailParam = new EmailInfoParameter(attendanceRecord.DeviceId, _temperatureFilterConfiguration.EmailTemplateMaxTemperatureHit);
+                    var mailParam = new EmailTemperatureHitParameter(attendanceRecord.DeviceId, _temperatureFilterConfiguration.EmailTemplateMaxTemperatureHit);
                     
                     mailParam.Location = attendanceRecord.Address;
                     mailParam.TemperatureRegistered = attendanceRecord.BodyTemperature;
                     mailParam.Image = attendanceRecord.Img;
                     mailParam.Timestamp = attendanceRecord.TimeStamp;
 
-                    var mailData = _mailContentParser.CreateMailMessage(mailParam, logger);
+                    var mailData = _mailContentParser.CreateTemperatureEMailAlertMessage(mailParam, logger);
 
                     if (mailData != null)
                     {
