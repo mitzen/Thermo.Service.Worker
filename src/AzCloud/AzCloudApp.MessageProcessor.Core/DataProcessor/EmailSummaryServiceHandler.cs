@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 {
-    public class NotificationSummaryProcessor : INotificationSummaryProcessor
+    public class EmailSummaryServiceHandler : ISummaryServiceHandler
     {
         private ServiceBusConfiguration _notificationServiceBusConfiguration;
         private readonly ISummaryEmailProviderDataProcessor _dataProcessor;
         private readonly ISummaryMailContentParser _summaryMailContentParser;
 
-        public NotificationSummaryProcessor(IOptions<ServiceBusConfiguration> notificationServiceBusOption, ISummaryEmailProviderDataProcessor dataProcessor,
+        public EmailSummaryServiceHandler(IOptions<ServiceBusConfiguration> notificationServiceBusOption, ISummaryEmailProviderDataProcessor dataProcessor,
             ISummaryMailContentParser parser)
         {
             _dataProcessor = dataProcessor;
@@ -30,33 +30,45 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
             var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
 
-            var summaryResut = _dataProcessor.GetSummaryEmailSentGroupByCompany();
+            var endDate = DateTime.Now;
+            var startDate = endDate.AddDays(-1);
+            var sumaryRecordCount = _dataProcessor.GetSummaryEmailSentGroupByCompany(startDate, endDate);
 
-            foreach (var item in summaryResut)
+            if (sumaryRecordCount != null)
             {
-                // Parse email info //
-                var mailParam = new EmailSummaryParam(item.CompanyId, item.TotalSent);
-                mailParam.Recipients = _dataProcessor.GetRecipientsByCompanyId(item.CompanyId);
 
-                var mailData = _summaryMailContentParser.CreateSummaryEmailAlertMessage(
-                    mailParam, logger);
-
-                if (mailData != null)
+                foreach (var item in sumaryRecordCount)
                 {
-                    var messgeInstance = MessageConverter.Serialize(mailData);
-                    await _messageSender.SendMessagesAsync(messgeInstance);
+                    // Parse email info //
+                    var mailParam = new EmailSummaryParam(item.CompanyId, item.TotalScans);
+                    mailParam.Recipients = _dataProcessor.GetRecipientsByCompanyId(item.CompanyId);
+                    mailParam.TotalScans = item.TotalScans;
 
-                    logger.LogInformation($"Summary {item.CompanyId} data to notification queue.");
+                    var mailData = _summaryMailContentParser.CreateSummaryEmailAlertMessage(
+                        mailParam, logger);
+
+                    if (mailData != null)
+                    {
+                        var messgeInstance = MessageConverter.Serialize(mailData);
+                        await _messageSender.SendMessagesAsync(messgeInstance);
+
+                        logger.LogInformation($"Summary {item.CompanyId} data to notification queue.");
+                    }
+                    else
+                    {
+                        logger.LogInformation($"No notifcation sent to queue. {DateTime.Now}");
+                    }
                 }
-                else
-                {
-                    logger.LogInformation($"No notifcation sent to queue. {DateTime.Now}");
-                }
+            }
+            else
+            {
+                logger.LogInformation($"Unable to find any summary record matches in the database.{DateTime.Now}");
+
             }
         }
     }
 
-    public interface INotificationSummaryProcessor
+    public interface ISummaryServiceHandler
     {
         Task ProcessMessage(ILogger logger);
     }
