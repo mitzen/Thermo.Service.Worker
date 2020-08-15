@@ -14,13 +14,17 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
         private ServiceBusConfiguration _notificationServiceBusConfiguration;
         private readonly ISummaryEmailProviderDataProcessor _dataProcessor;
         private readonly ISummaryMailContentParser _summaryMailContentParser;
+        private readonly EmailSummaryConfiguration _emailSummaryConfiguration;
 
-        public EmailSummaryServiceHandler(IOptions<ServiceBusConfiguration> notificationServiceBusOption, ISummaryEmailProviderDataProcessor dataProcessor,
+        public EmailSummaryServiceHandler(IOptions<ServiceBusConfiguration> notificationServiceBusOption,
+            IOptions<EmailSummaryConfiguration> emailSummaryOption,
+            ISummaryEmailProviderDataProcessor dataProcessor,
             ISummaryMailContentParser parser)
         {
             _dataProcessor = dataProcessor;
             _notificationServiceBusConfiguration = notificationServiceBusOption.Value;
             _summaryMailContentParser = parser;
+            _emailSummaryConfiguration = emailSummaryOption.Value;
         }
 
         public async Task ProcessMessage(ILogger logger)
@@ -30,9 +34,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
             var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
 
-            var endDate = DateTime.Now;
-            var startDate = endDate.AddDays(-1);
-            var sumaryRecords = _dataProcessor.GetSummaryEmailSentGroupByCompany(startDate, endDate);
+            IEnumerable<CompanyTotalScanResult> sumaryRecords = GetSummaryRecord();
 
             if (sumaryRecords != null)
             {
@@ -41,6 +43,8 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
                     // Parse email info //
                     var mailParam = new EmailSummaryParam(item.CompanyId, item.TotalScans);
                     mailParam.Recipients = _dataProcessor.GetRecipientsByCompanyId(item.CompanyId);
+
+                    ////////////////////////////////////////////////////////////////////////
                     mailParam.TotalAbnormalDetected = item.TotalScans;
 
                     var mailData = _summaryMailContentParser.CreateSummaryEmailAlertMessage(
@@ -62,14 +66,27 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             else
             {
                 logger.LogInformation($"Unable to find any summary record matches in the database.{DateTime.Now}");
-
             }
         }
-    }
 
-    public interface ISummaryServiceHandler
-    {
-        Task ProcessMessage(ILogger logger);
+        private IEnumerable<CompanyTotalScanResult> GetSummaryRecord()
+        {
+            var endDate = DateTime.Now;
+            var startDate = endDate.AddDays(-1);
+
+            var summaryParam = new SummaryParam
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                TemperatureMax = _emailSummaryConfiguration.MaxTemperature,
+            };
+
+            var totalScanRecords = _dataProcessor.GetTotalScansByCompany(summaryParam);
+
+            var totalAbnormalScanRecords = _dataProcessor.GetTotalAbnormalScanByCompany(summaryParam);
+
+            return totalScanRecords;
+        }
     }
 
     public class EmailSummaryParam

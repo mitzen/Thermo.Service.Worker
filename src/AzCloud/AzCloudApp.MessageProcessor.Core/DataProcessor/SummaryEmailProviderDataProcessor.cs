@@ -12,15 +12,36 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
         {
             _thermoDataContext = context;
         }
-        public IEnumerable<CompanyEmailSendSummary> GetSummaryEmailSentGroupByCompany(
-            DateTime start, DateTime end)
+        public IEnumerable<CompanyTotalScanResult> GetTotalScansByCompany(
+            SummaryParam param)
         {
             var result = (from cd in _thermoDataContext.Company_Device
                           join ar in _thermoDataContext.AttendanceRecord on cd.DeviceId equals
                           ar.DeviceId
-                          where ar.TimeStamp >= start && ar.TimeStamp <= end
+                          where ar.TimeStamp >= param.StartDate && ar.TimeStamp <= param.EndDate
                           group cd by cd.CompanyId into g
-                          select new CompanyEmailSendSummary
+                          select new CompanyTotalScanResult
+                          {
+                              CompanyId = g.Key,
+                              TotalScans = g.Count()
+                          }).ToList();
+
+            if (result != null)
+                return result;
+
+            return null;
+        }
+
+         public IEnumerable<CompanyTotalScanResult> GetTotalAbnormalScanByCompany(
+            SummaryParam param)
+        {
+            var result = (from cd in _thermoDataContext.Company_Device
+                          join ar in _thermoDataContext.AttendanceRecord on cd.DeviceId equals
+                          ar.DeviceId
+                          where ar.TimeStamp >= param.StartDate && ar.TimeStamp <= param.EndDate
+                          && ar.BodyTemperature > param.TemperatureMax
+                          group cd by cd.CompanyId into g
+                          select new CompanyTotalScanResult
                           {
                               CompanyId = g.Key,
                               TotalScans = g.Count()
@@ -40,6 +61,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             return 0;
         }
 
+
         public IEnumerable<string> GetRecipientsByCompanyId(int companyId)
         {
             var result = _thermoDataContext.EmailAlertRecipient.Where(x => x.CompanyId == companyId)
@@ -55,15 +77,27 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
     public interface ISummaryEmailProviderDataProcessor
     {
-        IEnumerable<CompanyEmailSendSummary> GetSummaryEmailSentGroupByCompany(DateTime start, DateTime end);
+        IEnumerable<CompanyTotalScanResult> GetTotalScansByCompany(SummaryParam param);
 
         IEnumerable<string> GetRecipientsByCompanyId(int companyId);
+
+        IEnumerable<CompanyTotalScanResult> GetTotalAbnormalScanByCompany(
+            SummaryParam param);
     }
 
-    public class CompanyEmailSendSummary
+    public class CompanyTotalScanResult
     {
         public int CompanyId { get; set; }
 
         public int TotalScans { get; set; }
+    }
+
+    public class SummaryParam
+    {
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
+
+        public double TemperatureMax { get; set; }
     }
 }

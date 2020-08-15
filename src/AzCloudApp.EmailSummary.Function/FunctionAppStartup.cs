@@ -8,7 +8,6 @@ using Service.MessageBusServiceProvider.Queue;
 using AzCloudApp.MessageProcessor.Core.EmailSummary;
 
 [assembly: FunctionsStartup(typeof(AzCloudApp.MessageProcessor.Function.FunctionAppStartup))]
-
 namespace AzCloudApp.MessageProcessor.Function
 {
     public class FunctionAppStartup : FunctionsStartup
