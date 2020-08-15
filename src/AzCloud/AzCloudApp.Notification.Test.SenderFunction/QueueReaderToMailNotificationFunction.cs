@@ -16,6 +16,7 @@ using AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel;
 using Microsoft.Azure.Amqp.Framing;
 using Service.ThermoDataModel.Heartbeat;
 using AzCloudApp.MessageProcessor.Core.PersonelThemoDataHandler;
+using AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils;
 
 namespace AzCloudApp.Notification.Test.SenderFunction
 {
@@ -36,6 +37,12 @@ namespace AzCloudApp.Notification.Test.SenderFunction
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req)
         {
+
+
+            var stest = "test data com";
+
+            var result = stest.ReplaceContent("test", "111").ReplaceContent("data", "222");
+
 
             try
             {

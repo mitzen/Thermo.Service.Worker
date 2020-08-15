@@ -18,7 +18,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
             _temperatureFilterConfiguration = temperatureOption.Value;
         }
 
-        public MailContentData CreateTemperatureEMailAlertMessage(EmailTemperatureHitParameter infoParameter, ILogger logger)
+        public MailContentData CreateTemperatureEmailAlertMessage(EmailTemperatureHitParameter infoParameter, ILogger logger)
         {
             var mailData = new MailContentData();
             mailData.MailInfo = new MailInfo();
@@ -51,7 +51,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
 
     public interface IMailContentParser
     {
-        MailContentData CreateTemperatureEMailAlertMessage(EmailTemperatureHitParameter emaiInfoParameter, ILogger logger);
+        MailContentData CreateTemperatureEmailAlertMessage(EmailTemperatureHitParameter emaiInfoParameter, ILogger logger);
     }
 
     public class EmailTemperatureHitParameter

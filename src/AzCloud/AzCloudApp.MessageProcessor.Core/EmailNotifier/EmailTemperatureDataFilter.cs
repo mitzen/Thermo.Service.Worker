@@ -45,7 +45,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier
                     mailParam.Image = attendanceRecord.Img;
                     mailParam.Timestamp = attendanceRecord.TimeStamp;
 
-                    var mailData = _mailContentParser.CreateTemperatureEMailAlertMessage(mailParam, logger);
+                    var mailData = _mailContentParser.CreateTemperatureEmailAlertMessage(mailParam, logger);
 
                     if (mailData != null)
                     {
