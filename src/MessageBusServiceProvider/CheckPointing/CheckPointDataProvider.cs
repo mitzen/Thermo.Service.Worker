@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Service.MessageBusServiceProvider.Converters;
 using Service.ThermoDataModel.Checkpoint;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -45,7 +46,11 @@ namespace Service.MessageBusServiceProvider.CheckPointing
             }
 
             var checkpointing = MessageConverter.DeSerialize<CheckPointConfiguration>(isourceContent);
-            _logger.LogInformation($"Reading checkpoint to {fileName}, Last sequence count : {checkpointing.LastSequence}");
+
+            if (checkpointing != null)
+                _logger.LogInformation($"Reading checkpoint to {fileName}, Last sequence count : {checkpointing.LastSequence}");
+            else
+                checkpointing = new CheckPointConfiguration { LastSequence = 1, LastUpdate = DateTime.Now };
 
             return Task.FromResult(checkpointing);
         }

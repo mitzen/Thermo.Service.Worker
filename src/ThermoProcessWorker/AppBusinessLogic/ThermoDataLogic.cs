@@ -92,6 +92,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
          
             var checkpointSourceFileName = targetDevice.CheckPointFileName;
             var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
+
             checkPoint.LastSequence = checkPoint.LastSequence == 0 ? 1 : checkPoint.LastSequence;
 
             var attendanceRequestInfo = new AttendanceRequest

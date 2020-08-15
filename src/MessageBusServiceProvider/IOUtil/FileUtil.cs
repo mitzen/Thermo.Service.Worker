@@ -7,7 +7,14 @@ namespace Service.MessageBusServiceProvider.IOUtil
     {
         public static bool CreateDirectoryFromFilePath(string fileNameAndPath)
         {
-            return CreateLocalDirectoriesInPath(Path.GetDirectoryName(fileNameAndPath));
+            CreateLocalDirectoriesInPath(Path.GetDirectoryName(fileNameAndPath));
+
+            if (!File.Exists(fileNameAndPath))
+            {
+                File.Create(fileNameAndPath);
+                return true;
+            }
+            return false; 
         }
 
         public static bool CreateLocalDirectoriesInPath(string path)
