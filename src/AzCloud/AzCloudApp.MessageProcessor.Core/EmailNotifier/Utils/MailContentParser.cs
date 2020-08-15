@@ -39,10 +39,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
 
         private string ApplyTextReplacement(EmailInfoParameter mailInfo)
         {
-            mailInfo.EmailMessage.ReplaceContent("###THERO_UNIT###", mailInfo.DeviceId);
-            mailInfo.EmailMessage.ReplaceContent("###INCIDENT_DATE###", mailInfo.Timestamp.ToString());
-            mailInfo.EmailMessage.ReplaceContent("###TEMPERATURE###", mailInfo.TemperatureRegistered.ToString());
-            mailInfo.EmailMessage.ReplaceContent("###IMG###", mailInfo.Image);
+            mailInfo.EmailMessage = mailInfo.EmailMessage.ReplaceContent("###THERO_UNIT###", mailInfo.DeviceId).ReplaceContent("###INCIDENT_DATE###", mailInfo.Timestamp.ToString()).ReplaceContent("###TEMPERATURE###", mailInfo.TemperatureRegistered.ToString()).ReplaceContent("###IMG###", mailInfo.Image);
             return mailInfo.EmailMessage;
         }
 

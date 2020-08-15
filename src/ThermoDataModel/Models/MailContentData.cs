@@ -9,8 +9,6 @@ namespace Service.ThermoDataModel.Models
 
     public class MailInfo
     {
-        public string From { get; set; }
-
         public IEnumerable<string> Recipients { get; set; }
 
         public string Subject { get; set; }
