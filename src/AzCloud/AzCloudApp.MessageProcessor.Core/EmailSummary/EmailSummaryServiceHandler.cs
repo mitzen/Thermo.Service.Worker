@@ -5,6 +5,7 @@ using Service.MessageBusServiceProvider.Converters;
 using Service.MessageBusServiceProvider.Queue;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AzCloudApp.MessageProcessor.Core.EmailSummary
@@ -35,10 +36,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
 
             var param = CreateParam();
-
-            IEnumerable<CompanyTotalScanResult> totalScan = GetTotalScanRecord(param);
-
-            IEnumerable<CompanyTotalScanResult> totalAbnormalScan = GetAbnormalScanRecord(param);
+            var totalScan = ComputeTotalSummaryScans(param, logger);
 
             if (totalScan != null)
             {
@@ -47,9 +45,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
                     // Parse email info //
                     var mailParam = new ParseEmailParam(item.CompanyId, item.TotalScans);
                     mailParam.Recipients = _dataProcessor.GetRecipientsByCompanyId(item.CompanyId);
-
-                    ////////////////////////////////////////////////////////////////////////
-                    mailParam.TotalAbnormalDetected = item.TotalScans;
+                    mailParam.TotalAbnormalDetected = item.TotalAbnormalScan;
 
                     var mailData = _summaryMailContentParser.CreateSummaryEmailAlertMessage(
                         mailParam, logger);
@@ -73,6 +69,33 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             }
         }
 
+        private IEnumerable<CompanyTotalScanResult> ComputeTotalSummaryScans(QueryTotalScanParam queryParam, ILogger logger)
+        { 
+            logger.LogInformation($"ComputeTotalSummaryScans routine. Start date : {queryParam.StartDate}, End Date: { queryParam.EndDate }, Max: { queryParam.TemperatureMax }");
+
+            var totalScan = GetTotalScanRecord(queryParam)?.ToList();
+            logger.LogInformation($"Total Scan result: {totalScan?.Count()}");
+
+            if (totalScan != null)
+            {
+                var totalAbnormalScan = GetAbnormalScanRecord(queryParam);
+                logger.LogInformation($"Abnormal : {totalAbnormalScan?.Count()}");
+
+
+                for (int i = 0; i < totalScan.Count(); i++)
+                {
+                    var sourceItem = totalScan[i];
+                    sourceItem.TotalAbnormalScan = GetAbScanCountByCompanyId(sourceItem.CompanyId, totalAbnormalScan);
+                }
+            }
+            return totalScan;
+        }
+
+        private int GetAbScanCountByCompanyId(int targetCompanyId, IEnumerable<AbnornormalScanResult> totalAbnormalScan)
+        {
+            return totalAbnormalScan.Where(x => x.CompanyId == targetCompanyId).Select(x => x.TotalAbnormalScan).FirstOrDefault();
+        }
+
         private QueryTotalScanParam CreateParam()
         {
             var endDate = DateTime.Now;
@@ -88,12 +111,12 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
         private IEnumerable<CompanyTotalScanResult> GetTotalScanRecord(QueryTotalScanParam param)
         {
-           return _dataProcessor.GetTotalScansByCompany(param);
+            return _dataProcessor.GetTotalScansByCompany(param);
         }
 
-        private IEnumerable<CompanyTotalScanResult> GetAbnormalScanRecord(QueryTotalScanParam param)
+        private IEnumerable<AbnornormalScanResult> GetAbnormalScanRecord(QueryTotalScanParam param)
         {
-            return _dataProcessor.GetTotalScansByCompany(param);
+            return _dataProcessor.GetTotalAbnormalScanByCompany(param);
         }
     }
 }

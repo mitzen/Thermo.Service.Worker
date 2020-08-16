@@ -32,7 +32,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             return null;
         }
 
-         public IEnumerable<CompanyTotalScanResult> GetTotalAbnormalScanByCompany(
+         public IEnumerable<AbnornormalScanResult> GetTotalAbnormalScanByCompany(
             QueryTotalScanParam param)
         {
             var result = (from cd in _thermoDataContext.Company_Device
@@ -41,10 +41,10 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
                           where ar.TimeStamp >= param.StartDate && ar.TimeStamp <= param.EndDate
                           && ar.BodyTemperature > param.TemperatureMax
                           group cd by cd.CompanyId into g
-                          select new CompanyTotalScanResult
+                          select new AbnornormalScanResult
                           {
                               CompanyId = g.Key,
-                              TotalScans = g.Count()
+                              TotalAbnormalScan = g.Count()
                           }).ToList();
 
             if (result != null)
@@ -52,15 +52,6 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
             return null;
         }
-
-        public int GetAbnormalScanCountByCompanyId(int companyId, DateTime start, DateTime end)
-        {
-            //var count = from ar in _thermoDataContext.AttendanceRecord
-            //            where ar.TimeStamp >= start && ar.TimeStamp <= end
-            //            && ar.DeviceId = companyId;
-            return 0;
-        }
-
 
         public IEnumerable<string> GetRecipientsByCompanyId(int companyId)
         {
@@ -81,7 +72,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
         IEnumerable<string> GetRecipientsByCompanyId(int companyId);
 
-        IEnumerable<CompanyTotalScanResult> GetTotalAbnormalScanByCompany(
+        IEnumerable<AbnornormalScanResult> GetTotalAbnormalScanByCompany(
             QueryTotalScanParam param);
     }
 
@@ -90,7 +81,17 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
         public int CompanyId { get; set; }
 
         public int TotalScans { get; set; }
+
+        public int TotalAbnormalScan { get; set; }
     }
+
+    public class AbnornormalScanResult
+    {
+        public int CompanyId { get; set; }
+
+        public int TotalAbnormalScan { get; set; }
+    }
+
 
     public class QueryTotalScanParam
     {
