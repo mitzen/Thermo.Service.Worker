@@ -34,14 +34,18 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
             var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
 
-            IEnumerable<CompanyTotalScanResult> sumaryRecords = GetSummaryRecord();
+            var param = CreateParam();
 
-            if (sumaryRecords != null)
+            IEnumerable<CompanyTotalScanResult> totalScan = GetTotalScanRecord(param);
+
+            IEnumerable<CompanyTotalScanResult> totalAbnormalScan = GetAbnormalScanRecord(param);
+
+            if (totalScan != null)
             {
-                foreach (var item in sumaryRecords)
+                foreach (var item in totalScan)
                 {
                     // Parse email info //
-                    var mailParam = new EmailSummaryParam(item.CompanyId, item.TotalScans);
+                    var mailParam = new ParseEmailParam(item.CompanyId, item.TotalScans);
                     mailParam.Recipients = _dataProcessor.GetRecipientsByCompanyId(item.CompanyId);
 
                     ////////////////////////////////////////////////////////////////////////
@@ -69,40 +73,27 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             }
         }
 
-        private IEnumerable<CompanyTotalScanResult> GetSummaryRecord()
+        private QueryTotalScanParam CreateParam()
         {
             var endDate = DateTime.Now;
             var startDate = endDate.AddDays(-1);
 
-            var summaryParam = new SummaryParam
+            return new QueryTotalScanParam
             {
                 StartDate = startDate,
                 EndDate = endDate,
                 TemperatureMax = _emailSummaryConfiguration.MaxTemperature,
             };
-
-            var totalScanRecords = _dataProcessor.GetTotalScansByCompany(summaryParam);
-
-            var totalAbnormalScanRecords = _dataProcessor.GetTotalAbnormalScanByCompany(summaryParam);
-
-            return totalScanRecords;
         }
-    }
 
-    public class EmailSummaryParam
-    {
-        public int CompanyId { get; set; }
-
-        public int TotalScans { get; set; }
-
-        public int TotalAbnormalDetected { get; set; }
-
-        public IEnumerable<string> Recipients { get; set; }
-
-        public EmailSummaryParam(int companyId, int emailCount)
+        private IEnumerable<CompanyTotalScanResult> GetTotalScanRecord(QueryTotalScanParam param)
         {
-            CompanyId = companyId;
-            TotalScans = emailCount;
+           return _dataProcessor.GetTotalScansByCompany(param);
+        }
+
+        private IEnumerable<CompanyTotalScanResult> GetAbnormalScanRecord(QueryTotalScanParam param)
+        {
+            return _dataProcessor.GetTotalScansByCompany(param);
         }
     }
 }

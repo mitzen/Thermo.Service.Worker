@@ -15,7 +15,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             _temperatureFilterConfiguration = temperatureOption.Value;
         }
 
-        public MailContentData CreateSummaryEmailAlertMessage(EmailSummaryParam param, ILogger logger)
+        public MailContentData CreateSummaryEmailAlertMessage(ParseEmailParam param, ILogger logger)
         {
             var mailData = new MailContentData();
             mailData.MailInfo = new MailInfo();
@@ -33,7 +33,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             logger.LogInformation($"Parsed content : mailData.MailInfo.ContentBody");
             return mailData;
         }
-        private string ApplyTextReplacement(string emailTemplate, EmailSummaryParam param)
+        private string ApplyTextReplacement(string emailTemplate, ParseEmailParam param)
         {
             var replacedContent = emailTemplate.ReplaceContent("###TOTAL_SCANS###", param.TotalScans.ToString()).ReplaceContent("###ABNORMAL_SCANS###", param.TotalAbnormalDetected.ToString());
             
@@ -43,6 +43,6 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
     public interface ISummaryMailContentParser
     {
-        MailContentData CreateSummaryEmailAlertMessage(EmailSummaryParam param, ILogger logger);
+        MailContentData CreateSummaryEmailAlertMessage(ParseEmailParam param, ILogger logger);
     }
 }

@@ -13,7 +13,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             _thermoDataContext = context;
         }
         public IEnumerable<CompanyTotalScanResult> GetTotalScansByCompany(
-            SummaryParam param)
+            QueryTotalScanParam param)
         {
             var result = (from cd in _thermoDataContext.Company_Device
                           join ar in _thermoDataContext.AttendanceRecord on cd.DeviceId equals
@@ -33,7 +33,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
         }
 
          public IEnumerable<CompanyTotalScanResult> GetTotalAbnormalScanByCompany(
-            SummaryParam param)
+            QueryTotalScanParam param)
         {
             var result = (from cd in _thermoDataContext.Company_Device
                           join ar in _thermoDataContext.AttendanceRecord on cd.DeviceId equals
@@ -77,12 +77,12 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
     public interface ISummaryEmailProviderDataProcessor
     {
-        IEnumerable<CompanyTotalScanResult> GetTotalScansByCompany(SummaryParam param);
+        IEnumerable<CompanyTotalScanResult> GetTotalScansByCompany(QueryTotalScanParam param);
 
         IEnumerable<string> GetRecipientsByCompanyId(int companyId);
 
         IEnumerable<CompanyTotalScanResult> GetTotalAbnormalScanByCompany(
-            SummaryParam param);
+            QueryTotalScanParam param);
     }
 
     public class CompanyTotalScanResult
@@ -92,7 +92,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
         public int TotalScans { get; set; }
     }
 
-    public class SummaryParam
+    public class QueryTotalScanParam
     {
         public DateTime StartDate { get; set; }
 
