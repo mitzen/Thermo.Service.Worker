@@ -8,7 +8,6 @@ using Service.MessageBusServiceProvider.Queue;
 using AzCloudApp.MessageProcessor.Core.EmailSummary;
 
 [assembly: FunctionsStartup(typeof(AzCloudApp.MessageProcessor.Function.FunctionAppStartup))]
-
 namespace AzCloudApp.MessageProcessor.Function
 {
     public class FunctionAppStartup : FunctionsStartup
@@ -47,7 +46,7 @@ namespace AzCloudApp.MessageProcessor.Function
             builder.Services.AddLogging();
 
             builder.Services.AddTransient<ISummaryEmailProviderDataProcessor, SummaryEmailProviderDataProcessor>();
-            builder.Services.AddTransient<INotificationSummaryProcessor, NotificationSummaryProcessor>();
+            builder.Services.AddTransient<ISummaryServiceHandler, EmailSummaryServiceHandler>();
             builder.Services.AddTransient<ISummaryMailContentParser, SummaryMailContentParser>();
 
             builder.Services.AddDbContext<ThermoDataContext>(opt => opt.UseSqlServer(configBuilder.GetConnectionString("ThermoDatabase")));

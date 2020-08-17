@@ -14,8 +14,6 @@ namespace Service.ThermoDataModel.Models
         public string Subject { get; set; }
 
         public string ContentBody { get; set; }
-
-        public string IsBodyHtml { get; set; }
         
         public string Sender { get; set; }
 

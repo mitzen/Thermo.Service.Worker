@@ -1,5 +1,4 @@
-﻿using Service.ThermoDataModel.Models;
-using System;
+﻿using System;
 
 namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 {

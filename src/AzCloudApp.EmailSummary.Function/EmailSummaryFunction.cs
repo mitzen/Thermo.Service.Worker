@@ -7,8 +7,8 @@ namespace AzCloudApp.EmailSummary.Function
 {
     public class EmailSummaryFunction
     {
-        private readonly INotificationSummaryProcessor _emailSummaryProcessor;
-        public EmailSummaryFunction(INotificationSummaryProcessor emailSummaryProcessor)
+        private readonly ISummaryServiceHandler _emailSummaryProcessor;
+        public EmailSummaryFunction(ISummaryServiceHandler emailSummaryProcessor)
         {
             _emailSummaryProcessor = emailSummaryProcessor;
         }

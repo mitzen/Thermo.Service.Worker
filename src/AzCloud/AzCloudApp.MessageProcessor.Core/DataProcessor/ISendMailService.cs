@@ -29,20 +29,20 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
         {
             logger.LogInformation($"Sending email. {DateTime.Now}");
 
-            var from = new EmailAddress(record.MailInfo.Sender, record.MailInfo.SenderName);
+            var senderAddress = new EmailAddress(record.MailInfo.Sender, record.MailInfo.SenderName);
 
-            List<EmailAddress> tos = new List<EmailAddress>();
+            List<EmailAddress> recipientsList = new List<EmailAddress>();
 
             foreach (var recipient in record.MailInfo.Recipients)
             {
-                tos.Add(new EmailAddress(recipient));
+                recipientsList.Add(new EmailAddress(recipient));
             }
 
             var subject = record.MailInfo.Subject;
             var htmlContent = record.MailInfo.ContentBody;
             var displayRecipients = false;
 
-            var mssage = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos,
+            var mssage = MailHelper.CreateSingleEmailToMultipleRecipients(senderAddress, recipientsList,
                 subject, string.Empty, htmlContent, displayRecipients);
 
             var response = await _client.SendEmailAsync(mssage);

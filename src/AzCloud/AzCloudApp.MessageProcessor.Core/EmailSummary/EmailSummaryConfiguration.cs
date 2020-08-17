@@ -8,5 +8,7 @@
 
         public string SenderName { get; set; }
 
+        public double MaxTemperature { get; set; }
+
     }
 }
