@@ -55,8 +55,8 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
         public IEnumerable<string> GetRecipientsByCompanyId(int companyId)
         {
-            var result = _thermoDataContext.EmailAlertRecipient.Where(x => x.CompanyId == companyId)
-                .Select(x => x.EmailAddress).ToList();
+            var result = _thermoDataContext.Users.Where(x => x.CompanyId == companyId)
+                .Select(x => x.Email).ToList();
 
             if (result != null && result.Any())
             {

@@ -10,7 +10,7 @@ namespace AzCloudApp.MessageProcessor.Core.Thermo.DataStore.DataStoreModel
 
         public int CompanyId { get; set; }
 
-        public string EmailAddress { get; set; }
+        public int UserId { get; set; }
 
         public DateTime Timestamp { get; set; }
     }

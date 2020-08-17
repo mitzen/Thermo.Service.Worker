@@ -16,12 +16,12 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             var result = (from cd in _thermoDataContext.Company_Device
                           join er in _thermoDataContext.EmailAlertRecipient on cd.CompanyId equals
                           er.CompanyId
-                          join u in _thermoDataContext.Users on er.CompanyId equals
-                         u.CompanyId
+                          join u in _thermoDataContext.Users on er.UserId equals
+                         u.Nid
                           where cd.DeviceId == deviceId
                           select new
                           {
-                             EmailAddress = u.Username
+                             EmailAddress = u.Email
                           }).ToList();
 
             if (result != null)
