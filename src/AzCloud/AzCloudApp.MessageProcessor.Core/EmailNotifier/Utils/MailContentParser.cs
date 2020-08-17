@@ -9,6 +9,10 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
 {
     public class MailContentParser : IMailContentParser
     {
+        private const string ImagePlaceHolderReplacement = "###IMG###";
+        private const string TemperaturePlaceHolderReplacement = "###TEMPERATURE###";
+        private const string IncidentDatePlaceHolderReplacement = "###INCIDENT_DATE###";
+        private const string ThermoUnitPlaceHolderReplacement = "###THERO_UNIT###";
         private readonly IEmailAlertRecipientDataProcessor _emailAlertRecipientDataProcessor;
         private TemperatureFilterConfiguration _temperatureFilterConfiguration;
 
@@ -30,6 +34,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
                 throw new ArgumentNullException("Recipients is null, please ensure recipient are setup properly.");
 
             mailData.MailInfo.Recipients = recipients;
+            mailData.MailInfo.Subject = _temperatureFilterConfiguration.Subject;
             mailData.MailInfo.ContentBody = ApplyTextReplacement(infoParameter);
             mailData.MailInfo.Sender = _temperatureFilterConfiguration.Sender;
             mailData.MailInfo.SenderName = _temperatureFilterConfiguration.SenderName;
@@ -38,7 +43,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
 
         private string ApplyTextReplacement(EmailTemperatureHitParameter mailInfo)
         {
-            mailInfo.EmailMessage = mailInfo.EmailMessage.ReplaceContent("###THERO_UNIT###", mailInfo.DeviceId).ReplaceContent("###INCIDENT_DATE###", mailInfo.Timestamp.ToString()).ReplaceContent("###TEMPERATURE###", mailInfo.TemperatureRegistered.ToString()).ReplaceContent("###IMG###", mailInfo.Image);
+            mailInfo.EmailMessage = mailInfo.EmailMessage.ReplaceContent(ThermoUnitPlaceHolderReplacement, mailInfo.DeviceId).ReplaceContent(IncidentDatePlaceHolderReplacement, mailInfo.Timestamp.ToString()).ReplaceContent(TemperaturePlaceHolderReplacement, mailInfo.TemperatureRegistered.ToString()).ReplaceContent(ImagePlaceHolderReplacement, mailInfo.Image);
             return mailInfo.EmailMessage;
         }
 

@@ -4,6 +4,8 @@
     {
         public double Max { get; set; }
 
+        public string Subject { get; set; }
+
         public string EmailTemplateMaxTemperatureHit { get; set; }
 
         public string Sender { get; set; }
