@@ -33,7 +33,6 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
             mailData.MailInfo.ContentBody = ApplyTextReplacement(infoParameter);
             mailData.MailInfo.Sender = _temperatureFilterConfiguration.Sender;
             mailData.MailInfo.SenderName = _temperatureFilterConfiguration.SenderName;
-
             return mailData;
         }
 
