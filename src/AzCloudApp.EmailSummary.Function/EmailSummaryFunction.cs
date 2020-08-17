@@ -14,7 +14,7 @@ namespace AzCloudApp.EmailSummary.Function
         }
 
         [FunctionName("EmailSummaryFunction")]
-        public void Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)
+        public void Run([TimerTrigger("%EmailScheduleTriggerTime%")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"Starting EmailSummaryNotificationFunction:{DateTime.Now}");
             _emailSummaryProcessor.ProcessMessage(log);
