@@ -21,7 +21,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
                           where cd.DeviceId == deviceId
                           select new
                           {
-                             EmailAddress = u.Email
+                             EmailAddress = u.Email.Trim()
                           }).ToList();
 
             if (result != null)
