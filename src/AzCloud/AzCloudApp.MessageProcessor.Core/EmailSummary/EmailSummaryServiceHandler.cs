@@ -90,7 +90,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
                 for (int i = 0; i < totalScan.Count(); i++)
                 {
-                    totalScan[i].TotalAbnormalScan = GetAbScanCountByCompanyId(sourceItem.CompanyId, totalAbnormalScan);
+                    totalScan[i].TotalAbnormalScan = GetAbScanCountByCompanyId(totalScan[i].CompanyId, totalAbnormalScan);
                 }
             }
             return totalScan;
