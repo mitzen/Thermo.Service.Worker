@@ -38,11 +38,14 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
             if (totalScan != null)
             {
+                logger.LogInformation($"Group by company count : {totalScan?.Count()}");
+
                 var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
 
                 foreach (var item in totalScan)
                 {
-                    // Parse email info //
+                    logger.LogInformation($"Total daily scan. {item.TotalScans}.");
+
                     var mailParam = new ParseEmailParam(item.CompanyId, item.TotalScans);
                     mailParam.Recipients = _dataProcessor.GetRecipientsByCompanyId(item.CompanyId);
                     mailParam.TotalAbnormalDetected = item.TotalAbnormalScan;
@@ -74,13 +77,11 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             logger.LogInformation($"ComputeTotalSummaryScans routine. Start date : {queryParam.StartDate}, End Date: { queryParam.EndDate }, Max: { queryParam.TemperatureMax }");
 
             var totalScan = GetTotalScanRecord(queryParam)?.ToList();
-            logger.LogInformation($"Total Scan result: {totalScan?.Count()}");
-
+          
             if (totalScan != null)
             {
                 var totalAbnormalScan = GetAbnormalScanRecord(queryParam);
                 logger.LogInformation($"Abnormal : {totalAbnormalScan?.Count()}");
-
 
                 for (int i = 0; i < totalScan.Count(); i++)
                 {
@@ -98,7 +99,13 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
         private QueryTotalScanParam CreateParam()
         {
-            var endDate = DateTime.Now;
+            DateTime endDate = DateTime.MinValue;
+          
+            if (!DateTime.TryParse(_emailSummaryConfiguration.TargetDate, out endDate))
+            {
+                endDate = DateTime.Now;
+            }
+
             var startDate = endDate.AddDays(-1);
 
             return new QueryTotalScanParam
