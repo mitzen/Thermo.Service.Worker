@@ -33,13 +33,13 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             logger.LogInformation($"NotificationSummaryProcessor : Getting summary email list of notifications." +
                 $"Connecion:{_notificationServiceBusConfiguration.ServiceBusConnection} and queuename: {_notificationServiceBusConfiguration.QueueName}");
 
-            var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
-
-            var param = CreateParam();
-            var totalScan = ComputeTotalSummaryScans(param, logger);
+            var queryParameter = CreateParam();
+            var totalScan = ComputeTotalSummaryScans(queryParameter, logger);
 
             if (totalScan != null)
             {
+                var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
+
                 foreach (var item in totalScan)
                 {
                     // Parse email info //

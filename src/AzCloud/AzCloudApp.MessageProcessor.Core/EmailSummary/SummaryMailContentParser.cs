@@ -9,6 +9,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 {
     public class SummaryMailContentParser : ISummaryMailContentParser
     {
+        private const string RecipientNullErrorMessage = "Recipients is null, please ensure recipient are setup properly.";
         private EmailSummaryConfiguration _temperatureFilterConfiguration;
         public SummaryMailContentParser(IOptions<EmailSummaryConfiguration> temperatureOption)
         {
@@ -20,17 +21,18 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             var mailData = new MailContentData();
             mailData.MailInfo = new MailInfo();
 
-            logger.LogInformation($"Parsing email summary content. TC:{ param.TotalAbnormalDetected }, TA:{ param.TotalAbnormalDetected }");
+            logger.LogInformation($"Parsing email summary content. TC:{ param.TotalScans }, TA:{ param.TotalAbnormalDetected }");
 
             if (param.Recipients == null && !param.Recipients.Any())
-                throw new ArgumentNullException("Recipients is null, please ensure recipient are setup properly.");
+                throw new ArgumentNullException(RecipientNullErrorMessage);
 
             mailData.MailInfo.Recipients = param.Recipients;
+            mailData.MailInfo.Subject = _temperatureFilterConfiguration.Subject;
             mailData.MailInfo.ContentBody = ApplyTextReplacement(_temperatureFilterConfiguration.EmailTemplate, param);
             mailData.MailInfo.Sender = _temperatureFilterConfiguration.Sender;
             mailData.MailInfo.SenderName = _temperatureFilterConfiguration.SenderName;
 
-            logger.LogInformation($"Parsed content : mailData.MailInfo.ContentBody");
+            logger.LogInformation($"Parsed content : {mailData.MailInfo.ContentBody}");
             return mailData;
         }
         private string ApplyTextReplacement(string emailTemplate, ParseEmailParam param)
