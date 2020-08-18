@@ -40,12 +40,6 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             {
                 logger.LogInformation($"Group by company count : {totalScan?.Count()}");
 
-                foreach (var item in totalScan)
-                {
-                    logger.LogInformation($"COMPUTE: {item.CompanyId},{item.TotalScans},{item.TotalAbnormalScan}");
-                }
-
-
                 var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
 
                 foreach (var item in totalScan)
@@ -60,10 +54,10 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
                     if (mailData != null)
                     {
-                        var messgeInstance = MessageConverter.Serialize(mailData);
-                        await _messageSender.SendMessagesAsync(messgeInstance);
+                        var messageInstance = MessageConverter.Serialize(mailData);
+                        await _messageSender.SendMessagesAsync(messageInstance);
 
-                        logger.LogInformation($"Summary {item.CompanyId} data to notification queue.");
+                        logger.LogInformation($"Sent content  {messageInstance} data to notification queue.");
                     }
                     else
                     {

@@ -21,8 +21,6 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             var mailData = new MailContentData();
             mailData.MailInfo = new MailInfo();
 
-            logger.LogInformation($"Parsing email summary content. TC:{ param.TotalScans }, TA:{ param.TotalAbnormalDetected }");
-
             if (param.Recipients == null && !param.Recipients.Any())
                 throw new ArgumentNullException(RecipientNullErrorMessage);
 
@@ -32,7 +30,6 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             mailData.MailInfo.Sender = _temperatureFilterConfiguration.Sender;
             mailData.MailInfo.SenderName = _temperatureFilterConfiguration.SenderName;
 
-            logger.LogInformation($"Parsed content : {mailData.MailInfo.ContentBody}");
             return mailData;
         }
         private string ApplyTextReplacement(string emailTemplate, ParseEmailParam param)
