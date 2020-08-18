@@ -38,13 +38,14 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
             if (totalScan != null)
             {
-                logger.LogInformation($"Group by company count : {totalScan?.Count()}");
+                logger.LogInformation($"View count : {totalScan?.Count()}");
 
                 var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
 
                 foreach (var item in totalScan)
                 {
-                    logger.LogInformation($"Total daily scan - {item.TotalScans}.");
+
+                    logger.LogInformation($"Total Amount daily scan - {item.TotalScans}.");
 
                     var mailParam = new ParseEmailParam(item.CompanyId, item.TotalScans);
                     mailParam.Recipients = _dataProcessor.GetRecipientsByCompanyId(item.CompanyId);
