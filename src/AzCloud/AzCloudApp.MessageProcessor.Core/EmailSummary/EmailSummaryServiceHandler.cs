@@ -40,18 +40,23 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
             {
                 logger.LogInformation($"Group by company count : {totalScan?.Count()}");
 
+                foreach (var item in totalScan)
+                {
+                    logger.LogInformation($"COMPUTE: {item.CompanyId},{item.TotalScans},{item.TotalAbnormalScan}");
+                }
+
+
                 var _messageSender = MessageBusServiceFactory.CreateServiceBusMessageSender(_notificationServiceBusConfiguration, logger);
 
                 foreach (var item in totalScan)
                 {
-                    logger.LogInformation($"Total daily scan. {item.TotalScans}.");
+                    logger.LogInformation($"Total daily scan - {item.TotalScans}.");
 
                     var mailParam = new ParseEmailParam(item.CompanyId, item.TotalScans);
                     mailParam.Recipients = _dataProcessor.GetRecipientsByCompanyId(item.CompanyId);
                     mailParam.TotalAbnormalDetected = item.TotalAbnormalScan;
 
-                    var mailData = _summaryMailContentParser.CreateSummaryEmailAlertMessage(
-                        mailParam, logger);
+                    var mailData = _summaryMailContentParser.CreateSummaryEmailAlertMessage(mailParam, logger);
 
                     if (mailData != null)
                     {
@@ -85,8 +90,7 @@ namespace AzCloudApp.MessageProcessor.Core.EmailSummary
 
                 for (int i = 0; i < totalScan.Count(); i++)
                 {
-                    var sourceItem = totalScan[i];
-                    sourceItem.TotalAbnormalScan = GetAbScanCountByCompanyId(sourceItem.CompanyId, totalAbnormalScan);
+                    totalScan[i].TotalAbnormalScan = GetAbScanCountByCompanyId(sourceItem.CompanyId, totalAbnormalScan);
                 }
             }
             return totalScan;
