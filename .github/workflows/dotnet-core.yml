@@ -18,10 +18,8 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: dotnet restore
-      working-directory: src/ThermoService.sln
+      run: dotnet restore src/ThermoService.sln
     - name: Build
-      run: dotnet build --configuration Release --no-restore
-      working-directory: src/ThermoService.sln
+      run: dotnet build --configuration Release --no-restore /src/ThermoService.sln
     - name: Test
       run: dotnet test --no-restore --verbosity normal
