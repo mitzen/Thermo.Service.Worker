@@ -1,5 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider\AzCloudApp.MessageProcessor.Core.Thermo.DataServiceProvider.csproj" />
+    <ProjectReference Include="..\AzCloud\AzCloudApp.MessageProcessor.Core.Thermo.DataStore\AzCloudApp.MessageProcessor.Core.Thermo.DataStore.csproj" />
+    <ProjectReference Include="..\Thermo.Web.WebApi.Model\Thermo.Web.WebApi.Model.csproj" />
+	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
+  </ItemGroup>
 </Project>

@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Service.MessageBusServiceProvider.AzBlob;
 using Service.MessageBusServiceProvider.CheckPointing;
-using Service.MessageBusServiceProvider.Queue;
 using Service.ThermoProcessWorker.AppBusinessLogic;
 
 namespace Service.ThermoProcessWorker

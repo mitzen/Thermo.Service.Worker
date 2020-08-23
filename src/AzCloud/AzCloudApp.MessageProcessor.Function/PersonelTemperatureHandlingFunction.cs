@@ -24,7 +24,7 @@ namespace AzCloudApp.MessageProcessor.Function
         {
             try
             {
-                log.LogInformation($"ThermoDataProcessorAzure v1.a started : {messageSource} {DateTime.Now}");
+                log.LogInformation($"ThermoDataProcessorAzure v1.g started : {messageSource} {DateTime.Now}");
                 await this._messsageThermoProcessor.ProcessMessage(messageSource, log);
             }
             catch (Exception ex)

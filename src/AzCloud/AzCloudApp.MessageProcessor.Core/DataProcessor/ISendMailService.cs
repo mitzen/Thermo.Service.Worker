@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
-using System.Net;
-using System.Net.Mail;
-using System.Threading;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AzCloudApp.MessageProcessor.Core.DataProcessor
@@ -17,41 +18,36 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
     public class SendMailService : ISendMailService
     {
         private NotificationConfiguration _notificationConfiguration;
-
+        private readonly SendGridClient _client;
         public SendMailService(IOptions<NotificationConfiguration> notificationConfiguration)
         {
             _notificationConfiguration = notificationConfiguration.Value;
+            _client = new SendGridClient(_notificationConfiguration.ApiKey);
         }
 
         public async Task SendMailAsync(MailContentData record, ILogger logger)
         {
-            logger.LogInformation($"Sending email using stmp server {this._notificationConfiguration.SmtpServer} and port {this._notificationConfiguration.Port}");
+            logger.LogInformation($"Sending email. {DateTime.Now}");
 
-            MailMessage message = new MailMessage();
-            message.From = new MailAddress(record.MailInfo.Sender);
+            var senderAddress = new EmailAddress(record.MailInfo.Sender, record.MailInfo.SenderName);
+
+            List<EmailAddress> recipientsList = new List<EmailAddress>();
 
             foreach (var recipient in record.MailInfo.Recipients)
             {
-                message.To.Add(new MailAddress(recipient));
+                recipientsList.Add(new EmailAddress(recipient));
             }
 
-            message.Subject = record.MailInfo.Subject;
-            message.IsBodyHtml = true;
-            message.Body = record.MailInfo.Body;
+            var subject = record.MailInfo.Subject;
+            var htmlContent = record.MailInfo.ContentBody;
+            var displayRecipients = false;
 
-            SmtpClient smtpClient = new SmtpClient();
-            smtpClient.Port = this._notificationConfiguration.Port;
-            smtpClient.Host = this._notificationConfiguration.SmtpServer; //for gmail host  
-            smtpClient.EnableSsl = true;
-            smtpClient.UseDefaultCredentials = false;
-            smtpClient.Credentials = new NetworkCredential(
-                this._notificationConfiguration.Username,
-                this._notificationConfiguration.Password
-             );
-            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtpClient.Send(message);
+            var mssage = MailHelper.CreateSingleEmailToMultipleRecipients(senderAddress, recipientsList,
+                subject, string.Empty, htmlContent, displayRecipients);
 
-            logger.LogInformation($"Mail message sent {message.Body}");
+            var response = await _client.SendEmailAsync(mssage);
+
+            logger.LogInformation($"Mail message sent result {response.StatusCode} at {DateTime.Now}");
 
         }
     }

@@ -3,7 +3,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Service.ThermoDataModel.Configuration;
-using System;
 using System.Threading.Tasks;
 
 namespace AzCloudApp.Notification.Function

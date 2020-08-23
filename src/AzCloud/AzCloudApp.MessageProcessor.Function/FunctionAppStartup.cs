@@ -6,7 +6,9 @@ using AzCloudApp.MessageProcessor.Core.DataProcessor;
 using AzCloudApp.MessageProcessor.Core.Thermo.DataStore;
 using AzCloudApp.MessageProcessor.Core.PersonelThemoDataHandler;
 using AzCloudApp.MessageProcessor.Core.MessageController;
-using Service.ThermoDataModel.Configuration;
+using Service.MessageBusServiceProvider.Queue;
+using AzCloudApp.MessageProcessor.Core.EmailNotifier;
+using AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils;
 
 [assembly: FunctionsStartup(typeof(AzCloudApp.MessageProcessor.Function.FunctionAppStartup))]
 
@@ -26,18 +28,30 @@ namespace AzCloudApp.MessageProcessor.Function
             .Build();
 
             builder
-              .Services
-              .AddOptions<NotificationConfiguration>()
-              .Configure<IConfiguration>((messageResponderSettings, configuration) =>
-              {
-                  configuration
-                  .GetSection("Notification")
-                  .Bind(messageResponderSettings);
-              });
+             .Services
+             .AddOptions<TemperatureFilterConfiguration>()
+             .Configure<IConfiguration>((messageResponderSettings, configuration) =>
+             {
+                 configuration
+                 .GetSection("TemperatureFilter")
+                 .Bind(messageResponderSettings);
+             });
 
+            builder
+            .Services
+            .AddOptions<ServiceBusConfiguration>()
+            .Configure<IConfiguration>((messageResponderSettings, configuration) =>
+            {
+                configuration
+                .GetSection("NotificationServiceBusConfiguration")
+                .Bind(messageResponderSettings);
+            });
 
             builder.Services.AddLogging();
-            builder.Services.AddTransient<ISendMailService, SendMailService>();
+            builder.Services.AddTransient<IEmailAlertRecipientDataProcessor, EmailAlertRecipientDataProcessor>();
+
+            builder.Services.AddTransient<IMailContentParser, MailContentParser>();
+            builder.Services.AddTransient<IDataFilter, EmailTemperatureDataFilter>();
             builder.Services.AddTransient<IDataStoreProcesor, DataStoreMessageProcessor>();
             builder.Services.AddTransient<INotificationProcessor, NotificationMessageProcessor>();
             builder.Services.AddTransient<IMessageController, ThermoMessageController>();

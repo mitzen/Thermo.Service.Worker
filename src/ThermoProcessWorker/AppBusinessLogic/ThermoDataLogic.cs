@@ -7,11 +7,11 @@ using RestSharp;
 using Service.ThermoProcessWorker.RestServices;
 using Service.ThermoDataModel.Configuration;
 using Service.ThermoDataModel.Models;
-using Service.ThermoDataModel.Requests;
 using Service.MessageBusServiceProvider.CheckPointing;
 using System.Collections.Generic;
 using Service.MessageBusServiceProvider.Converters;
-using Microsoft.Azure.Amqp.Framing;
+using Service.ThermoDataModel.Requests;
+using Service.MessageBusServiceProvider.IOUtil;
 
 namespace Service.ThermoProcessWorker.AppBusinessLogic
 {
@@ -76,7 +76,9 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 _logger.LogInformation(MessageSpacer);
                 _logger.LogInformation($"Scattering process for {targetDevice.HostName}, {DateTime.Now}");
                 _logger.LogInformation(MessageSpacer);
-            
+
+                FileUtil.CreateDirectoryFromFilePath(targetDevice.CheckPointFileName);
+
                 tasks.Add(RunTaskForTargetDevices(targetDevice));
             }
 
@@ -87,6 +89,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         {
             targetBaseUrl = targetDevice.HostName;
             thermoDataRequester = RequestFactory.CreateRestService(targetBaseUrl, _logger);
+         
             var checkpointSourceFileName = targetDevice.CheckPointFileName;
             var checkPoint = await _checkPointLogger.ReadCheckPoint(checkpointSourceFileName);
 
