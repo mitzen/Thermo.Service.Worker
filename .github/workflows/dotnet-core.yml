@@ -20,6 +20,6 @@ jobs:
     - name: Install dependencies
       run: dotnet restore src/ThermoService.sln
     - name: Build
-      run: dotnet build --configuration Release --no-restore /src/ThermoService.sln
+      run: dotnet build /src/ThermoService.sln --configuration Release --no-restore 
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test /src/ThermoService.sln --no-restore --verbosity normal
