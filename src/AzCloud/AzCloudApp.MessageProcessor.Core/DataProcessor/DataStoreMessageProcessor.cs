@@ -29,7 +29,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
                 DataStoreModelConverter.UpateModel(ref targetRecord, source);
             }
 
-            return this._thermoDataContext.SaveChangesAsync();
+            return _thermoDataContext.SaveChangesAsync();
         }
 
         public Task<int> SaveHeartBeatRecordAsync(HeartbeatMessage source)
@@ -42,17 +42,17 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             }
             else
             {
-                this._thermoDataContext.HeartBeat.Update(source.ToModel());
+                _thermoDataContext.HeartBeat.Update(source.ToModel());
             }
 
-            return this._thermoDataContext.SaveChangesAsync();
+            return _thermoDataContext.SaveChangesAsync();
         }
 
         public HeartBeatDataStore GetHeartBeateRecordByDeviceId(HeartbeatMessage source)
         {
             if (source != null && source.DeviceId != null)
             {
-                var result = this._thermoDataContext.HeartBeat.Where(x => x.DeviceId.Trim().ToLower() == source.DeviceId.Trim().ToLower()).FirstOrDefault();
+                var result = _thermoDataContext.HeartBeat.Where(x => x.DeviceId.Trim().ToLower() == source.DeviceId.Trim().ToLower()).FirstOrDefault();
 
                 return result;
             }
@@ -63,7 +63,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
         {
             if (source != null && source.DeviceId != null)
             {
-                return this._thermoDataContext.AttendanceRecord.Where(x => x.Id == source.Id && x.DeviceId.Trim() == source.DeviceId.Trim()).FirstOrDefault();
+                return _thermoDataContext.AttendanceRecord.Where(x => x.Id == source.Id && x.DeviceId.Trim() == source.DeviceId.Trim()).FirstOrDefault();
             }
 
             return null;

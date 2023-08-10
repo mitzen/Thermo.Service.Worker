@@ -30,9 +30,4 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             return null;
         }
     }
-
-    public interface IEmailAlertRecipientDataProcessor
-    {
-        IEnumerable<string> GetEmailByDeviceId(string deviceId);
-    }
 }
