@@ -30,7 +30,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         private ICheckPointLogger _checkPointLogger;
         private int _errorCount = 0;
         private IChannelMessageSender _channelMessageSender;
-
+        
         public ThermoDataLogic(ILogger<ThermoDataLogic> logger, IConfiguration configuration, ICheckPointLogger checkPointLogger, IChannelMessageSender channelMessageSender)
         {
             _logger = logger;
@@ -132,7 +132,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
                 // Send heartbeat messages //
                 _logger.LogWarning($"No records retrieve from Rest Service. {targetDevice.HostName}: {DateTime.Now}");
 
-                await this._channelMessageSender.SendHeartBeatMessagesToAzureServiceBus(targetDevice);
+                await _channelMessageSender.SendHeartBeatMessagesToAzureServiceBus(targetDevice);
             }
         }
     }

@@ -28,7 +28,7 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
         private const string DefaultImageJpg = ".jpg";
         private readonly IBlobClientProvider _blobClientProvider;
         private readonly BlobConfiguration _blobConfiguration;
-
+        
         public ChannelMessageSender(ILogger<ChannelMessageSender> logger,
             IConfiguration configuration, IBlobClientProvider blobClientProvider)
         {
@@ -41,7 +41,6 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             _blobConfiguration = BlobConfigurationUtil.GetBlobConfigiration(configuration);
 
         }
-
         public void Setup(CancellationToken stoppingToken)
         {
             _stoppingToken = stoppingToken;
@@ -85,7 +84,6 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
 
                     // Removeing image file / 
                     File.Delete(targetImagePath);
-
                 }
 
                 var messgeInstance = MessageConverter.Serialize(attendanceItem);
@@ -93,10 +91,9 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             }
 
             this._logger.LogInformation($"{currentBatchId} : Batch sent {DateTime.Now}");
-            //return Task.CompletedTask;
         }
 
-        public Task SendHeartBeatMessagesToAzureServiceBus(TargetDevice targetDevice)
+        public async Task SendHeartBeatMessagesToAzureServiceBus(TargetDevice targetDevice)
         {
             var heartbeatMessage = new HeartbeatMessage
             {
@@ -107,9 +104,8 @@ namespace Service.ThermoProcessWorker.AppBusinessLogic
             };
 
             var messgeInstance = MessageConverter.Serialize(heartbeatMessage);
-            _messageSender.SendMessagesAsync(messgeInstance);
-            this._logger.LogInformation($"Sending HeartBeat message {DateTime.Now}");
-            return Task.CompletedTask;
-        }
+            await _messageSender.SendMessagesAsync(messgeInstance);
+            _logger.LogInformation($"Sending HeartBeat message {DateTime.Now}");
+       }
     }
 }

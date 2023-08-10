@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
+﻿using Moq;
 using Moq.AutoMock;
 using RestSharp;
 using Service.ThermoDataModel.Models;

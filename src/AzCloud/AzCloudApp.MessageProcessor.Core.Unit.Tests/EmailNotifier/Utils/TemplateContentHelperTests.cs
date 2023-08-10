@@ -5,12 +5,14 @@ namespace AzCloudApp.MessageProcessor.Core.Unit.Tests.EmailNotifier.Utils
 {
     public class TemplateContentHelperTests
     {
+        private const string ToTargetContent = "ok";
+
         [Fact]
         public void TemplateContent()
         {
             var contentReplace = "test";
-            var result = contentReplace.ReplaceContent("test", "ok");
-            Assert.Equal("ok", result);
+            var result = contentReplace.ReplaceContent(contentReplace, ToTargetContent);
+            Assert.Equal(ToTargetContent, result);
         }
     }
 }

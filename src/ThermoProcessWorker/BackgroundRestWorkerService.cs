@@ -19,11 +19,16 @@ namespace Service.ThermoProcessWorker
         private readonly ICheckPointLogger _checkPointLogger;
         private readonly IThermoDataLogic thermoLogic;
 
-        public BackgroundRestWorkerService(ILogger<BackgroundRestWorkerService> logger, IThermoDataLogic logic, IConfiguration configuration, ICheckPointLogger checkPointLogger)
+        public BackgroundRestWorkerService(ILogger<BackgroundRestWorkerService> logger, 
+            IThermoDataLogic logic, 
+            IConfiguration configuration, 
+            ICheckPointLogger checkPointLogger)
         {
             _logger = logger;
             _configuration = configuration;
-            _serviceWorkerConfiguration = configuration.GetSection(ServiceWorkerConfiguration).Get<ServiceWorkerConfiguration>();
+            var svc = configuration.GetSection(ServiceWorkerConfiguration);
+                
+            _serviceWorkerConfiguration = svc.Get<ServiceWorkerConfiguration>();
             _checkPointLogger = checkPointLogger;
             thermoLogic = logic;
         }

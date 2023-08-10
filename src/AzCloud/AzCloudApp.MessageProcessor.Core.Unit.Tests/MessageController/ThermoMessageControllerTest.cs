@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Service.ThermoDataModel;
 using AzCloudApp.MessageProcessor.Core.DataProcessor;
 using AzCloudApp.MessageProcessor.Core.EmailNotifier;
+using System;
 
 namespace AzCloudApp.MessageProcessor.Core.Unit.Tests.DataProcessor.MessageController
 {
@@ -29,7 +30,42 @@ namespace AzCloudApp.MessageProcessor.Core.Unit.Tests.DataProcessor.MessageContr
             mocker.GetMock<IDataFilter>().Verify(x =>
             x.ExecuteDataFiltering(It.IsAny<AttendanceRecord>(), fakeLogger.Object), Times.Once);
         }
-                
+
+        [Fact]
+        public async Task ProcessTestMessageSuccessfully()
+        {
+            var mocker = new AutoMocker();
+            var fakeLogger = new Mock<ILogger>();
+            
+            var subject = mocker.CreateInstance<ThermoMessageController>();
+            await subject.ProcessDataAsync(GetAttendanceData("TEST"), fakeLogger.Object);
+
+            fakeLogger.Verify(x => x.Log(
+                      It.IsAny<LogLevel>(),
+                      It.IsAny<EventId>(),
+                      It.IsAny<It.IsAnyType>(),
+                      It.IsAny<Exception>(),
+                      (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Exactly(2));
+        }
+
+        [Fact]
+        public async Task ProcessHeartBeatMessageSuccessfully1()
+        {
+            var mocker = new AutoMocker();
+            var fakeLogger = new Mock<ILogger>();
+
+            var subject = mocker.CreateInstance<ThermoMessageController>();
+            await subject.ProcessDataAsync(GetAttendanceData(CoreMessageType.HeartBeatMessage), fakeLogger.Object);
+
+            fakeLogger.Verify(x => x.Log(
+                      It.IsAny<LogLevel>(),
+                      It.IsAny<EventId>(),
+                      It.IsAny<It.IsAnyType>(),
+                      It.IsAny<Exception>(),
+                      (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Exactly(2));
+        }
+
+
         private string GetAttendanceData(string messageType)
         {
             var attendanceData = new AttendanceRecord()

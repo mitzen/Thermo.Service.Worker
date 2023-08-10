@@ -3,34 +3,32 @@ using Service.ThermoProcessWorker.UnitTests.AppBusinessLogic;
 using Xunit;
 using Microsoft.Extensions.Logging;
 using Service.ThermoProcessWorker.RestServices;
-using Service.ThermoDataModel.Requests;
-using Moq.AutoMock;
-using System;
 using Moq;
 
 namespace Service.ThermoProcessWorker.UnitTests.RestServices
 {
-    public class RestDataServiceTests : BaseTest
+    public class RequestFactoryTest : BaseTest
     {
         [Fact]
-        public void WhenRestDataServiceExecuteThenRestSharpClientGetsExecuted()
+        public void CreatedInstanceIsThermoDataRequester()
         {
-            var fakeRequest = new Mock<IRestRequest>();
-            var mocker = new AutoMocker();
+            var fakeLogger = new Mock<ILogger>();
 
-            var target = mocker.CreateInstance<RestDataService>();
-            var result = target.ExecuteAsync<AttendanceRequest>(fakeRequest.Object);
+            var instance = RequestFactory.CreateRestService("http://localhost", fakeLogger.Object);
+            Assert.NotNull(instance);
+            Assert.IsType<ThermoDataRequester>(instance);
+        }
 
-            // Logging 
-            mocker.GetMock<ILogger>().Verify(x => x.Log(
-                      It.IsAny<LogLevel>(),
-                      It.IsAny<EventId>(),
-                      It.IsAny<It.IsAnyType>(),
-                      It.IsAny<Exception>(),
-                      (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
+        [Fact]
+        public void CreatePostBodyRequestInstanceIsRestRequest()
+        {
+            var fakeLogger = new Mock<ILogger>();
 
-            //IRestClinet 
-            mocker.GetMock<IRestClient>().VerifyAll();
+            var instance = RequestFactory.CreatePostBodyRequest(
+                "http://localhost", GetAttendanceData("Test"));
+            
+            Assert.NotNull(instance);
+            Assert.IsType<RestRequest>(instance);
         }
     }
 }
