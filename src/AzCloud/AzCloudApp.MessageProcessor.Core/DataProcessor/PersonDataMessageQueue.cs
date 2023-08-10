@@ -9,15 +9,6 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
         public string ImgBase64 { get; set; }
     }
 
-
-    public class DeviceDataMessageQueue : ThermoBaseMessageType
-    {
-        public int Id { get; set; }
-        public string DeviceId { get; set; }
-        public string IPAddress { get; set; }
-        public bool? IsActive { get; set; }
-    }
-
     public class PersonDataMessageQueue : ThermoBaseMessageType
     {
         public int Id { get; set; }

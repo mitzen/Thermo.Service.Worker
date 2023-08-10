@@ -16,7 +16,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             this._sendMailService = sendMail;
         }
 
-        public Task ProcessAsync(string source, ILogger logger)
+        public async Task ProcessAsync(string source, ILogger logger)
         {
             logger.LogInformation($"NotificationMessageProcessor starts execution wth {this._sendMailService.GetType().Name}");
 
@@ -25,10 +25,8 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
                 var target = MessageConverter.GetMessageType<MailContentData>(source);
 
                 if (target != null)
-                    this._sendMailService.SendMailAsync(target, logger);
+                    await this._sendMailService.SendMailAsync(target, logger);
             }
-
-            return Task.CompletedTask;
         }
     }
 }

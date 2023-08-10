@@ -18,16 +18,17 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
         private readonly INotificationProcessor _notificationProcesor;
         private readonly IDataFilter _notificationTrigger;
 
-        public ThermoMessageController(IDataStoreProcesor dataStoreProcesor, INotificationProcessor notificationProcesor, IDataFilter notificationTrigger)
+        public ThermoMessageController(IDataStoreProcesor dataStoreProcesor, INotificationProcessor notificationProcesor, 
+            IDataFilter notificationTrigger)
         {
             _dataStoreProcesor = dataStoreProcesor;
             _notificationProcesor = notificationProcesor;
             _notificationTrigger = notificationTrigger;
         }
 
-        public Task ProcessDataAsync(string sourceData, ILogger logger)
+        public async Task ProcessDataAsync(string sourceData, ILogger logger)
         {
-            this._logger = logger;
+            _logger = logger;
 
             logger.LogInformation($"MessageController::ProcessDataAsync [Deserializing messages] : {DateTime.Now}");
 
@@ -38,21 +39,19 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
                 if (attendanceRecFromQueue.MessageType == TextMessageType)
                 {
                     logger.LogInformation($"Test data detected : { attendanceRecFromQueue.Id }");
-                    return Task.CompletedTask;
                 }
                 else if (attendanceRecFromQueue.MessageType == CoreMessageType.AttendanceMessage)
                 {
-                    _notificationTrigger.ExecuteDataFiltering(attendanceRecFromQueue, logger);
+                    await _notificationTrigger.ExecuteDataFiltering(attendanceRecFromQueue, logger);
 
-                    var result = this._dataStoreProcesor.SaveAttendanceRecordAsync(attendanceRecFromQueue);
-                    logger.LogInformation($" ********** Saved attendance record to database ********* : { attendanceRecFromQueue.Id } and record count  {result.Result}");
+                    var result = await _dataStoreProcesor.SaveAttendanceRecordAsync(attendanceRecFromQueue);
+                    logger.LogInformation($" ********** Saved attendance record to database ********* : { attendanceRecFromQueue.Id } and record count {result}");
                 }
                 else if (attendanceRecFromQueue.MessageType == CoreMessageType.HeartBeatMessage)
                 {
                     var heartbeat = MessageConverter.GetMessageType<HeartbeatMessage>(sourceData);
-
-                    var result = this._dataStoreProcesor.SaveHeartBeatRecordAsync(heartbeat);
-                    logger.LogInformation($" ********** Saved HeartBeat record to database ********* : { attendanceRecFromQueue.Id } and record count  {result.Result}");
+                    var result = await _dataStoreProcesor.SaveHeartBeatRecordAsync(heartbeat);
+                    logger.LogInformation($" ********** Saved HeartBeat record to database ********* : { attendanceRecFromQueue.Id } and record count {result}");
                 }
             }
             catch (Exception ex)
@@ -61,7 +60,6 @@ namespace AzCloudApp.MessageProcessor.Core.MessageController
                 logger.LogError($"StackTrace: {ex.StackTrace}");
                 throw;
             }
-            return Task.CompletedTask;
         }
     }
 }

@@ -16,11 +16,11 @@ namespace AzCloudApp.MessageProcessor.Core.PersonelThemoDataHandler
             _logger = logger;
             _messageController = messageController;
         }
-        public Task ProcessMessage(string message, ILogger logger)
+
+        public async Task ProcessMessage(string message, ILogger logger)
         {
             logger.LogInformation($"Passing mesages received from service bus to PersonelThermoMessageProcessor : {DateTime.Now} : {message}");
-            this._messageController.ProcessDataAsync(message, logger);
-            return Task.CompletedTask;
+            await _messageController.ProcessDataAsync(message, logger);
         }
     }
 }

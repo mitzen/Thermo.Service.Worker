@@ -16,13 +16,15 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
         private readonly IEmailAlertRecipientDataProcessor _emailAlertRecipientDataProcessor;
         private TemperatureFilterConfiguration _temperatureFilterConfiguration;
 
-        public MailContentParser(IOptions<TemperatureFilterConfiguration> temperatureOption, IEmailAlertRecipientDataProcessor emailAlertRecipientDataProcessor)
+        public MailContentParser(IOptions<TemperatureFilterConfiguration> temperatureOption, 
+            IEmailAlertRecipientDataProcessor emailAlertRecipientDataProcessor)
         {
-            _emailAlertRecipientDataProcessor = emailAlertRecipientDataProcessor;
             _temperatureFilterConfiguration = temperatureOption.Value;
+            _emailAlertRecipientDataProcessor = emailAlertRecipientDataProcessor;
         }
 
-        public MailContentData CreateTemperatureEmailAlertMessage(EmailTemperatureHitParameter infoParameter, ILogger logger)
+        public MailContentData CreateTemperatureEmailAlertMessage(EmailTemperatureHitParameter infoParameter, 
+            ILogger logger)
         {
             var mailData = new MailContentData();
             mailData.MailInfo = new MailInfo();
@@ -40,42 +42,17 @@ namespace AzCloudApp.MessageProcessor.Core.EmailNotifier.Utils
             mailData.MailInfo.SenderName = _temperatureFilterConfiguration.SenderName;
             return mailData;
         }
-
+        
         private string ApplyTextReplacement(EmailTemperatureHitParameter mailInfo)
         {
-            mailInfo.EmailMessage = mailInfo.EmailMessage.ReplaceContent(ThermoUnitPlaceHolderReplacement, mailInfo.DeviceId).ReplaceContent(IncidentDatePlaceHolderReplacement, mailInfo.Timestamp.ToString()).ReplaceContent(TemperaturePlaceHolderReplacement, mailInfo.TemperatureRegistered.ToString()).ReplaceContent(ImagePlaceHolderReplacement, mailInfo.Image);
+            mailInfo.EmailMessage = mailInfo.EmailMessage.ReplaceContent(ThermoUnitPlaceHolderReplacement, 
+                mailInfo.DeviceId).ReplaceContent(IncidentDatePlaceHolderReplacement, mailInfo.Timestamp.ToString()).ReplaceContent(TemperaturePlaceHolderReplacement, mailInfo.TemperatureRegistered.ToString()).ReplaceContent(ImagePlaceHolderReplacement, mailInfo.Image);
             return mailInfo.EmailMessage;
         }
 
         private IEnumerable<string> GetEmailAddress(string deviceId)
         {
             return _emailAlertRecipientDataProcessor.GetEmailByDeviceId(deviceId);
-        }
-    }
-
-    public interface IMailContentParser
-    {
-        MailContentData CreateTemperatureEmailAlertMessage(EmailTemperatureHitParameter emaiInfoParameter, ILogger logger);
-    }
-
-    public class EmailTemperatureHitParameter
-    {
-        public string DeviceId { get; set; }
-
-        public string EmailMessage { get; set; }
-
-        public string Location { get; set; }
-
-        public double TemperatureRegistered { get; set; }
-
-        public string Image { get; set; }
-
-        public DateTime? Timestamp { get; set; }
-
-        public EmailTemperatureHitParameter(string deviceId, string emailMessage)
-        {
-            DeviceId = deviceId;
-            EmailMessage = emailMessage;
         }
     }
 }

@@ -38,7 +38,6 @@ namespace Service.ThermoProcessWorker.UnitTests.Queue
         public void WhenConnectionStringIsInvalidThenThrowsExceptionCreateClient()
         {
             var fakeLogger = new Mock<ILogger>();
-
             Assert.Throws<ArgumentNullException>(() => MessageBusServiceFactory.CreateServiceBusMessageSender(incompletedConnectionString, fakeLogger.Object));
         }
 
@@ -47,7 +46,6 @@ namespace Service.ThermoProcessWorker.UnitTests.Queue
         {
             var fakeLogger = new Mock<ILogger>();
             var target  = MessageBusServiceFactory.CreateServiceBusMessageSender(validConnectionString, fakeLogger.Object);
-
             Assert.NotNull(target);
         }
     }
