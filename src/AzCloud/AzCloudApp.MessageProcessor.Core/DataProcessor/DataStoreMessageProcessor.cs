@@ -19,7 +19,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
 
         public Task<int> SaveAttendanceRecordAsync(AttendanceRecord source)
         {
-            var targetRecord = GetAttendanceRecordAsync(source);
+            var targetRecord = GetAttendanceRecord(source);
             if (targetRecord ==  null)
             {
                 this._thermoDataContext.AttendanceRecord.Add(source.ToModel());
@@ -53,13 +53,12 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
             if (source != null && source.DeviceId != null)
             {
                 var result = _thermoDataContext.HeartBeat.Where(x => x.DeviceId.Trim().ToLower() == source.DeviceId.Trim().ToLower()).FirstOrDefault();
-
                 return result;
             }
             return null;
         }
 
-        public AttendanceDataStore GetAttendanceRecordAsync(AttendanceRecord source)
+        public AttendanceDataStore GetAttendanceRecord(AttendanceRecord source)
         {
             if (source != null && source.DeviceId != null)
             {

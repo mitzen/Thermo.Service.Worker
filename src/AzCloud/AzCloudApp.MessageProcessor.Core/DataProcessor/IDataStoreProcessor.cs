@@ -9,7 +9,7 @@ namespace AzCloudApp.MessageProcessor.Core.DataProcessor
     {        
         Task<int> SaveAttendanceRecordAsync(AttendanceRecord source);
 
-        AttendanceDataStore GetAttendanceRecordAsync(AttendanceRecord source);
+        AttendanceDataStore GetAttendanceRecord(AttendanceRecord source);
 
         Task<int> SaveHeartBeatRecordAsync(HeartbeatMessage source);
 
